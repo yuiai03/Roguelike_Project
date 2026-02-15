@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(ExpDropper))]
 [RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour, IDamageable
 {

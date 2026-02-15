@@ -307,6 +307,7 @@ GameObject:
   - component: {fileID: 6984368762438355412}
   - component: {fileID: 4834305697849818684}
   - component: {fileID: 8281497751904159243}
+  - component: {fileID: 7248709360530492833}
   m_Layer: 14
   m_Name: RangedEnemy
   m_TagString: Enemy
@@ -422,11 +423,18 @@ MonoBehaviour:
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
-  minSafeDistance: 5
-  maxAttackDistance: 15
-  strafeEnabled: 1
-  strafeSpeed: 2
-  strafeChangeInterval: 2
+--- !u!114 &7248709360530492833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6649033429569800493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec2408c475e94df41ba9bd08e8aea253, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7920697095186778469
 GameObject:
   m_ObjectHideFlags: 0

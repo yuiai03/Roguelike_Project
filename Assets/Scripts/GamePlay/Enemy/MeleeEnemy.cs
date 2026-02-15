@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class MeleeEnemy : Enemy
 {
     [Header("Melee Settings")]
