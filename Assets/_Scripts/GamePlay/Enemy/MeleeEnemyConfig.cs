@@ -10,6 +10,13 @@ public class MeleeEnemyConfig : EnemyConfig
     public float contactDamage = 10f;
     public float attackCooldown = 1f;
 
+    [Header("Lunge Attack")]
+    public float lungeSpeed = 12f;
+    public float lungeDistance = 3f;
+    public float lungeDetectionRadius = 1.5f;
+    public float retreatSpeed = 6f;
+    public float retreatDistance = 2f;
+
     public MeleeEnemyConfig()
     {
         enemyType = EnemyType.Melee;

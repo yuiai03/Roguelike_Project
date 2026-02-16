@@ -428,5 +428,7 @@ public enum EnemyState
     Idle,
     Chasing,
     Attacking,
+    Lunging,
+    Retreating,
     Dead
 }

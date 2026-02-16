@@ -26,6 +26,13 @@ public class EnemyData : MonoBehaviour
     public float contactDamage = 10f;
     public float attackCooldown = 1f;
 
+    [Header("Melee - Lunge Attack")]
+    public float lungeSpeed = 12f;
+    public float lungeDistance = 3f;
+    public float lungeDetectionRadius = 1.5f;
+    public float retreatSpeed = 6f;
+    public float retreatDistance = 2f;
+
     [Header("Combat - Ranged")]
     public float projectileDamage = 15f;
     public float projectileSpeed = 10f;
@@ -77,6 +84,11 @@ public class EnemyData : MonoBehaviour
         {
             contactDamage = meleeConfig.contactDamage;
             attackCooldown = meleeConfig.attackCooldown;
+            lungeSpeed = meleeConfig.lungeSpeed;
+            lungeDistance = meleeConfig.lungeDistance;
+            lungeDetectionRadius = meleeConfig.lungeDetectionRadius;
+            retreatSpeed = meleeConfig.retreatSpeed;
+            retreatDistance = meleeConfig.retreatDistance;
         }
         else if (dataConfig is RangedEnemyConfig rangedConfig)
         {
