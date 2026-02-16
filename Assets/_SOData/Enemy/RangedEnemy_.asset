@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 557150ba2ab9e144ab69609281d290b5, type: 3}
+  m_Name: RangedEnemy_
+  m_EditorClassIdentifier: 
+  enemyType: 1
+  maxHealth: 100
+  moveSpeed: 5
+  attackRange: 20
+  rotationSpeed: 5
+  groundDistance: 0.4
+  gravity: -10
+  knockbackForce: 3
+  knockbackDuration: 0.2
+  expValue: 10
+  projectileDamage: 15
+  projectileSpeed: 10
+  projectileLifetime: 5
+  shootCooldown: 2
