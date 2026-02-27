@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 5451439453120198845}
   - component: {fileID: 6236676275591175110}
   - component: {fileID: 8203959539093392813}
-  - component: {fileID: 5403057201981544363}
-  - component: {fileID: 659524579358550477}
+  - component: {fileID: 3820205468119193113}
+  - component: {fileID: -4699522104336744963}
   m_Layer: 0
   m_Name: PlayerProjectile
   m_TagString: Untagged
@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 8f9a02cdb01708a4bb096c2abf16a9ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,19 +110,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5403057201981544363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6725370750554534045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43396792a44d5b94fb3abcec1528470c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!54 &659524579358550477
+--- !u!54 &3820205468119193113
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -149,3 +137,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-4699522104336744963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6725370750554534045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43396792a44d5b94fb3abcec1528470c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

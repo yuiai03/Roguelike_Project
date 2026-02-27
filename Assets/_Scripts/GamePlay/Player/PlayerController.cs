@@ -14,9 +14,9 @@ public class PlayerController : MonoBehaviour
     private InputSystem_Actions inputActions;
     private PlayerHealth playerHealth;
     private PlayerData playerData;
+    private PlayerAnimationController animationController;
     private Vector2 moveInput;
     private Vector3 velocity;
-    private Vector3 dashDirection;
 
     [Header("Model Reference")]
     [SerializeField] private Transform modelTransform;
@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerData = GetComponent<PlayerData>();
+        animationController = GetComponent<PlayerAnimationController>();
 
         if (modelTransform == null)
         {
@@ -86,7 +87,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 cameraForward = Camera.main.transform.forward;
         Vector3 cameraRight = Camera.main.transform.right;
-        
+
         cameraForward.y = 0f;
         cameraRight.y = 0f;
         cameraForward.Normalize();
@@ -99,21 +100,20 @@ public class PlayerController : MonoBehaviour
             isDashing = true;
             dashTimer = playerData.dashDuration;
             dashCooldownTimer = playerData.dashCooldown;
-            
-            if (moveDirection.sqrMagnitude > 0.01f)
-            {
-                dashDirection = moveDirection.normalized;
-            }
-            else
-            {
-                dashDirection = modelTransform != null ? modelTransform.forward : transform.forward;
-            }
         }
         dashPressed = false;
 
         if (isDashing)
         {
-            controller.Move(dashDirection * playerData.dashSpeed * Time.deltaTime);
+            float dashProgress = dashTimer / playerData.dashDuration;
+            float speedMultiplier = Mathf.Lerp(0.6f, 1f, dashProgress);
+            float currentSpeed = playerData.dashSpeed * speedMultiplier;
+
+            Vector3 dashMove = moveDirection.sqrMagnitude > 0.01f
+                ? moveDirection.normalized * currentSpeed
+                : (modelTransform != null ? modelTransform.forward : transform.forward) * currentSpeed;
+
+            controller.Move(dashMove * Time.deltaTime);
             dashTimer -= Time.deltaTime;
             if (dashTimer <= 0f)
                 isDashing = false;
@@ -127,11 +127,14 @@ public class PlayerController : MonoBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             modelTransform.rotation = Quaternion.RotateTowards(
-                modelTransform.rotation, 
-                targetRotation, 
+                modelTransform.rotation,
+                targetRotation,
                 playerData.rotationSpeed * Time.deltaTime
             );
         }
+
+        // Update Animations
+        UpdateAnimations(moveDirection);
 
         velocity.y += playerData.gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
@@ -155,6 +158,25 @@ public class PlayerController : MonoBehaviour
     public Transform GetModelTransform()
     {
         return modelTransform;
+    }
+
+    private void UpdateAnimations(Vector3 moveDirection)
+    {
+        if (animationController == null) return;
+
+        // Determine which animation to play based on state
+        if (isDashing)
+        {
+            animationController.PlayAnimationSmart(PlayerAnimationController.AnimationState.Dash);
+        }
+        else if (moveDirection.sqrMagnitude > 0.01f)
+        {
+            animationController.PlayAnimationSmart(PlayerAnimationController.AnimationState.Run);
+        }
+        else
+        {
+            animationController.PlayAnimationSmart(PlayerAnimationController.AnimationState.Idle);
+        }
     }
 
     void OnDrawGizmos()

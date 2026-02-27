@@ -15,6 +15,9 @@ MonoBehaviour:
   cardName: "T\u0103ng t\u1ED1c \u0111\u1ED9 ch\u1EA1y"
   description: "T\u0103ng t\u1ED1c \u0111\u1ED9 ch\u1EA1y th\xEAm 1 ch\xFAt\t\t\t\t"
   icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  buffType: 5
+  buffType: 7
   value: 1
   rarity: 4
+  shotCount: 1
+  aoeRadius: 2
+  ballCount: 1

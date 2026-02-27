@@ -9,7 +9,7 @@ public class RangedEnemyConfig : EnemyConfig
     [Header("Ranged Combat")]
     public float projectileDamage = 15f;
     public float projectileSpeed = 10f;
-    public float projectileLifetime = 5f;
+    public float projectileLifetime = 10f;
     public float shootCooldown = 2f;
 
     public RangedEnemyConfig()

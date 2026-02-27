@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemyData : MonoBehaviour
 {
     [Header("Data Source")]
-    [SerializeField] private EnemyConfig dataConfig;
+    [SerializeField] protected EnemyConfig dataConfig;
 
     [Header("Basic Info")]
     public EnemyType enemyType = EnemyType.Melee;
@@ -36,7 +36,7 @@ public class EnemyData : MonoBehaviour
     [Header("Combat - Ranged")]
     public float projectileDamage = 15f;
     public float projectileSpeed = 10f;
-    public float projectileLifetime = 5f;
+    public float projectileLifetime = 10f;
     public float shootCooldown = 2f;
 
     [Header("Knockback")]
@@ -45,6 +45,10 @@ public class EnemyData : MonoBehaviour
 
     [Header("Drops")]
     public int expValue = 10;
+
+    [Header("Randomization")]
+    [Tooltip("Độ lệch ngẫu nhiên khi spawn (0.15 = ±15%)")]
+    public float randomVariation = 0.15f;
 
     private void Awake()
     {
@@ -62,13 +66,15 @@ public class EnemyData : MonoBehaviour
     {
         if (dataConfig == null) return;
 
-        // Copy common data từ Config sang runtime variables
-        enemyType = dataConfig.enemyType;
+        // Tính toán thông số ngẫu nhiên cho mỗi con quái
+        float var = randomVariation;
+        
+        // Randomize các chỉ số chính (± variation %)
         maxHealth = dataConfig.maxHealth;
         currentHealth = maxHealth;
 
-        moveSpeed = dataConfig.moveSpeed;
-        attackRange = dataConfig.attackRange;
+        moveSpeed = dataConfig.moveSpeed * UnityEngine.Random.Range(1f - var, 1f + var);
+        attackRange = dataConfig.attackRange; // Tầm đánh giữ nguyên để không bị lỗi logic
         rotationSpeed = dataConfig.rotationSpeed;
 
         groundDistance = dataConfig.groundDistance;
@@ -77,25 +83,25 @@ public class EnemyData : MonoBehaviour
         knockbackForce = dataConfig.knockbackForce;
         knockbackDuration = dataConfig.knockbackDuration;
 
-        expValue = dataConfig.expValue;
+        expValue = dataConfig.expValue; // EXP rớt ra giữ nguyên
 
         // Load specific data based on config type
         if (dataConfig is MeleeEnemyConfig meleeConfig)
         {
             contactDamage = meleeConfig.contactDamage;
-            attackCooldown = meleeConfig.attackCooldown;
-            lungeSpeed = meleeConfig.lungeSpeed;
+            attackCooldown = meleeConfig.attackCooldown * UnityEngine.Random.Range(1f - var, 1f + var);
+            lungeSpeed = meleeConfig.lungeSpeed * UnityEngine.Random.Range(1f - var, 1f + var);
             lungeDistance = meleeConfig.lungeDistance;
             lungeDetectionRadius = meleeConfig.lungeDetectionRadius;
-            retreatSpeed = meleeConfig.retreatSpeed;
+            retreatSpeed = meleeConfig.retreatSpeed * UnityEngine.Random.Range(1f - var, 1f + var);
             retreatDistance = meleeConfig.retreatDistance;
         }
         else if (dataConfig is RangedEnemyConfig rangedConfig)
         {
             projectileDamage = rangedConfig.projectileDamage;
-            projectileSpeed = rangedConfig.projectileSpeed;
+            projectileSpeed = rangedConfig.projectileSpeed * UnityEngine.Random.Range(1f - var, 1f + var);
             projectileLifetime = rangedConfig.projectileLifetime;
-            shootCooldown = rangedConfig.shootCooldown;
+            shootCooldown = rangedConfig.shootCooldown * UnityEngine.Random.Range(1f - var, 1f + var);
         }
     }
 
@@ -126,10 +132,22 @@ public class EnemyData : MonoBehaviour
     {
         return currentHealth <= 0f;
     }
+
+    /// <summary>
+    /// Helper: Lấy config của enemy theo kiểu cụ thể (ví dụ TankEnemyConfig)
+    /// </summary>
+    public T GetConfig<T>() where T : EnemyConfig
+    {
+        // EnemyConfig lưu dưới dạng private field, truy cập qua đối tượng này
+        return dataConfig as T;
+    }
 }
 
 public enum EnemyType
 {
     Melee,
     Ranged,
+    Tank,
+    Exploder,
+    Boss,
 }

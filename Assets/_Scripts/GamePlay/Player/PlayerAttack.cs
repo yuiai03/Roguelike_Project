@@ -50,41 +50,78 @@ public class PlayerAttack : MonoBehaviour
     private void PerformAttack()
     {
         attackTimer = playerData.GetAttackCooldown();
-        
-        SpawnProjectile();
+        SpawnProjectiles();
     }
 
-    private void SpawnProjectile()
+    private void SpawnProjectiles()
     {
         if (projectilePrefab == null) return;
+        if (currentTarget == null) return;
 
-        GameObject obj = ObjectPool.Instance.Spawn(PoolType.PlayerProjectile, attackPoint.position, attackPoint.rotation);
-        
-        if (obj != null && currentTarget != null)
+        Vector3 spawnPos = attackPoint.position + Vector3.up * 1f;
+        Vector3 targetPos = currentTarget.position + Vector3.up * 1f;
+        Vector3 rawDir = targetPos - spawnPos;
+        rawDir.y = 0f; // bắn ngang, trục y không đổi
+        Vector3 baseDir = rawDir.normalized;
+
+        int shotCount = Mathf.Max(1, playerData.multiShotCount);
+
+        if (shotCount == 1)
         {
-            Vector3 direction = (currentTarget.position - attackPoint.position).normalized;
-            
-            float finalDamage = playerData.GetTotalDamage();
-            
-            PlayerProjectile projectile = obj.GetComponent<PlayerProjectile>();
-            if (projectile != null)
+            SpawnSingleProjectile(spawnPos, baseDir);
+        }
+        else
+        {
+            // Hình quạt: spread đều hai bên
+            float totalSpread = playerData.multiShotAngle * (shotCount - 1);
+            float startAngle = -totalSpread / 2f;
+
+            for (int i = 0; i < shotCount; i++)
             {
-                projectile.Initialize(
-                    finalDamage,
-                    playerData.projectileSpeed,
-                    playerData.projectileLifetime,
-                    direction,
-                    enemyLayer,
-                    gameObject
-                );
+                float angle = startAngle + playerData.multiShotAngle * i;
+                Vector3 dir = Quaternion.Euler(0f, angle, 0f) * baseDir;
+                SpawnSingleProjectile(spawnPos, dir);
             }
+        }
+    }
+
+    private void SpawnSingleProjectile(Vector3 spawnPos, Vector3 direction)
+    {
+        GameObject obj = ObjectPool.Instance.Spawn(PoolType.PlayerProjectile, spawnPos, Quaternion.identity);
+        if (obj == null) return;
+
+        // Nếu đạn MultiShot có damage riêng thì dùng, ngược lại dùng damage gốc
+        float finalDamage = (playerData.multiShotCount > 1 && playerData.multiShotDamage > 0f)
+            ? playerData.multiShotDamage
+            : playerData.GetTotalDamage();
+
+        PlayerProjectile projectile = obj.GetComponent<PlayerProjectile>();
+        if (projectile != null)
+        {
+            projectile.Initialize(
+                finalDamage,
+                playerData.projectileSpeed,
+                playerData.projectileLifetime,
+                direction,
+                enemyLayer,
+                gameObject
+            );
+
+            projectile.InitializeExtra(
+                playerData.isAoEEnabled,
+                playerData.aoeRadius,
+                playerData.aoeDamagePercent,
+                playerData.aoeDamage,
+                0, // pierce count — spirit sẽ xử lý riêng
+                enemyLayer
+            );
         }
     }
 
     private Transform FindNearestEnemy()
     {
         Collider[] enemies = Physics.OverlapSphere(transform.position, playerData.attackRange, enemyLayer);
-        
+
         Transform nearestEnemy = null;
         float nearestDistance = float.MaxValue;
 

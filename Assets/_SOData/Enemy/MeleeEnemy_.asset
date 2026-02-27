@@ -21,6 +21,11 @@ MonoBehaviour:
   gravity: -10
   knockbackForce: 3
   knockbackDuration: 0.2
-  expValue: 10
+  expValue: 50
   contactDamage: 10
   attackCooldown: 1
+  lungeSpeed: 12
+  lungeDistance: 3
+  lungeDetectionRadius: 1.5
+  retreatSpeed: 6
+  retreatDistance: 2

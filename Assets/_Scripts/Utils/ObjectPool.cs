@@ -8,6 +8,13 @@ public enum PoolType
     EnemyProjectile = 2,
     MeleeEnemy = 3,
     RangedEnemy = 4,
+    CircleSpawnEffect = 5,
+    OrbitingBall = 6,
+    AoEExplosionVFX = 7,
+    SpiritPierce = 8,
+    SpiritExplosion = 9,
+    DamageText = 10,
+    SpiritProjectile = 11,
 }
 
 [System.Serializable]

@@ -25,6 +25,12 @@ public class SimpleWaveData
 
     [Header("Wave Settings")]
     public float preparationTime = 3f;
+
+    [Header("Boss Wave")]
+    [Tooltip("True nếu đây là boss wave (wave 10, 20, 30)")]
+    public bool isBossWave = false;
+    [Tooltip("PoolType của boss boss được spawn ở wave này")]
+    public PoolType bossPoolType = PoolType.None;
 }
 
 [CreateAssetMenu(fileName = "SimpleWaveConfig", menuName = "Roguelike/Simple Wave Config")]
@@ -45,21 +51,36 @@ public class WaveConfig : ScriptableObject
         return waves[waveNumber - 1];
     }
 
-    [ContextMenu("Generate 30 Empty Waves")]
+    [ContextMenu("Generate 30 Waves")]
     public void Generate30Waves()
     {
         waves.Clear();
 
         for (int i = 1; i <= 30; i++)
         {
+            bool isBoss = (i % 10 == 0); // wave 10, 20, 30
+
             SimpleWaveData wave = new SimpleWaveData
             {
-                preparationTime = 3f
+                preparationTime = isBoss ? 5f : 3f, // boss wave có thêm TG chuẩn bị
+                isBossWave      = isBoss,
+                bossPoolType    = PoolType.None,     // Gán trong Inspector
             };
+
+            // Thêm enemy group mặc định (không phải boss wave)
+            if (!isBoss)
+            {
+                wave.enemyGroups.Add(new EnemyGroup
+                {
+                    enemyPoolType = PoolType.MeleeEnemy,
+                    enemyCount    = 3 + i / 3, // tăng dần theo wave
+                    spreadRadius  = 3f,
+                });
+            }
 
             waves.Add(wave);
         }
 
-        Debug.Log("Generated 30 empty waves! Add enemy groups in Inspector.");
+        Debug.Log("Generated 30 waves! Wave 10/20/30 đánh dấu là Boss Wave. Gán bossPoolType trong Inspector!");
     }
 }

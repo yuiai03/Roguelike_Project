@@ -27,5 +27,5 @@ public class PlayerConfig : ScriptableObject
     public float attackCooldown = 1f;
     public float attackRange = 50f;
     public float projectileSpeed = 30f;
-    public float projectileLifetime = 3f;
+    public float projectileLifetime = 10f;
 }

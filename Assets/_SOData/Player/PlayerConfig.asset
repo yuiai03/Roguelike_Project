@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8212b76fdbf2146aa43bcddf5702e3, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 7
   gravity: -20
   rotationSpeed: 1440
   dashSpeed: 15
-  dashDuration: 0.2
+  dashDuration: 0.5
   dashCooldown: 1
   groundDistance: 0.3
   maxHealth: 1000
   attackDamage: 50
   attackCooldown: 1
   attackRange: 50
-  projectileSpeed: 30
-  projectileLifetime: 3
+  projectileSpeed: 20
+  projectileLifetime: 10

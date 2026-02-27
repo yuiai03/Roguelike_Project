@@ -86,7 +86,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (enemyPrefabs.Count == 0) return;
 
-        // L?c enemies có th? spawn theo wave
+        // L?c enemies cï¿½ th? spawn theo wave
         List<EnemySpawnInfo> availableEnemies = enemyPrefabs.FindAll(e => e.minWave <= currentWave);
         if (availableEnemies.Count == 0) return;
 
@@ -129,9 +129,9 @@ public class EnemySpawner : MonoBehaviour
             if (data != null)
             {
                 float waveScale = Mathf.Pow(enemyScalePerWave, currentWave - 1);
-                data.maxHealth *= waveScale;
-                data.contactDamage *= waveScale;
-                data.projectileDamage *= waveScale;
+                data.maxHealth = Mathf.Round(data.maxHealth * waveScale);
+                data.contactDamage = Mathf.Round(data.contactDamage * waveScale);
+                data.projectileDamage = Mathf.Round(data.projectileDamage * waveScale);
                 data.ResetHealth();
             }
 
@@ -151,7 +151,7 @@ public class EnemySpawner : MonoBehaviour
             float distance = Random.Range(minSpawnDistance, spawnRadius);
             Vector3 spawnPos = spawnCenter.position + new Vector3(randomCircle.x, 0f, randomCircle.y) * distance;
 
-            // Ki?m tra không spawn trong v?t c?n
+            // Ki?m tra khï¿½ng spawn trong v?t c?n
             if (!Physics.CheckSphere(spawnPos, 1f, obstacleLayer))
             {
                 spawnPos.y = spawnCenter.position.y;

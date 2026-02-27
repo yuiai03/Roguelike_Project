@@ -28,13 +28,31 @@ public class PlayerData : MonoBehaviour
     public float attackCooldown = 1f;
     public float attackRange = 20f;
     public float projectileSpeed = 30f;
-    public float projectileLifetime = 3f;
+    public float projectileLifetime = 10f;
 
     [Header("Stats Bonuses")]
     public float healthBonus = 0f;
     public float moveSpeedBonus = 0f;
     public float damageBonus = 0f;
     public float attackSpeedBonus = 0f;
+
+    [Header("MultiShot")]
+    public int multiShotCount = 1; // 1 = bắn 1 đạn thẳng (mặc định), 2+ = bắn hình quạt
+    public float multiShotAngle = 15f; // Góc mỗi bên so với hướng tâm
+    public float multiShotDamage = 0f; // Damage riêng của đạn MultiShot (0 = dùng damage gốc)
+
+    [Header("AoE Explosion")]
+    public bool isAoEEnabled = false;
+    public float aoeRadius = 3f;
+    public float aoeDamagePercent = 0.5f; // 50% của damage gốc
+    public float aoeDamage = 0f; // Damage AoE flat (0 = dùng aoeDamagePercent)
+
+    [Header("Frost Shot")]
+    public float frostChance = 0f; // 0-1 (0.25 = 25%)
+    public float frostDuration = 1.5f;
+
+    [Header("Exp Boost")]
+    public float expBonusPercent = 0f; // Stack, 0.25 = +25%
 
     private void Awake()
     {
@@ -77,6 +95,13 @@ public class PlayerData : MonoBehaviour
         moveSpeedBonus = 0f;
         damageBonus = 0f;
         attackSpeedBonus = 0f;
+
+        multiShotCount = 1;
+        multiShotDamage = 0f;
+        isAoEEnabled = false;
+        aoeDamage = 0f;
+        frostChance = 0f;
+        expBonusPercent = 0f;
     }
 
     /// <summary>
@@ -98,7 +123,7 @@ public class PlayerData : MonoBehaviour
 
     public float GetTotalDamage()
     {
-        return attackDamage + damageBonus;
+        return Mathf.Round(attackDamage + damageBonus);
     }
 
     public float GetAttackCooldown()

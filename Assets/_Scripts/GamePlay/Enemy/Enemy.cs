@@ -44,6 +44,10 @@ public class Enemy : MonoBehaviour, IDamageable
     protected Vector3 knockbackVelocity;
     protected Vector3 velocity;
     protected CharacterController controller;
+    
+    // AI Randomization
+    protected Vector3 moveOffset;
+    protected float offsetChangeTimer;
 
     protected EnemyState currentState = EnemyState.Idle;
 
@@ -133,6 +137,15 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (player == null) return;
 
+        // Định kỳ thay đổi hướng offset một chút để quái vật tránh đi cùng 1 đường
+        offsetChangeTimer -= Time.deltaTime;
+        if (offsetChangeTimer <= 0f)
+        {
+            float maxOffset = enemyData.enemyType == EnemyType.Melee ? 1.5f : 3f;
+            moveOffset = new Vector3(Random.Range(-maxOffset, maxOffset), 0f, Random.Range(-maxOffset, maxOffset));
+            offsetChangeTimer = Random.Range(1.5f, 3f);
+        }
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         switch (enemyData.enemyType)
@@ -184,7 +197,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void MoveTowardsPlayer()
     {
-        Vector3 direction = (player.position - transform.position).normalized;
+        Vector3 targetPos = player.position + moveOffset;
+        Vector3 direction = (targetPos - transform.position).normalized;
         direction.y = 0f;
         Vector3 moveVector = direction * enemyData.moveSpeed * Time.deltaTime;
 
@@ -204,7 +218,8 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (player == null) return;
 
-        Vector3 direction = (player.position - transform.position).normalized;
+        Vector3 targetPos = player.position + moveOffset;
+        Vector3 direction = (targetPos - transform.position).normalized;
         direction.y = 0f;
 
         if (direction != Vector3.zero)
@@ -237,8 +252,13 @@ public class Enemy : MonoBehaviour, IDamageable
         attackTimer = enemyData.shootCooldown;
         OnAttack?.Invoke();
 
-        Vector3 direction = (player.position - firePoint.position).normalized;
-        GameObject projectile = ObjectPool.Instance.Spawn(PoolType.EnemyProjectile, firePoint.position, Quaternion.LookRotation(direction));
+        Vector3 spawnPosition = firePoint.position + Vector3.up * 1f;
+        // Bắn ngang: flat hoá trục Y để đạn không rơi xuống
+        Vector3 targetPosition = player.position + Vector3.up * 1f + moveOffset * 0.3f;
+        Vector3 rawDir = targetPosition - spawnPosition;
+        rawDir.y = 0f;
+        Vector3 direction = rawDir.normalized;
+        GameObject projectile = ObjectPool.Instance.Spawn(PoolType.EnemyProjectile, spawnPosition, Quaternion.LookRotation(direction));
 
         Projectile proj = projectile.GetComponent<Projectile>();
         if (proj != null)
@@ -276,6 +296,12 @@ public class Enemy : MonoBehaviour, IDamageable
         OnTakeDamageEvent?.Invoke();
         OnHealthChanged?.Invoke(enemyData.currentHealth, enemyData.maxHealth);
 
+        // Hiển thị damage text tại hitPoint
+        if (DamageTextSpawner.Instance != null && damage > 0)
+        {
+            DamageTextSpawner.Instance.Spawn(damage, hitPoint, isHeal: false, isPlayer: false, isCrit: false);
+        }
+
         ApplyKnockback(hitDirection);
         StartCoroutine(FlashDamage());
 
@@ -288,8 +314,19 @@ public class Enemy : MonoBehaviour, IDamageable
     protected virtual void ApplyKnockback(Vector3 direction)
     {
         direction.y = 0f;
+        if (direction == Vector3.zero) return; // không knockback nếu không có hướng
         knockbackVelocity = direction.normalized * enemyData.knockbackForce;
         knockbackTimer = enemyData.knockbackDuration;
+    }
+
+    /// <summary>Áp dụng knockback tùy chỉnh (dùng cho OrbitingBall, AoE, v.v.)</summary>
+    public void Knockback(Vector3 direction, float force, float duration = 0.2f)
+    {
+        if (isDead) return;
+        direction.y = 0f;
+        if (direction == Vector3.zero) return;
+        knockbackVelocity = direction.normalized * force;
+        knockbackTimer    = duration;
     }
 
     protected virtual System.Collections.IEnumerator FlashDamage()
@@ -339,15 +376,18 @@ public class Enemy : MonoBehaviour, IDamageable
         isDead = false;
         currentState = EnemyState.Idle;
         knockbackTimer = 0f;
-        attackTimer = 0f;
         velocity = Vector3.zero;
         knockbackVelocity = Vector3.zero;
 
-        // Reset enemy data về giá trị gốc
+        // Reset enemy data về giá trị gốc (và random offset lại chỉ số)
         if (enemyData != null)
         {
             enemyData.ResetData();
         }
+
+        // Delay đánh nhịp đầu ngẫu nhiên để tránh quái bắn/đâm chung 1 lúc
+        attackTimer = Random.Range(0.2f, 1f);
+        offsetChangeTimer = 0f; // Sẽ random ngay ở frame đầu của UpdateAI
 
         // Reset material color
         if (enemyMaterial != null && !isDead)
