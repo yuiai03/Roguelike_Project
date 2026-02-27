@@ -123,12 +123,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spiritType: 0
   poolType: 0
-  orbitRadius: 2.5
-  orbitSpeed: 120
+  followSpeed: 5
+  minFollowDist: 1.5
+  maxFollowDist: 3.5
+  hoverHeight: 1.5
+  hoverAmplitude: 0.3
+  hoverFrequency: 2
+  orbitSpeed: 30
+  driftAmplitude: 0.4
+  driftFrequency: 0.35
   attackInterval: 4
   attackRange: 15
   damage: 30
+  projectileSpeed: 18
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 0
   aoeRadius: 4

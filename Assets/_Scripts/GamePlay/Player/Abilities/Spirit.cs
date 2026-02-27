@@ -19,17 +19,26 @@ public class Spirit : MonoBehaviour
     [HideInInspector] public PoolType poolType;
 
     [Header("Follow / Hover")]
-    public float followSpeed    = 5f;
-    public float minFollowDist  = 1.5f;
-    public float maxFollowDist  = 3.5f;
-    public float hoverHeight    = 1.5f;
+    public float followSpeed = 5f;
+    public float minFollowDist = 1.5f;
+    public float maxFollowDist = 3.5f;
+    public float hoverHeight = 1.5f;
     public float hoverAmplitude = 0.3f;
     public float hoverFrequency = 2f;
 
+    [Header("Orbit & Drift")]
+    [Tooltip("Tốc độ xoay orbit quanh player (độ/giây)")]
+    public float orbitSpeed = 30f;
+    [Tooltip("Biên độ drift x/z ngẫu nhiên (tỉ lệ theo khoảng cách)")]
+    [Range(0f, 1f)]
+    public float driftAmplitude = 0.4f;
+    [Tooltip("Tốc độ thay đổi drift (Hz)")]
+    public float driftFrequency = 0.35f;
+
     [Header("Attack")]
-    public float attackInterval  = 4f;
-    public float attackRange     = 15f;
-    public float damage          = 30f;
+    public float attackInterval = 4f;
+    public float attackRange = 15f;
+    public float damage = 30f;
     public float projectileSpeed = 18f;
     public LayerMask enemyLayer;
 
@@ -46,9 +55,9 @@ public class Spirit : MonoBehaviour
 
     public void Initialize(Transform playerTransform, float startAngle, LayerMask layer)
     {
-        player      = playerTransform;
-        idOffset    = startAngle;
-        enemyLayer  = layer;
+        player = playerTransform;
+        idOffset = startAngle;
+        enemyLayer = layer;
         attackTimer = Random.Range(0f, attackInterval);
 
         Collider col = GetComponent<Collider>();
@@ -85,20 +94,28 @@ public class Spirit : MonoBehaviour
 
     private void MoveToFollowTarget()
     {
-        // Tạo góc target xoay nhẹ theo Perlin noise (mỗi tinh linh khác nhau qua idOffset)
-        float driftAngle = idOffset + Mathf.PerlinNoise(Time.time * 0.2f + idOffset, 0f) * 60f - 30f;
-        float rad = driftAngle * Mathf.Deg2Rad;
+        float t = Time.time;
+
+        // ── Orbit: mỗi tinh linh xoay quanh player với pha riêng (idOffset) ──
+        float angle = idOffset + t * orbitSpeed;
+        float rad = angle * Mathf.Deg2Rad;
 
         // Khoảng cách dao động giữa min và max
         float targetDist = Mathf.Lerp(minFollowDist, maxFollowDist,
-            Mathf.PerlinNoise(Time.time * 0.15f + idOffset + 5f, 0f));
+            Mathf.PerlinNoise(t * 0.15f + idOffset + 5f, 0f));
 
-        // Điểm đích luôn gắn với player.position
-        Vector3 offset = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * targetDist;
-        Vector3 goal   = player.position + offset;
+        Vector3 orbitPos = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * targetDist;
+
+        // ── Drift x/z độc lập: mỗi trục dùng Perlin riêng để tạo chuyển động hữu cơ ──
+        float driftAmp = targetDist * driftAmplitude;
+        float noiseX = (Mathf.PerlinNoise(t * driftFrequency + idOffset * 0.13f, 0f) * 2f - 1f) * driftAmp;
+        float noiseZ = (Mathf.PerlinNoise(0f, t * driftFrequency + idOffset * 0.13f + 7.3f) * 2f - 1f) * driftAmp;
+
+        // Điểm đích = orbit + drift ngẫu nhiên
+        Vector3 goal = player.position + orbitPos + new Vector3(noiseX, 0f, noiseZ);
 
         // Bobbing Y
-        float bob = Mathf.Sin(Time.time * hoverFrequency + idOffset) * hoverAmplitude;
+        float bob = Mathf.Sin(t * hoverFrequency + idOffset) * hoverAmplitude;
         goal.y = player.position.y + hoverHeight + bob;
 
         // SmoothDamp tới điểm đích
@@ -119,10 +136,10 @@ public class Spirit : MonoBehaviour
     {
         if (target == null) return;
 
-        Vector3 spawnPos   = transform.position;
+        Vector3 spawnPos = transform.position;
         Vector3 targetFlat = target.position;
-        targetFlat.y       = spawnPos.y;
-        Vector3 dir        = (targetFlat - spawnPos).normalized;
+        targetFlat.y = spawnPos.y;
+        Vector3 dir = (targetFlat - spawnPos).normalized;
 
         GameObject projObj = ObjectPool.Instance.Spawn(PoolType.SpiritProjectile, spawnPos, Quaternion.LookRotation(dir));
         if (projObj == null) return;
@@ -144,8 +161,8 @@ public class Spirit : MonoBehaviour
     private Transform FindNearestEnemy()
     {
         Collider[] enemies = Physics.OverlapSphere(player.position, attackRange, enemyLayer);
-        Transform  nearest = null;
-        float      minDist = float.MaxValue;
+        Transform nearest = null;
+        float minDist = float.MaxValue;
 
         foreach (var col in enemies)
         {

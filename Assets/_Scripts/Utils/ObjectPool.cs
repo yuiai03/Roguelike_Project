@@ -15,6 +15,9 @@ public enum PoolType
     SpiritExplosion = 9,
     DamageText = 10,
     SpiritProjectile = 11,
+    StoneGolemBoss = 12,
+    ShadowStalkerBoss = 13,
+    VoidTitanBoss = 14,
 }
 
 [System.Serializable]

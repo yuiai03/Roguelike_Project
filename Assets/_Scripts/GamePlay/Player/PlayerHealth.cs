@@ -83,6 +83,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         isDead = true;
         OnDeath?.Invoke();
         Debug.Log("Player died!");
+
+        // GỬI ĐIỂM LÊN LEADERBOARD KHI CHẾT
+        if (PlayerLevelSystem.Instance != null && Roguelike.Systems.Leaderboard.PlayFabLeaderboardManager.Instance != null)
+        {
+            int finalScore = Mathf.FloorToInt(PlayerLevelSystem.Instance.GetTotalExpGained());
+            Roguelike.Systems.Leaderboard.PlayFabLeaderboardManager.Instance.SubmitScore(finalScore);
+        }
     }
 
     public bool IsDead()

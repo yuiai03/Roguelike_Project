@@ -9,6 +9,9 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     [SerializeField] private float expToNextLevel = 100f;
     [SerializeField] private float expScalingFactor = 1.1f; // Exp cần tăng mỗi level
 
+    [Header("Leaderboard Data")]
+    public float totalExpGained = 0f; // Track tổng toàn bộ XP thu nhặt được
+
     [Header("Events")]
     public UnityEvent<int> OnLevelUp; // Gửi current level
     public UnityEvent<float, float> OnExpChanged; // current exp, max exp
@@ -27,6 +30,7 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     public void AddExp(float amount)
     {
         currentExp += amount;
+        totalExpGained += amount; // Cộng dồn điểm số
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
 
         // Check level up
@@ -64,6 +68,7 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     public float GetCurrentExp() => currentExp;
     public float GetExpToNextLevel() => expToNextLevel;
     public float GetExpProgress() => currentExp / expToNextLevel;
+    public float GetTotalExpGained() => totalExpGained;
 
     // Cheat for testing
     [ContextMenu("Add 50 Exp")]
