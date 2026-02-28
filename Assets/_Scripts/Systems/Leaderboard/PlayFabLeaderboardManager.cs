@@ -14,7 +14,7 @@ namespace Roguelike.Systems.Leaderboard
         [Header("PlayFab Settings")]
         [Tooltip("Tiêu đề của Title trong cấu hình PlayFab.")]
         public string PlayFabTitleId = "YOUR_TITLE_ID_HERE";
-        
+
         [Tooltip("Tên của Statistic (Leaderboard) khai báo trên trang PlayFab.")]
         public string LeaderboardStatisticName = "HighScore";
 
@@ -25,13 +25,16 @@ namespace Roguelike.Systems.Leaderboard
 
         [HideInInspector]
         public string CurrentDisplayName = "";
-        
+
+        [HideInInspector]
+        public string CurrentPlayFabId = "";
+
         protected override void Awake()
         {
             base.Awake();
             if (string.IsNullOrEmpty(PlayFabSettings.TitleId))
             {
-                PlayFabSettings.TitleId = PlayFabTitleId; 
+                PlayFabSettings.TitleId = PlayFabTitleId;
             }
         }
 
@@ -46,20 +49,40 @@ namespace Roguelike.Systems.Leaderboard
         /// </summary>
         public void Login()
         {
+            string customId = GetOrCreateCustomId();
+
 #if UNITY_EDITOR
-            var request = new LoginWithCustomIDRequest { CustomId = "Developer_" + SystemInfo.deviceUniqueIdentifier, CreateAccount = true };
+            var request = new LoginWithCustomIDRequest { CustomId = "Developer_" + customId, CreateAccount = true };
 #else
-            var request = new LoginWithCustomIDRequest { CustomId = SystemInfo.deviceUniqueIdentifier, CreateAccount = true };
+            var request = new LoginWithCustomIDRequest { CustomId = customId, CreateAccount = true };
 #endif
             
-            Debug.Log("Đang kết nối tới PlayFab...");
+            Debug.Log($"Đang kết nối tới PlayFab với CustomId: {customId}...");
             PlayFabClientAPI.LoginWithCustomID(request, OnLoginSuccess, OnError);
+        }
+
+        private string GetOrCreateCustomId()
+        {
+            // Kiểm tra xem đã lưu CustomID ở local chưa
+            if (PlayerPrefs.HasKey("PlayFab_CustomId"))
+            {
+                return PlayerPrefs.GetString("PlayFab_CustomId");
+            }
+            else
+            {
+                // Nếu chưa có, tạo mới dựa trên Device ID, hoặc sinh ngẫu nhiên nếu bạn muốn
+                string newId = SystemInfo.deviceUniqueIdentifier;
+                PlayerPrefs.SetString("PlayFab_CustomId", newId);
+                PlayerPrefs.Save();
+                return newId;
+            }
         }
 
         private void OnLoginSuccess(LoginResult result)
         {
+            CurrentPlayFabId = result.PlayFabId;
             Debug.Log("Đăng nhập PlayFab thành công! PlayFabId: " + result.PlayFabId);
-            
+
             // Tải thông tin Profile để lấy Display Name hiện tại
             GetPlayerProfile();
 
@@ -82,6 +105,23 @@ namespace Roguelike.Systems.Leaderboard
                     Debug.Log($"Tên hiện tại: {CurrentDisplayName}");
                 }
             }, OnError);
+        }
+
+        [ContextMenu("Reset PlayFab User (Test Only)")]
+        public void ForgetPlayFabUser()
+        {
+            Debug.Log("Đang xóa dữ liệu User ở bộ nhớ Local...");
+            PlayFabClientAPI.ForgetAllCredentials();
+
+            // Sinh random CustomID mới để lần sau Login ra account khác
+            string newRandomId = System.Guid.NewGuid().ToString();
+            PlayerPrefs.SetString("PlayFab_CustomId", newRandomId);
+            PlayerPrefs.Save();
+            
+            CurrentPlayFabId = "";
+            CurrentDisplayName = "";
+
+            Debug.Log($"Đã reset User cũ! Ở lần chạy hoặc đăng nhập lại tiếp theo, bạn sẽ ở Account mới là: {newRandomId}");
         }
         #endregion
 
@@ -141,7 +181,6 @@ namespace Roguelike.Systems.Leaderboard
         }
         #endregion
 
-        #region 4. G E T   L E A D E R B O A R D
         /// <summary>
         /// Kéo Top 100 từ PlayFab về hiển thị trên UI.
         /// </summary>
@@ -168,7 +207,7 @@ namespace Roguelike.Systems.Leaderboard
         private void OnLeaderboardGet(GetLeaderboardResult result)
         {
             Debug.Log("Tải Leaderboard thành công!");
-            
+
             if (OnLeaderboardDataArrived != null)
             {
                 OnLeaderboardDataArrived.Invoke(result.Leaderboard);
@@ -180,7 +219,32 @@ namespace Roguelike.Systems.Leaderboard
                 Debug.Log($"[Rank {item.Position + 1}] {nameToDisplay} (ID: {item.PlayFabId}) - Score: {item.StatValue}");
             }
         }
-        #endregion
+
+        public event System.Action<PlayerLeaderboardEntry> OnPlayerLeaderboardDataArrived;
+
+        /// <summary>
+        /// Lấy vị trí và điểm của chính người chơi hiện tại trên Leaderboard.
+        /// </summary>
+        public void GetPlayerLeaderboardData()
+        {
+            if (!PlayFabClientAPI.IsClientLoggedIn()) return;
+
+            var request = new GetLeaderboardAroundPlayerRequest
+            {
+                StatisticName = LeaderboardStatisticName,
+                MaxResultsCount = 1
+            };
+
+            PlayFabClientAPI.GetLeaderboardAroundPlayer(request, OnPlayerLeaderboardGet, OnError);
+        }
+
+        private void OnPlayerLeaderboardGet(GetLeaderboardAroundPlayerResult result)
+        {
+            if (result.Leaderboard != null && result.Leaderboard.Count > 0)
+            {
+                OnPlayerLeaderboardDataArrived?.Invoke(result.Leaderboard[0]);
+            }
+        }
 
         #region E R R O R S
         private void OnError(PlayFabError error)

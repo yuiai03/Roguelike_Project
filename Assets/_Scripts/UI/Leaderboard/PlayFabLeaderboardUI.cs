@@ -13,6 +13,10 @@ namespace Roguelike.UI.Leaderboard
         [SerializeField] private GameObject entryPrefab;
         [SerializeField] private Button refreshButton;
 
+        [Header("My Score UI (Tùy chọn)")]
+        [SerializeField] private LeaderboardEntryUI myEntryUI;
+
+
         [Header("Name Submission (Tùy chọn)")]
         [SerializeField] private TMPro.TMP_InputField nameInput;
         [SerializeField] private Button submitNameButton;
@@ -22,6 +26,7 @@ namespace Roguelike.UI.Leaderboard
             if (PlayFabLeaderboardManager.Instance != null)
             {
                 PlayFabLeaderboardManager.Instance.OnLeaderboardDataArrived += UpdateLeaderboardUI;
+                PlayFabLeaderboardManager.Instance.OnPlayerLeaderboardDataArrived += UpdatePlayerLeaderboardUI;
                 PlayFabLeaderboardManager.Instance.OnLoginSuccessEvent += FetchLeaderboard;
             }
 
@@ -49,6 +54,7 @@ namespace Roguelike.UI.Leaderboard
             if (PlayFabLeaderboardManager.Instance != null)
             {
                 PlayFabLeaderboardManager.Instance.OnLeaderboardDataArrived -= UpdateLeaderboardUI;
+                PlayFabLeaderboardManager.Instance.OnPlayerLeaderboardDataArrived -= UpdatePlayerLeaderboardUI;
                 PlayFabLeaderboardManager.Instance.OnLoginSuccessEvent -= FetchLeaderboard;
             }
 
@@ -85,6 +91,7 @@ namespace Roguelike.UI.Leaderboard
             if (PlayFabLeaderboardManager.Instance != null)
             {
                 PlayFabLeaderboardManager.Instance.GetLeaderboardData();
+                PlayFabLeaderboardManager.Instance.GetPlayerLeaderboardData();
             }
             else
             {
@@ -108,9 +115,24 @@ namespace Roguelike.UI.Leaderboard
 
                 if (entryScript != null)
                 {
+                    bool isMyEntry = entry.PlayFabId == PlayFabLeaderboardManager.Instance.CurrentPlayFabId;
+                    
                     // Position trên PlayFab bắt đầu từ 0, nên +1 để ra Rank chuẩn
-                    entryScript.Setup(entry.Position + 1, entry.DisplayName, entry.StatValue);
+                    entryScript.Setup(entry.Position + 1, entry.DisplayName, entry.StatValue, isMyEntry);
                 }
+            }
+        }
+
+        private void UpdatePlayerLeaderboardUI(PlayerLeaderboardEntry entry)
+        {
+            if (myEntryUI != null)
+            {
+                if (!myEntryUI.gameObject.activeSelf)
+                {
+                    myEntryUI.gameObject.SetActive(true);
+                }
+                
+                myEntryUI.Setup(entry.Position + 1, entry.DisplayName, entry.StatValue, true);
             }
         }
     }
