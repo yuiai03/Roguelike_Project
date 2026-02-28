@@ -126,6 +126,13 @@ public class Enemy : MonoBehaviour, IDamageable
             UpdateAI();
         }
 
+        // Nếu Player chết thì khóa vận tốc đi lại ngang, chỉ cho rớt thẳng đứng hoặc knockback
+        if (currentState == EnemyState.Idle || currentState == EnemyState.Dead)
+        {
+            velocity.x = 0;
+            velocity.z = 0;
+        }
+
         velocity.y += enemyData.gravity * Time.deltaTime;
         if (controller != null && controller.enabled)
         {
@@ -136,6 +143,16 @@ public class Enemy : MonoBehaviour, IDamageable
     protected virtual void UpdateAI()
     {
         if (player == null) return;
+        
+        // Nếu Player chết, Enemy đứng yên vĩnh viễn (đưa về trạng thái Idle)
+        if (PlayerHealth.Instance != null && PlayerHealth.Instance.IsDead())
+        {
+            if (currentState != EnemyState.Idle)
+            {
+                currentState = EnemyState.Idle;
+            }
+            return;
+        }
 
         // Định kỳ thay đổi hướng offset một chút để quái vật tránh đi cùng 1 đường
         offsetChangeTimer -= Time.deltaTime;
@@ -407,8 +424,14 @@ public class Enemy : MonoBehaviour, IDamageable
         // Notify health changed
         if (enemyData != null)
         {
+            // Reset máu trước khi gọi event
+            enemyData.ResetHealth();
             OnHealthChanged?.Invoke(enemyData.currentHealth, enemyData.maxHealth);
         }
+
+        // Bật lại Animator (sửa lỗi Animation đơ khi tái sử dụng từ Pool)
+        Animator anim = GetComponentInChildren<Animator>();
+        if (anim != null) anim.enabled = true;
     }
 
     public bool IsDead()

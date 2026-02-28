@@ -41,11 +41,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
     void Start()
     {
-        if (waveConfig != null)
-        {
-            StartNextWave();
-        }
-        else
+        if (waveConfig == null)
         {
             Debug.LogError("No WaveConfig assigned!");
         }

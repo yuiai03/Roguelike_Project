@@ -12,16 +12,23 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private bool isDead;
     private PlayerData playerData;
 
+    public static PlayerHealth Instance { get; private set; }
+
     void Awake()
     {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
+
         playerData = GetComponent<PlayerData>();
     }
 
     private void Start()
     {
-        if (playerData == null)
+        if (playerData != null)
         {
             playerData.currentHealth = playerData.GetMaxHealth();
+            // Bắt buộc gọi event ngay lần đầu dể UI cập nhật
+            OnHealthChanged?.Invoke(playerData.currentHealth, playerData.GetMaxHealth());
         }
         isDead = false;
     }

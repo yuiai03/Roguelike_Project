@@ -114,7 +114,11 @@ public class EnemyAnimationController : MonoBehaviour
         {
             case EnemyState.Idle:
             case EnemyState.Attacking:
+                return EnemyAnimState.Idle;
+                
             case EnemyState.Dead:
+                // Thay vì return Idle để nó phát CrossFade, ta tắt luôn Animator để dừng mọi chạy/dash
+                if (animator != null) animator.enabled = false;
                 return EnemyAnimState.Idle;
 
             case EnemyState.Chasing:
