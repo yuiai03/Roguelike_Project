@@ -3942,25 +3942,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 716300635}
     m_Modifications:
-    - target: {fileID: 1053407074305370386, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
-      propertyPath: m_Type
-      value: 1
+    - target: {fileID: 1018712229022736237, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1053407074305370386, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 8cba899b2bd69a54281bd2aa75f7d901, type: 3}
-    - target: {fileID: 1053407074305370386, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
       propertyPath: m_Color.b
-      value: 0.3301887
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1053407074305370386, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
       propertyPath: m_Color.g
-      value: 0.3301887
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1053407074305370386, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
       propertyPath: m_Color.r
-      value: 0.3301887
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1053407074305370386, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
       propertyPath: m_PixelsPerUnitMultiplier
@@ -4046,6 +4042,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2229274606877067140, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2786876314225228140, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
       propertyPath: m_Name
       value: MyLeaderboardEntry
@@ -4098,6 +4098,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -40
       objectReference: {fileID: 0}
+    - target: {fileID: 5762471622446693586, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4108,6 +4112,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2221984348922539283, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
   m_PrefabInstance: {fileID: 1012769733}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1012769735 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4583459103790943069, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
+  m_PrefabInstance: {fileID: 1012769733}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf2952f3134acb49998bb5ac66ef91e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1027735654
 GameObject:
   m_ObjectHideFlags: 0
@@ -4280,7 +4295,7 @@ MonoBehaviour:
   entriesContainer: {fileID: 373497254}
   entryPrefab: {fileID: 2786876314225228140, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
   refreshButton: {fileID: 1282983006}
-  myEntryUI: {fileID: 0}
+  myEntryUI: {fileID: 1012769735}
   nameInput: {fileID: 212193917}
   submitNameButton: {fileID: 157669516}
 --- !u!114 &1039853407

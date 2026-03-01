@@ -17,26 +17,20 @@ namespace Roguelike.UI.Leaderboard
 
         public void Setup(int rank, string displayName, int score, bool isMyEntry = false)
         {
+            Debug.Log($"Setup: Rank={rank}, DisplayName={displayName}, Score={score}, IsMyEntry={isMyEntry}");
             if (rankText != null) rankText.text = $"#{rank}";
             if (nameText != null) nameText.text = string.IsNullOrEmpty(displayName) ? "Unknown Player" : displayName;
             if (scoreText != null) scoreText.text = score.ToString();
 
             if (backgroundImage != null)
             {
-                if (isMyEntry)
+                if (rank % 2 == 0)
                 {
-                    if (myEntrySprite != null) backgroundImage.sprite = myEntrySprite;
+                    if (evenRowSprite != null) backgroundImage.sprite = evenRowSprite;
                 }
                 else
                 {
-                    if (rank % 2 == 0)
-                    {
-                        if (evenRowSprite != null) backgroundImage.sprite = evenRowSprite;
-                    }
-                    else
-                    {
-                        if (oddRowSprite != null) backgroundImage.sprite = oddRowSprite;
-                    }
+                    if (oddRowSprite != null) backgroundImage.sprite = oddRowSprite;
                 }
             }
         }
