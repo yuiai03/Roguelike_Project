@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eaea6a99b66e0c4880dfe3dff38d82a, type: 3}
   m_Name: MultiShot
   m_EditorClassIdentifier: 
-  cardName: MultiShot
-  description: 
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  cardName: "B\u1EAFn nhi\u1EC1u \u0111\u1EA1n"
+  description: "B\u1EAFn th\xEAm \u0111\u1EA1n ph\u1EE5, m\u1ED7i \u0111\u1EA1n g\xE2y
+    {value} s\xE1t th\u01B0\u01A1ng"
+  icon: {fileID: 21300000, guid: 568f521ee08074145a309c4a017cecc9, type: 3}
   buffType: 3
   value: 10
   rarity: 1

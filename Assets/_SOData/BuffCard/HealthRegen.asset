@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eaea6a99b66e0c4880dfe3dff38d82a, type: 3}
   m_Name: HealthRegen
   m_EditorClassIdentifier: 
-  cardName: IncreaseMaxHealth
-  description: 
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  cardName: "H\u1ED3i m\xE1u"
+  description: "H\u1ED3i l\u1EA1i {value} m\xE1u"
+  icon: {fileID: 21300000, guid: cbf354d9b6d7d014284bd525a5436b5f, type: 3}
   buffType: 6
   value: 200
   rarity: 1

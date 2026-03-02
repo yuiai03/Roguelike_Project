@@ -312,7 +312,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
                     data.maxHealth = Mathf.Round(data.maxHealth * scale);
                     data.contactDamage = Mathf.Round(data.contactDamage * scale);
                     data.projectileDamage = Mathf.Round(data.projectileDamage * scale);
-                    data.ResetHealth();
+                    enemy.RefreshHealthState();
                 }
             }
 

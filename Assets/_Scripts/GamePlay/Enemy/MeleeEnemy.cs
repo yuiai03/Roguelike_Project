@@ -199,8 +199,9 @@ public class MeleeEnemy : Enemy
     /// <summary>
     /// Reset khi spawn từ pool
     /// </summary>
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         isLunging = false;
         isRetreating = false;
         isAttackingAnimation = false;

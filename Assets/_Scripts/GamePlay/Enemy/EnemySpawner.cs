@@ -132,7 +132,7 @@ public class EnemySpawner : MonoBehaviour
                 data.maxHealth = Mathf.Round(data.maxHealth * waveScale);
                 data.contactDamage = Mathf.Round(data.contactDamage * waveScale);
                 data.projectileDamage = Mathf.Round(data.projectileDamage * waveScale);
-                data.ResetHealth();
+                enemy.RefreshHealthState();
             }
 
             enemy.OnDeath.AddListener(() => OnEnemyDied(enemy));

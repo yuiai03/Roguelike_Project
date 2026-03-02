@@ -109,8 +109,9 @@ public class TankEnemy : Enemy
         }
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         // Reset shield state mỗi khi spawn
         isShieldActive = false;
         shieldTimer = tankConfig != null ? tankConfig.shieldCycleNormal : 4f;

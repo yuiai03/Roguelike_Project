@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eaea6a99b66e0c4880dfe3dff38d82a, type: 3}
   m_Name: SpiritPierce
   m_EditorClassIdentifier: 
-  cardName: "Tinh linh b\u1EAFn \u0111\u1EA1n xuy\xEAn"
-  description: 
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  cardName: "Tinh linh xuy\xEAn th\u1EA5u"
+  description: "Tri\u1EC7u h\u1ED3i tinh linh b\u1EAFn \u0111\u1EA1n xuy\xEAn th\u1EA5u
+    k\u1EBB \u0111\u1ECBch"
+  icon: {fileID: 406828231, guid: c65c14c31ae4270429207f553f0ad6f1, type: 3}
   buffType: 10
   value: 10
   rarity: 1

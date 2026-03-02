@@ -328,6 +328,16 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
+    /// <summary> Cập nhật lại UI máu (được gọi sau khi WaveSpawner thay đổi chỉ số) </summary>
+    public void RefreshHealthState()
+    {
+        if (enemyData != null)
+        {
+            enemyData.ResetHealth();
+            OnHealthChanged?.Invoke(enemyData.currentHealth, enemyData.maxHealth);
+        }
+    }
+
     protected virtual void ApplyKnockback(Vector3 direction)
     {
         direction.y = 0f;
@@ -387,7 +397,7 @@ public class Enemy : MonoBehaviour, IDamageable
     /// <summary>
     /// Reset enemy khi spawn từ pool
     /// </summary>
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         // Reset states
         isDead = false;

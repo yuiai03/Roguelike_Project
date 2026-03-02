@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eaea6a99b66e0c4880dfe3dff38d82a, type: 3}
   m_Name: ExpBoost
   m_EditorClassIdentifier: 
-  cardName: ExpBoost
-  description: 
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  cardName: "T\u0103ng kinh nghi\u1EC7m"
+  description: "T\u0103ng th\xEAm {value}% kinh nghi\u1EC7m nh\u1EADn \u0111\u01B0\u1EE3c"
+  icon: {fileID: 21300000, guid: 2ad465a3f5fcfcc4880a60996447b572, type: 3}
   buffType: 8
   value: 10
   rarity: 1

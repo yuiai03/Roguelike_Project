@@ -50,6 +50,7 @@ public class Spirit : MonoBehaviour
     private float idOffset;
     private float attackTimer;
     private Vector3 currentVelocity;
+    private bool isShooting;
 
     // ─────────────────────────────────────────────────────────────
 
@@ -123,7 +124,7 @@ public class Spirit : MonoBehaviour
 
         // Quay mặt hướng di chuyển
         Vector3 flatVel = new Vector3(currentVelocity.x, 0f, currentVelocity.z);
-        if (flatVel.sqrMagnitude > 0.05f)
+        if (flatVel.sqrMagnitude > 0.05f && !isShooting)
         {
             Quaternion targetRot = Quaternion.LookRotation(flatVel.normalized);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 8f);
@@ -141,6 +142,8 @@ public class Spirit : MonoBehaviour
         targetFlat.y = spawnPos.y;
         Vector3 dir = (targetFlat - spawnPos).normalized;
 
+        StartCoroutine(ShootAnimationCrt(dir));
+
         GameObject projObj = ObjectPool.Instance.Spawn(PoolType.SpiritProjectile, spawnPos, Quaternion.LookRotation(dir));
         if (projObj == null) return;
 
@@ -154,6 +157,40 @@ public class Spirit : MonoBehaviour
             Projectile p = projObj.GetComponent<Projectile>();
             p?.Initialize(damage, projectileSpeed, 10f, dir, enemyLayer, gameObject);
         }
+    }
+
+    private System.Collections.IEnumerator ShootAnimationCrt(Vector3 targetDirection)
+    {
+        isShooting = true;
+
+        if (targetDirection.sqrMagnitude > 0.001f)
+        {
+            transform.rotation = Quaternion.LookRotation(targetDirection);
+        }
+
+        Vector3 origScale = Vector3.one;
+        Vector3 targetScale = origScale * 1.5f;
+        
+        float t = 0;
+        float halfDuration = 0.1f;
+        
+        while (t < halfDuration)
+        {
+            t += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(origScale, targetScale, t / halfDuration);
+            yield return null;
+        }
+
+        t = 0;
+        while (t < halfDuration)
+        {
+            t += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(targetScale, origScale, t / halfDuration);
+            yield return null;
+        }
+
+        transform.localScale = origScale;
+        isShooting = false;
     }
 
     // ─────────────────────────────────────────────────────────────

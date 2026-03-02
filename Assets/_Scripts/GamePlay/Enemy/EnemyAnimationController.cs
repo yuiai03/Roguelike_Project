@@ -68,6 +68,25 @@ public class EnemyAnimationController : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        // Force reset state when re-spawned from ObjectPool
+        if (animator != null)
+        {
+            animator.enabled = true;
+            // Force play idle immediately from the beginning 
+            // so we don't start from an interrupted death animation frame
+            int hash = GetStateHash(EnemyAnimState.Idle);
+            if (hash != 0)
+            {
+                animator.Play(hash, 0, 0f);
+            }
+        }
+        currentAnimState = EnemyAnimState.Idle;
+        previousAnimState = EnemyAnimState.Idle;
+        lastEnemyState = EnemyState.Idle;
+    }
+
     private void Update()
     {
         if (animator == null || enemy == null || enemy.IsDead())

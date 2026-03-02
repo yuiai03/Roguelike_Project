@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: OrbitingBall
   m_EditorClassIdentifier: 
   cardName: "B\xF3ng xoay"
-  description: 
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  description: "Tri\u1EC7u h\u1ED3i b\xF3ng xoay quanh ng\u01B0\u1EDDi, g\xE2y {value}
+    s\xE1t th\u01B0\u01A1ng m\u1ED7i b\xF3ng"
+  icon: {fileID: 21300000, guid: bf3dee72c541ace4cb4e56886414811a, type: 3}
   buffType: 9
   value: 10
   rarity: 1
