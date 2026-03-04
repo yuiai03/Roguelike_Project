@@ -3,12 +3,12 @@ using UnityEngine.InputSystem;
 
 public class PreGameNPC : MonoBehaviour
 {
-    [Header("UI Reference")]
-    [SerializeField] private GameStartUIManager uiManager;
-
     [Header("Settings")]
     [Tooltip("Khoảng cách tối đa người chơi có thể tương tác")]
     [SerializeField] private float interactRange = 3f;
+    [Tooltip("Tốc độ xoay tự động của NPC")]
+    [SerializeField] private float rotationSpeed = 50f;
+    [SerializeField] private string interactText = "Bấm F để nói chuyện";
 
     private Transform playerTransform;
     private bool playerInRange = false;
@@ -35,10 +35,10 @@ public class PreGameNPC : MonoBehaviour
     {
         if (hasInteracted) return;
 
+        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+
         if (playerInRange)
         {
-            Debug.Log("Player in range");
-
             if (Keyboard.current != null && (Keyboard.current.fKey.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame))
             {
                 Interact();
@@ -50,13 +50,9 @@ public class PreGameNPC : MonoBehaviour
     {
         hasInteracted = true;
 
-        if (uiManager != null)
+        if (GameStartUIManager.Instance != null)
         {
-            uiManager.ShowTutorial(this);
-        }
-        else
-        {
-            Debug.LogError("GameStartUIManager chưa được gắn vào PreGameNPC!");
+            GameStartUIManager.Instance.ShowTutorial(this);
         }
     }
 
@@ -69,9 +65,9 @@ public class PreGameNPC : MonoBehaviour
             playerTransform = other.transform;
             playerInRange = true;
 
-            if (uiManager != null)
+            if (GameStartUIManager.Instance != null)
             {
-                uiManager.ShowInteractPrompt(true);
+                GameStartUIManager.Instance.ShowInteractPrompt(true, interactText);
             }
         }
     }
@@ -84,9 +80,9 @@ public class PreGameNPC : MonoBehaviour
         {
             playerInRange = false;
 
-            if (uiManager != null)
+            if (GameStartUIManager.Instance != null)
             {
-                uiManager.ShowInteractPrompt(false);
+                GameStartUIManager.Instance.ShowInteractPrompt(false);
             }
         }
     }

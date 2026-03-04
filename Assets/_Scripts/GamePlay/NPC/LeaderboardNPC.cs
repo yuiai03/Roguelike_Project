@@ -1,13 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
+
 public class LeaderboardNPC : MonoBehaviour
 {
     [Header("UI Reference")]
-    [SerializeField] private GameObject interactPromptPanel; 
     [SerializeField] private GameObject leaderboardPanel;
     [Header("Settings")]
     [Tooltip("Tốc độ xoay tự động của NPC")]
     [SerializeField] private float rotationSpeed = 50f;
+    [SerializeField] private string interactText = "Bấm F để xem bảng xếp hạng";
+
     private Transform playerTransform;
     private bool playerInRange = false;
     private InputSystem_Actions inputActions;
@@ -28,7 +31,7 @@ public class LeaderboardNPC : MonoBehaviour
         transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
         if (playerInRange)
         {
-            if ((Keyboard.current.fKey.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame))
+            if (Keyboard.current != null && (Keyboard.current.fKey.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame))
             {
                 Interact();
             }
@@ -36,35 +39,7 @@ public class LeaderboardNPC : MonoBehaviour
     }
     private void Interact()
     {
-        if (leaderboardPanel != null)
-        {
-            bool isActive = leaderboardPanel.activeSelf;
-            leaderboardPanel.SetActive(!isActive);
-            
-            if (PlayerController.Instance != null)
-            {
-                PlayerController.Instance.SetInputActive(isActive);
-            }
-
-            if (!isActive)
-            {
-                {
-                    Roguelike.Systems.Leaderboard.PlayFabLeaderboardManager.Instance.GetLeaderboardData();
-                }
-            }
-        }
-        else
-        {
-            GameStartUIManager uiManager = FindObjectOfType<GameStartUIManager>();
-            if (uiManager != null)
-            {
-                uiManager.ShowLeaderboard();
-            }
-            else
-            {
-                Debug.LogError("Chưa gán Leaderboard Panel cho LeaderboardNPC!");
-            }
-        }
+        GameStartUIManager.Instance.ShowLeaderboard();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -74,7 +49,7 @@ public class LeaderboardNPC : MonoBehaviour
             playerTransform = other.transform;
             playerInRange = true;
             {
-                interactPromptPanel.SetActive(true);
+                GameStartUIManager.Instance.ShowInteractPrompt(true, interactText);
             }
         }
     }
@@ -84,7 +59,7 @@ public class LeaderboardNPC : MonoBehaviour
         {
             playerInRange = false;
             {
-                interactPromptPanel.SetActive(false);
+                GameStartUIManager.Instance.ShowInteractPrompt(false);
             }
             if (leaderboardPanel.activeSelf)
             {

@@ -81,28 +81,52 @@ public class GameStartUIManager : Singleton<GameStartUIManager>
         ShowNotification("Tên không hợp lệ hoặc đã được sử dụng. Vui lòng thử tên khác.");
     }
 
-    public void ShowInteractPrompt(bool isVisible)
+    public void ShowInteractPrompt(bool isVisible, string promptText = "")
     {
         if (interactPromptPanel != null)
         {
-            interactPromptPanel.SetActive(isVisible);
+            if (isVisible && !string.IsNullOrEmpty(promptText))
+            {
+                TextMeshProUGUI textComp = interactPromptPanel.GetComponentInChildren<TextMeshProUGUI>();
+                if (textComp != null)
+                {
+                    textComp.text = promptText;
+                }
+            }
+
+            CanvasGroup canvasGroup = interactPromptPanel.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = interactPromptPanel.AddComponent<CanvasGroup>();
+            }
+
+            DOTween.Kill(canvasGroup);
+
+            if (isVisible)
+            {
+                interactPromptPanel.SetActive(true);
+                canvasGroup.alpha = 0f;
+                canvasGroup.DOFade(1f, 0.3f).SetUpdate(true);
+            }
+            else
+            {
+                canvasGroup.DOFade(0f, 0.1f).SetUpdate(true).OnComplete(() =>
+                {
+                    interactPromptPanel.SetActive(false);
+                });
+            }
         }
     }
 
     public void ShowTutorial(PreGameNPC npc)
     {
         currentNPC = npc;
-        ShowInteractPrompt(false);
 
-        if (PlayerController.Instance != null)
-        {
-            PlayerController.Instance.SetInputActive(false);
-        }
+        SetInteractiveUI(false);
 
         if (PlayFabLeaderboardManager.Instance != null &&
             string.IsNullOrEmpty(PlayFabLeaderboardManager.Instance.CurrentDisplayName))
         {
-            // Panel nhập tên có thể đã được hiện tự động sau loading, chỉ bật nếu chưa hiện
             if (nameInputPanel != null && !nameInputPanel.activeSelf)
             {
                 nameInputPanel.SetActive(true);
@@ -118,8 +142,7 @@ public class GameStartUIManager : Singleton<GameStartUIManager>
     {
         string nameInput = nameInputField != null ? nameInputField.text.Trim() : "";
 
-        PlayFabLeaderboardManager.Instance.SubmitName(nameInput,
-        onFailed: () =>
+        PlayFabLeaderboardManager.Instance.SubmitName(nameInput, onFailed: () =>
         {
             ShowNotification("Tên không hợp lệ hoặc đã được sử dụng. Vui lòng thử lại.");
         },
@@ -215,35 +238,57 @@ public class GameStartUIManager : Singleton<GameStartUIManager>
     }
 
     #region Leaderboard UI
+
+    private void SetInteractiveUI(bool isInteractive)
+    {
+        ShowInteractPrompt(isInteractive);
+        if (PlayerController.Instance != null)
+            PlayerController.Instance.SetInputActive(isInteractive);
+    }
+
+    private CanvasGroup GetOrAddCanvasGroup(GameObject panel)
+    {
+        CanvasGroup cg = panel.GetComponent<CanvasGroup>();
+        if (cg == null) cg = panel.AddComponent<CanvasGroup>();
+        return cg;
+    }
+
     public void ShowLeaderboard()
     {
-        if (leaderboardPanel != null)
+        if (leaderboardPanel == null) return;
+
+        CanvasGroup cg = GetOrAddCanvasGroup(leaderboardPanel);
+        DOTween.Kill(cg);
+
+        leaderboardPanel.SetActive(true);
+        cg.alpha = 0f;
+        cg.DOFade(1f, 0.3f).SetUpdate(true);
+
+        SetInteractiveUI(false);
+
+        if (PlayFabLeaderboardManager.Instance != null)
         {
-            leaderboardPanel.SetActive(true);
-
-            if (PlayerController.Instance != null)
-            {
-                PlayerController.Instance.SetInputActive(false);
-            }
-
-            if (PlayFabLeaderboardManager.Instance != null)
-            {
-                PlayFabLeaderboardManager.Instance.GetLeaderboardData();
-            }
+            PlayFabLeaderboardManager.Instance.GetLeaderboardData();
         }
     }
 
     public void HideLeaderboard()
     {
-        if (leaderboardPanel != null)
+        if (leaderboardPanel == null) return;
+
+        CanvasGroup cg = GetOrAddCanvasGroup(leaderboardPanel);
+        DOTween.Kill(cg);
+
+        cg.DOFade(0f, 0.3f).SetUpdate(true).OnComplete(() =>
         {
             leaderboardPanel.SetActive(false);
+        });
 
-            if (PlayerController.Instance != null && (tutorialPanel == null || !tutorialPanel.activeSelf) && (nameInputPanel == null || !nameInputPanel.activeSelf))
-            {
-                PlayerController.Instance.SetInputActive(true);
-            }
-        }
+        bool anyPanelOpen = (tutorialPanel != null && tutorialPanel.activeSelf)
+                         || (nameInputPanel != null && nameInputPanel.activeSelf);
+
+        if (!anyPanelOpen)
+            SetInteractiveUI(true);
     }
     #endregion
 
