@@ -8,12 +8,7 @@ using PlayFab.SharedModels;
 
 namespace PlayFab
 {
-    /// <summary>
-    /// The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication
-    /// models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. The
-    /// game_server API is designed to create uniquely identifiable game_server entities. The game_server Entity token can be
-    /// used to call Matchmaking Lobby and Pubsub for server scenarios.
-    /// </summary>
+
     public class PlayFabAuthenticationInstanceAPI : IPlayFabInstanceApi
     {
         public readonly PlayFabApiSettings apiSettings = null;
@@ -41,18 +36,11 @@ namespace PlayFab
             authenticationContext = context ?? new PlayFabAuthenticationContext();
         }
 
-        /// <summary>
-        /// Verify entity login.
-        /// </summary>
         public bool IsEntityLoggedIn()
         {
             return authenticationContext == null ? false : authenticationContext.IsEntityLoggedIn();
         }
 
-        /// <summary>
-        /// Clear the Client SessionToken which allows this Client to call API calls requiring login.
-        /// A new/fresh login will be required after calling this.
-        /// </summary>
         public void ForgetAllCredentials()
         {
             if (authenticationContext != null)
@@ -61,9 +49,6 @@ namespace PlayFab
             }
         }
 
-        /// <summary>
-        /// Create a game_server entity token and return a new or existing game_server entity.
-        /// </summary>
         public void AuthenticateGameServerWithCustomId(AuthenticateCustomIdRequest request, Action<AuthenticateCustomIdResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -72,9 +57,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/GameServerIdentity/AuthenticateGameServerWithCustomId", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Delete a game_server entity.
-        /// </summary>
         public void Delete(DeleteRequest request, Action<EmptyResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -83,10 +65,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/GameServerIdentity/Delete", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Method to exchange a legacy AuthenticationTicket or title SecretKey for an Entity Token or to refresh a still valid
-        /// Entity Token.
-        /// </summary>
         public void GetEntityToken(GetEntityTokenRequest request, Action<GetEntityTokenResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -104,9 +82,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Authentication/GetEntityToken", request, authType, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Method for a server to validate a client provided EntityToken. Only callable by the title entity.
-        /// </summary>
         public void ValidateEntityToken(ValidateEntityTokenRequest request, Action<ValidateEntityTokenResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;

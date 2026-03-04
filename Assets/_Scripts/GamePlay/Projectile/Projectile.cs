@@ -13,7 +13,7 @@ public class Projectile : MonoBehaviour
 
     protected virtual void Awake()
     {
-        // Tắt gravity nếu có Rigidbody — đạn di chuyển bằng transform, không cần physics
+
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -31,10 +31,8 @@ public class Projectile : MonoBehaviour
         this.targetLayer = targetLayer;
         this.owner = owner;
 
-        // Reset timer when initialized
         timer = 0f;
 
-        // Rotate projectile to face direction
         if (this.direction != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(this.direction);
@@ -43,10 +41,9 @@ public class Projectile : MonoBehaviour
 
     protected virtual void Update()
     {
-        // Move projectile
+
         transform.position += direction * speed * Time.deltaTime;
 
-        // Check lifetime
         timer += Time.deltaTime;
         if (timer >= lifetime)
         {
@@ -58,14 +55,12 @@ public class Projectile : MonoBehaviour
     {
         if (other.gameObject == owner) return;
 
-        // Check if hit target layer
         if (((1 << other.gameObject.layer) & targetLayer) != 0)
         {
             OnHit(other);
             return;
         }
 
-        // Check if hit obstacle
         if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
         {
             Debug.Log($"Projectile hit obstacle: {other.gameObject.name}");
@@ -73,7 +68,6 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // Ignore everything else (other enemies, other players, zones, etc.)
     }
 
     protected virtual void OnHit(Collider other)

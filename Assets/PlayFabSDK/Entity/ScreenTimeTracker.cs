@@ -5,26 +5,20 @@ using UnityEngine;
 
 namespace PlayFab.Public
 {
-    /// <summary>
-    /// Interface which can be used to implement class responsible for gathering and sending information about session.
-    /// </summary>
+
     public interface IScreenTimeTracker
     {
-        // Unity MonoBehaviour callbacks
+
         void OnEnable();
         void OnDisable();
         void OnDestroy();
         void OnApplicationQuit();
         void OnApplicationFocus(bool isFocused);
 
-        // Class specific methods
         void ClientSessionStart(string entityId, string entityType, string playFabUserId);
         void Send();
     }
 
-    /// <summary>
-    /// Class responsible for gathering and sending information about session, for example: focus duration, device info, etc.
-    /// </summary>
     public class ScreenTimeTracker : IScreenTimeTracker
     {
         private Guid focusId;
@@ -55,10 +49,6 @@ namespace PlayFab.Public
             }
         }
 
-        /// <summary>
-        /// Start session, the function responsible for creating SessionID and gathering information about user and device
-        /// </summary>
-        /// <param name="playFabUserId">Result of the user's login, represent user ID</param>
         public void ClientSessionStart(string entityId, string entityType, string playFabUserId)
         {
             EnsureSingleGameSessionId();
@@ -85,15 +75,9 @@ namespace PlayFab.Public
             eventInfo.Payload = payload;
             eventsRequests.Enqueue(eventInfo);
 
-            // Fake a focus-on event at the time of the first login:
             OnApplicationFocus(true);
         }
 
-        /// <summary>
-        /// Gather information about user's focus. Calculates interaction durations.
-        /// Name mimics MonoBehaviour method, for ease of integration.
-        /// </summary>
-        /// <param name="isFocused">State of focus</param>
         public void OnApplicationFocus(bool isFocused)
         {
             EnsureSingleGameSessionId();
@@ -113,17 +97,15 @@ namespace PlayFab.Public
 
             if (isFocused)
             {
-                // start counting focus-on time
+
                 focusOnDateTime = currentUtcDateTime;
 
-                // new id per focus
                 focusId = Guid.NewGuid();
 
                 if (!initialFocus)
                 {
                     focusStateDuration = (currentUtcDateTime - focusOffDateTime).TotalSeconds;
 
-                    // this check safeguards from manual time changes while app is running
                     if (focusStateDuration < 0)
                     {
                         focusStateDuration = 0;
@@ -134,13 +116,11 @@ namespace PlayFab.Public
             {
                 focusStateDuration = (currentUtcDateTime - focusOnDateTime).TotalSeconds;
 
-                // this check safeguards from manual time changes while app is running
                 if (focusStateDuration < 0)
                 {
                     focusStateDuration = 0;
                 }
 
-                // start counting focus-off time
                 focusOffDateTime = currentUtcDateTime;
             }
 
@@ -160,16 +140,12 @@ namespace PlayFab.Public
 
             if (!isFocused)
             {
-                // Force the eventsRequests queue to empty.
-                // If we are losing focus we should make an attempt to push out a focus lost event ASAP
+
                 Send();
             }
 
         }
 
-        /// <summary>
-        /// Sends events to server.
-        /// </summary>
         public void Send()
         {
             if (PlayFabSettings.staticPlayer.IsClientLoggedIn() && (isSending == false))
@@ -194,60 +170,37 @@ namespace PlayFab.Public
             }
         }
 
-        /// <summary>
-        /// Callback to handle successful server interaction.
-        /// </summary>
-        /// <param name="response">Server response</param>
         private void EventSentSuccessfulCallback(EventsModels.WriteEventsResponse response)
         {
-            // add code to work with successful callback
+
         }
 
-        /// <summary>
-        /// Callback to handle unsuccessful server interaction.
-        /// </summary>
-        /// <param name="response">Server response</param>
         private void EventSentErrorCallback(PlayFabError response)
         {
             Debug.LogWarning("Failed to send session data. Error: " + response.GenerateErrorReport());
         }
 
         #region Unused MonoBehaviour compatibility  methods
-        /// <summary>
-        /// Unused
-        /// Name mimics MonoBehaviour method, for ease of integration.
-        /// </summary>
+
         public void OnEnable()
         {
-            // add code sending events on enable
+
         }
 
-        /// <summary>
-        /// Unused
-        /// Name mimics MonoBehaviour method, for ease of integration.
-        /// </summary>
         public void OnDisable()
         {
-            // add code sending events on disable
+
         }
 
-        /// <summary>
-        /// Unused
-        /// Name mimics MonoBehaviour method, for ease of integration.
-        /// </summary>
         public void OnDestroy()
         {
-            // add code sending events on destroy
+
         }
         #endregion
 
-        /// <summary>
-        /// Trying to send event during game exit. Note: works only on certain platforms.
-        /// Name mimics MonoBehaviour method, for ease of integration.
-        /// </summary>
         public void OnApplicationQuit()
         {
-            // trying to send events during game exit
+
             Send();
         }
     }

@@ -27,7 +27,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (playerData != null)
         {
             playerData.currentHealth = playerData.GetMaxHealth();
-            // Bắt buộc gọi event ngay lần đầu dể UI cập nhật
+
             OnHealthChanged?.Invoke(playerData.currentHealth, playerData.GetMaxHealth());
         }
         isDead = false;
@@ -43,7 +43,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         OnHealthChanged?.Invoke(playerData.currentHealth, playerData.GetMaxHealth());
         OnTakeDamage?.Invoke();
 
-        // Hiển thị damage chữ màu đỏ tại vị trí player (hơi lệch lên 1 tí)
         if (DamageTextSpawner.Instance != null && damage > 0)
         {
             DamageTextSpawner.Instance.Spawn(damage, transform.position + Vector3.up * 1f, isHeal: false, isPlayer: true);
@@ -61,11 +60,10 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         playerData.currentHealth += amount;
         playerData.currentHealth = Mathf.Min(playerData.currentHealth, playerData.GetMaxHealth());
-        
+
         OnHealthChanged?.Invoke(playerData.currentHealth, playerData.GetMaxHealth());
         OnHeal?.Invoke(amount);
 
-        // Hiển thị text heal màu xanh
         if (DamageTextSpawner.Instance != null && amount > 0)
         {
             DamageTextSpawner.Instance.Spawn(amount, transform.position + Vector3.up * 1f, isHeal: true, isPlayer: false);
@@ -91,7 +89,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         OnDeath?.Invoke();
         Debug.Log("Player died!");
 
-        // GỬI ĐIỂM LÊN LEADERBOARD KHI CHẾT
         if (PlayerLevelSystem.Instance != null && Roguelike.Systems.Leaderboard.PlayFabLeaderboardManager.Instance != null)
         {
             int finalScore = Mathf.FloorToInt(PlayerLevelSystem.Instance.GetTotalExpGained());

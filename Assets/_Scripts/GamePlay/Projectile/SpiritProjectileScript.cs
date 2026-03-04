@@ -1,20 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
-/// Đạn của Tinh linh.
-/// Pierce: bắn xuyên qua nhiều enemy, Explosion: nổ AoE khi trúng.
-/// </summary>
 public class SpiritProjectileScript : Projectile
 {
     private bool isExplosion;
     private float explosionRadius;
     private bool isPierce;
-    private readonly HashSet<Collider> hitEnemies = new HashSet<Collider>(); // tránh đánh trùng enemy
+    private readonly HashSet<Collider> hitEnemies = new HashSet<Collider>(); 
 
-    /// <summary>
-    /// Initialize với thêm tham số AoE và Pierce
-    /// </summary>
     public void Initialize(float dmg, float spd, float life, Vector3 dir,
         LayerMask enemyMask, GameObject ownerObj, bool aoe, float aoeRad, bool pierce = false)
     {
@@ -27,18 +20,18 @@ public class SpiritProjectileScript : Projectile
 
     protected override void OnHit(Collider other)
     {
-        if (hitEnemies.Contains(other)) return; // đã đánh con này rồi, bỏ qua
+        if (hitEnemies.Contains(other)) return; 
 
         IDamageable damageable = other.GetComponent<IDamageable>();
         if (damageable == null || damageable.IsDead()) return;
 
-        hitEnemies.Add(other); // đánh dấu con này đã bị trúng
+        hitEnemies.Add(other); 
         Vector3 hitPoint = other.ClosestPoint(transform.position);
         damageable.TakeDamage(damage, hitPoint, direction);
 
         if (isExplosion)
         {
-            // Nọ AoE tại điểm trúng và despawn
+
             Collider[] hits = Physics.OverlapSphere(hitPoint, explosionRadius, targetLayer);
             foreach (var col in hits)
             {
@@ -48,13 +41,13 @@ public class SpiritProjectileScript : Projectile
                 dmg.TakeDamage(damage, hitPoint, dir);
             }
             ObjectPool.Instance.Spawn(PoolType.AoEExplosionVFX, hitPoint, Quaternion.identity);
-            DispawnProjectile(); // Explosion luôn despawn khi nổ
+            DispawnProjectile(); 
         }
         else if (!isPierce)
         {
-            DispawnProjectile(); // Bình thường (không xuyên) → despawn
+            DispawnProjectile(); 
         }
-        // Pierce: không despawn, tiếp tục bay qua
+
     }
 
     protected override void DispawnProjectile()

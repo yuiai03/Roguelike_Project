@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : Singleton<PlayerController>
 {
+
     private bool isGrounded;
     private bool dashPressed;
     private bool isDashing;
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private PlayerAnimationController animationController;
     private Vector2 moveInput;
     private Vector3 velocity;
+    private bool isInputActive = true;
 
     [Header("Model Reference")]
     [SerializeField] private Transform modelTransform;
@@ -25,8 +27,10 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public LayerMask groundMask;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         controller = GetComponent<CharacterController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerData = GetComponent<PlayerData>();
@@ -76,6 +80,14 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, playerData.groundDistance, groundMask);
             if (isGrounded && velocity.y < 0) velocity.y = -2f;
+        }
+
+        if (!isInputActive)
+        {
+            velocity.y += playerData.gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+            UpdateAnimations(Vector3.zero);
+            return;
         }
 
         if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
@@ -133,11 +145,20 @@ public class PlayerController : MonoBehaviour
             );
         }
 
-        // Update Animations
         UpdateAnimations(moveDirection);
 
         velocity.y += playerData.gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void SetInputActive(bool active)
+    {
+        isInputActive = active;
+        if (!active)
+        {
+            moveInput = Vector2.zero;
+            dashPressed = false;
+        }
     }
 
     public PlayerData GetPlayerData()
@@ -164,7 +185,6 @@ public class PlayerController : MonoBehaviour
     {
         if (animationController == null) return;
 
-        // Determine which animation to play based on state
         if (isDashing)
         {
             animationController.PlayAnimationSmart(PlayerAnimationController.AnimationState.Dash);

@@ -8,10 +8,7 @@ using PlayFab.SharedModels;
 
 namespace PlayFab
 {
-    /// <summary>
-    /// Write custom PlayStream and Telemetry events for any PlayFab entity. Telemetry events can be used for analytic,
-    /// reporting, or debugging. PlayStream events can do all of that and also trigger custom actions in near real-time.
-    /// </summary>
+
     public class PlayFabEventsInstanceAPI : IPlayFabInstanceApi
     {
         public readonly PlayFabApiSettings apiSettings = null;
@@ -32,18 +29,11 @@ namespace PlayFab
             authenticationContext = context;
         }
 
-        /// <summary>
-        /// Verify entity login.
-        /// </summary>
         public bool IsEntityLoggedIn()
         {
             return authenticationContext == null ? false : authenticationContext.IsEntityLoggedIn();
         }
 
-        /// <summary>
-        /// Clear the Client SessionToken which allows this Client to call API calls requiring login.
-        /// A new/fresh login will be required after calling this.
-        /// </summary>
         public void ForgetAllCredentials()
         {
             if (authenticationContext != null)
@@ -52,9 +42,6 @@ namespace PlayFab
             }
         }
 
-        /// <summary>
-        /// Creates a new telemetry key for the title.
-        /// </summary>
         public void CreateTelemetryKey(CreateTelemetryKeyRequest request, Action<CreateTelemetryKeyResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -63,9 +50,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/CreateTelemetryKey", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Deletes a Data Connection from a title.
-        /// </summary>
         public void DeleteDataConnection(DeleteDataConnectionRequest request, Action<DeleteDataConnectionResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -74,9 +58,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/DeleteDataConnection", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Deletes a telemetry key configured for the title.
-        /// </summary>
         public void DeleteTelemetryKey(DeleteTelemetryKeyRequest request, Action<DeleteTelemetryKeyResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -85,9 +66,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/DeleteTelemetryKey", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Retrieves a single Data Connection associated with a title.
-        /// </summary>
         public void GetDataConnection(GetDataConnectionRequest request, Action<GetDataConnectionResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -96,9 +74,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/GetDataConnection", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Gets information about a telemetry key configured for the title.
-        /// </summary>
         public void GetTelemetryKey(GetTelemetryKeyRequest request, Action<GetTelemetryKeyResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -107,9 +82,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/GetTelemetryKey", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Retrieves the list of Data Connections associated with a title.
-        /// </summary>
         public void ListDataConnections(ListDataConnectionsRequest request, Action<ListDataConnectionsResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -118,9 +90,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/ListDataConnections", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Lists all telemetry keys configured for the title.
-        /// </summary>
         public void ListTelemetryKeys(ListTelemetryKeysRequest request, Action<ListTelemetryKeysResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -129,9 +98,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/ListTelemetryKeys", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Creates or updates a Data Connection on a title.
-        /// </summary>
         public void SetDataConnection(SetDataConnectionRequest request, Action<SetDataConnectionResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -140,9 +106,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/SetDataConnection", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Sets a Data Connection for the title to either the active or deactivated state.
-        /// </summary>
         public void SetDataConnectionActive(SetDataConnectionActiveRequest request, Action<SetDataConnectionActiveResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -151,9 +114,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/SetDataConnectionActive", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Sets a telemetry key to the active or deactivated state.
-        /// </summary>
         public void SetTelemetryKeyActive(SetTelemetryKeyActiveRequest request, Action<SetTelemetryKeyActiveResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -162,9 +122,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/SetTelemetryKeyActive", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Write batches of entity based events to PlayStream. The namespace of the Event must be 'custom' or start with 'custom.'.
-        /// </summary>
         public void WriteEvents(WriteEventsRequest request, Action<WriteEventsResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -173,10 +130,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Event/WriteEvents", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Write batches of entity based events to as Telemetry events (bypass PlayStream). The namespace must be 'custom' or start
-        /// with 'custom.'
-        /// </summary>
         public void WriteTelemetryEvents(WriteEventsRequest request, Action<WriteEventsResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -184,10 +137,7 @@ namespace PlayFab
             if (!context.IsEntityLoggedIn()) throw new PlayFabException(PlayFabExceptionCode.NotLoggedIn,"Must be logged in to call this method");
             PlayFabHttp.MakeApiCall("/Event/WriteTelemetryEvents", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
-        /// <summary>
-        /// Write batches of entity based events to as Telemetry events (bypass PlayStream) using a Telemetry Key. The namespace must be 'custom' or start
-        /// with 'custom.'
-        /// </summary>
+
         public void WriteTelemetryEventsWithTelemetryKey(WriteEventsRequest request, Action<WriteEventsResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;
@@ -196,7 +146,7 @@ namespace PlayFab
 
             PlayFabHttp.MakeApiCall("/Event/WriteTelemetryEvents", request, AuthType.TelemetryKey, resultCallback, errorCallback, customData, extraHeaders, context, callSettings);
         }
-    
+
     }
 }
 

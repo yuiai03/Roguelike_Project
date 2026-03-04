@@ -25,7 +25,6 @@ public class WaveSpawnerEditor : Editor
 
         EditorGUILayout.Space(10);
 
-        // Preview controls
         if (config != null)
         {
             EditorGUILayout.BeginVertical("box");
@@ -58,7 +57,6 @@ public class WaveSpawnerEditor : Editor
 
         EditorGUILayout.Space(10);
 
-        // Runtime controls
         if (Application.isPlaying)
         {
             EditorGUILayout.BeginVertical("box");
@@ -91,14 +89,12 @@ public class WaveSpawnerEditor : Editor
         SimpleWaveData wave = config.GetWave(previewWave);
         if (wave == null) return;
 
-        // Draw moveable handles for group positions
         int groupIndex = 0;
         foreach (EnemyGroup group in wave.enemyGroups)
         {
             Color groupColor = Color.HSVToRGB((groupIndex * 0.2f) % 1f, 0.8f, 1f);
             Handles.color = groupColor;
 
-            // Draw position handle
             EditorGUI.BeginChangeCheck();
             Vector3 newPos = Handles.PositionHandle(group.spawnPosition, Quaternion.identity);
             if (EditorGUI.EndChangeCheck())
@@ -108,10 +104,8 @@ public class WaveSpawnerEditor : Editor
                 EditorUtility.SetDirty(config);
             }
 
-            // Draw sphere
             Handles.SphereHandleCap(0, group.spawnPosition, Quaternion.identity, 1f, EventType.Repaint);
 
-            // Draw radius handle
             Handles.color = new Color(groupColor.r, groupColor.g, groupColor.b, 0.3f);
             EditorGUI.BeginChangeCheck();
             float newRadius = Handles.RadiusHandle(Quaternion.identity, group.spawnPosition, group.spreadRadius);

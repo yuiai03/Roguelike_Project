@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// ScriptableObject chứa dữ liệu mặc định cho Player (READ-ONLY)
-/// </summary>
 [CreateAssetMenu(fileName = "PlayerConfig", menuName = "Roguelike/Player Config")]
 public class PlayerConfig : ScriptableObject
 {

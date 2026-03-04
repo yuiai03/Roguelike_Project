@@ -7,11 +7,11 @@ namespace PlayFab.Internal
     public enum AuthType
     {
         None,
-        PreLoginSession, // Not yet defined
-        LoginSession, // "X-Authorization"
-        DevSecretKey, // "X-SecretKey"
-        EntityToken, // "X-EntityToken"
-        TelemetryKey // "X-TelemetryKey"
+        PreLoginSession, 
+        LoginSession, 
+        DevSecretKey, 
+        EntityToken, 
+        TelemetryKey 
     }
 
     public enum HttpRequestState
@@ -33,7 +33,6 @@ namespace PlayFab.Internal
         public System.Diagnostics.Stopwatch Stopwatch;
 #endif
 
-        // This class stores the state of the request and all associated data
         public string ApiEndpoint = null;
         public string FullUrl = null;
         public byte[] Payload = null;

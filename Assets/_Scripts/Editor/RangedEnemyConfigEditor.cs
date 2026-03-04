@@ -1,9 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 
-/// <summary>
-/// Custom Editor cho RangedEnemyConfig
-/// </summary>
 [CustomEditor(typeof(RangedEnemyConfig))]
 public class RangedEnemyConfigEditor : Editor
 {

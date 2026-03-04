@@ -61,7 +61,7 @@ public class PlayerAttack : MonoBehaviour
         Vector3 spawnPos = attackPoint.position + Vector3.up * 1f;
         Vector3 targetPos = currentTarget.position + Vector3.up * 1f;
         Vector3 rawDir = targetPos - spawnPos;
-        rawDir.y = 0f; // bắn ngang, trục y không đổi
+        rawDir.y = 0f; 
         Vector3 baseDir = rawDir.normalized;
 
         int shotCount = Mathf.Max(1, playerData.multiShotCount);
@@ -72,7 +72,7 @@ public class PlayerAttack : MonoBehaviour
         }
         else
         {
-            // Hình quạt: spread đều hai bên
+
             float totalSpread = playerData.multiShotAngle * (shotCount - 1);
             float startAngle = -totalSpread / 2f;
 
@@ -90,7 +90,6 @@ public class PlayerAttack : MonoBehaviour
         GameObject obj = ObjectPool.Instance.Spawn(PoolType.PlayerProjectile, spawnPos, Quaternion.identity);
         if (obj == null) return;
 
-        // Nếu đạn MultiShot có damage riêng thì dùng, ngược lại dùng damage gốc
         float finalDamage = (playerData.multiShotCount > 1 && playerData.multiShotDamage > 0f)
             ? playerData.multiShotDamage
             : playerData.GetTotalDamage();
@@ -112,7 +111,7 @@ public class PlayerAttack : MonoBehaviour
                 playerData.aoeRadius,
                 playerData.aoeDamagePercent,
                 playerData.aoeDamage,
-                0, // pierce count — spirit sẽ xử lý riêng
+                0, 
                 enemyLayer
             );
         }

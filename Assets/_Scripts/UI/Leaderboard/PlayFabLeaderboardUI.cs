@@ -6,20 +6,28 @@ using UnityEngine.UI;
 
 namespace Roguelike.UI.Leaderboard
 {
-    public class PlayFabLeaderboardUI : MonoBehaviour
+    public class PlayFabLeaderboardUI : Singleton<PlayFabLeaderboardUI>
     {
         [Header("UI References")]
         [SerializeField] private Transform entriesContainer;
         [SerializeField] private GameObject entryPrefab;
-        [SerializeField] private Button refreshButton;
 
         [Header("My Score UI (Tùy chọn)")]
         [SerializeField] private LeaderboardEntryUI myEntryUI;
 
-
         [Header("Name Submission (Tùy chọn)")]
         [SerializeField] private TMPro.TMP_InputField nameInput;
         [SerializeField] private Button submitNameButton;
+
+        [Header("Entry Colors")]
+        public Color oddRowColor = Color.white;
+        public Color evenRowColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+        public Color myEntryColor = new Color(1f, 0.9f, 0.6f, 1f);
+
+        protected override void Awake()
+        {
+            base.Awake();
+        }
 
         void Start()
         {
@@ -30,18 +38,11 @@ namespace Roguelike.UI.Leaderboard
                 PlayFabLeaderboardManager.Instance.OnLoginSuccessEvent += FetchLeaderboard;
             }
 
-            if (refreshButton != null)
-            {
-                refreshButton.onClick.AddListener(FetchLeaderboard);
-            }
-
-            // Lắng nghe sự kiện nút gửi tên
             if (submitNameButton != null && nameInput != null)
             {
                 submitNameButton.onClick.AddListener(OnSubmitNameClicked);
             }
 
-            // Thử kéo data lỡ như đã đăng nhập xong từ trước
             FetchLeaderboard();
         }
 
@@ -58,11 +59,6 @@ namespace Roguelike.UI.Leaderboard
                 PlayFabLeaderboardManager.Instance.OnLoginSuccessEvent -= FetchLeaderboard;
             }
 
-            if (refreshButton != null)
-            {
-                refreshButton.onClick.RemoveListener(FetchLeaderboard);
-            }
-
             if (submitNameButton != null)
             {
                 submitNameButton.onClick.RemoveListener(OnSubmitNameClicked);
@@ -74,15 +70,14 @@ namespace Roguelike.UI.Leaderboard
             if (PlayFabLeaderboardManager.Instance != null && nameInput != null)
             {
                 PlayFabLeaderboardManager.Instance.SubmitName(nameInput.text);
-                
-                // Tùy chọn: Xóa trắng ô text sau khi gửi
+
                 nameInput.text = ""; 
             }
         }
 
         private void FetchLeaderboard()
         {
-            // Xóa rác cũ trước khi tải
+
             foreach (Transform child in entriesContainer)
             {
                 Destroy(child.gameObject);
@@ -101,13 +96,12 @@ namespace Roguelike.UI.Leaderboard
 
         private void UpdateLeaderboardUI(List<PlayerLeaderboardEntry> leaderboardData)
         {
-            // Xóa rác cũ lại một lần nữa cho chắc
+
             foreach (Transform child in entriesContainer)
             {
                 Destroy(child.gameObject);
             }
 
-            // Sinh Instantiate Prefab cho mỗi người chơi
             foreach (var entry in leaderboardData)
             {
                 GameObject newEntry = Instantiate(entryPrefab, entriesContainer);
@@ -116,8 +110,7 @@ namespace Roguelike.UI.Leaderboard
                 if (entryScript != null)
                 {
                     bool isMyEntry = entry.PlayFabId == PlayFabLeaderboardManager.Instance.CurrentPlayFabId;
-                    
-                    // Position trên PlayFab bắt đầu từ 0, nên +1 để ra Rank chuẩn
+
                     entryScript.Setup(entry.Position + 1, entry.DisplayName, entry.StatValue, isMyEntry);
                 }
             }
@@ -131,7 +124,7 @@ namespace Roguelike.UI.Leaderboard
                 {
                     myEntryUI.gameObject.SetActive(true);
                 }
-                
+
                 myEntryUI.Setup(entry.Position + 1, entry.DisplayName, entry.StatValue, true);
             }
         }

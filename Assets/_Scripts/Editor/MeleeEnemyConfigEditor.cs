@@ -1,9 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 
-/// <summary>
-/// Custom Editor cho MeleeEnemyConfig
-/// </summary>
 [CustomEditor(typeof(MeleeEnemyConfig))]
 public class MeleeEnemyConfigEditor : Editor
 {

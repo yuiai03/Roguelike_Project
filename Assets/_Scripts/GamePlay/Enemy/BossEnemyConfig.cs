@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Config cho Boss Enemy — dùng chung cho cả 3 boss
-/// </summary>
 [CreateAssetMenu(fileName = "BossEnemyConfig", menuName = "Roguelike/Enemy/Boss Config")]
 public class BossEnemyConfig : EnemyConfig
 {
@@ -12,10 +9,10 @@ public class BossEnemyConfig : EnemyConfig
     [Header("Phase Thresholds (HP %)")]
     [Tooltip("% HP trigger phase 2 (0-1)")]
     [Range(0f, 1f)]
-    public float phase2Threshold = 0.6f; // 60% HP
+    public float phase2Threshold = 0.6f; 
     [Tooltip("% HP trigger phase 3 (0-1)")]
     [Range(0f, 1f)]
-    public float phase3Threshold = 0.3f; // 30% HP
+    public float phase3Threshold = 0.3f; 
 
     [Header("Phase Damage Multipliers")]
     public float phase1DamageMult   = 1f;

@@ -25,7 +25,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
     public UnityEvent<int> OnWaveComplete;
     public UnityEvent<int, int> OnEnemyCountChanged;
     public UnityEvent OnAllWavesComplete;
-    public UnityEvent<int, string> OnBossWaveStart; // (waveNumber, bossName)
+    public UnityEvent<int, string> OnBossWaveStart; 
 
     private List<Enemy> activeEnemies = new List<Enemy>();
     private int totalEnemiesToSpawn;
@@ -37,14 +37,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
     {
         public Vector3 position;
         public PoolType poolType;
-    }
-
-    void Start()
-    {
-        if (waveConfig == null)
-        {
-            Debug.LogError("No WaveConfig assigned!");
-        }
     }
 
     void Update()
@@ -71,7 +63,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
         }
         else
         {
-            // === INFINITE WAVE GENERATION ===
+
             wave = GenerateEndlessWave(currentWave);
         }
 
@@ -81,7 +73,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
             return;
         }
 
-        // Log boss wave
         if (wave.isBossWave)
         {
             string bossName = GetBossNameForWave(currentWave);
@@ -103,7 +94,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
     private SimpleWaveData GenerateEndlessWave(int waveNumber)
     {
         bool isBoss = (waveNumber % 10 == 0);
-        
+
         SimpleWaveData wave = new SimpleWaveData
         {
             preparationTime = isBoss ? 5f : 3f,
@@ -117,23 +108,21 @@ public class WaveSpawner : Singleton<WaveSpawner>
             int extraWaves = waveNumber - waveConfig.waves.Count;
             int baseCount = 10;
             int additionalCount = Mathf.FloorToInt(extraWaves * 1.5f);
-            
-            // Melee enemies swarm
+
             wave.enemyGroups.Add(new EnemyGroup
             {
                 enemyPoolType = PoolType.MeleeEnemy,
-                enemyCount = Mathf.Min(baseCount + additionalCount, 40), // Cap at 40 Melee
+                enemyCount = Mathf.Min(baseCount + additionalCount, 40), 
                 spreadRadius = 6f,
                 spawnDelay = 0f
             });
-            
-            // Ranged enemies swarm after certain waves
+
             if (waveNumber > 35)
             {
                 wave.enemyGroups.Add(new EnemyGroup
                 {
                     enemyPoolType = PoolType.RangedEnemy,
-                    enemyCount = Mathf.Min(5 + Mathf.FloorToInt((waveNumber - 35) * 0.8f), 20), // Cap at 20 Ranged
+                    enemyCount = Mathf.Min(5 + Mathf.FloorToInt((waveNumber - 35) * 0.8f), 20), 
                     spreadRadius = 8f,
                     spawnDelay = 1f
                 });
@@ -155,7 +144,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
         foreach (EnemyGroup group in wave.enemyGroups)
             totalEnemiesToSpawn += group.enemyCount;
 
-        // Boss wave: +1 vào count
         if (wave.isBossWave && wave.bossPoolType != PoolType.None)
             totalEnemiesToSpawn += 1;
 
@@ -175,7 +163,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
             }
         }
 
-        // Spawn boss
         if (wave.isBossWave && wave.bossPoolType != PoolType.None)
         {
             Vector3 bossPos = transform.position + Vector3.forward * 5f;

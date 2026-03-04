@@ -1,12 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Boss Wave 20 — Shadow Stalker.
-/// P1: dash + melee nhanh
-/// P2 (60%): tàng hình 2s → teleport cạnh player
-/// P3 (30%): 2 clone giả + bắn 4 hướng
-/// </summary>
 public class ShadowStalkerBoss : BossEnemy
 {
     [Header("Shadow Stalker")]
@@ -33,19 +27,16 @@ public class ShadowStalkerBoss : BossEnemy
 
         dashTimer -= Time.deltaTime;
 
-        // P1: dash về phía player + melee
         if (currentPhase == 1 && dashTimer <= 0f && player != null)
         {
             StartCoroutine(DashToPlayer());
         }
 
-        // P2: dash nhanh hơn
         if (currentPhase == 2 && dashTimer <= 0f && player != null)
         {
             StartCoroutine(DashToPlayer());
         }
 
-        // P3: bắn 4 hướng
         if (currentPhase == 3 && bossShootTimer <= 0f)
         {
             ShootRadial(4);
@@ -86,13 +77,11 @@ public class ShadowStalkerBoss : BossEnemy
             yield return new WaitForSeconds(invisDuration + 1f);
             if (isDead) yield break;
 
-            // Tàng hình
             isInvisible = true;
             if (bossRenderer != null) bossRenderer.enabled = false;
             Debug.Log("[ShadowStalker] Tàng hình...");
             yield return new WaitForSeconds(invisDuration);
 
-            // Teleport cạnh player
             if (player != null && !isDead)
             {
                 Vector3 offset = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f));
@@ -100,7 +89,6 @@ public class ShadowStalkerBoss : BossEnemy
                 Debug.Log("[ShadowStalker] Teleport cạnh player!");
             }
 
-            // Hiện ra
             if (bossRenderer != null) bossRenderer.enabled = true;
             isInvisible = false;
         }
@@ -110,7 +98,7 @@ public class ShadowStalkerBoss : BossEnemy
     {
         if (cloneSpawned) return;
         cloneSpawned = true;
-        // Tạo 2 clone giả bằng cách spawn dummy enemy
+
         for (int i = 0; i < 2; i++)
         {
             Vector3 offset = new Vector3(Random.Range(-4f, 4f), 0f, Random.Range(-4f, 4f));

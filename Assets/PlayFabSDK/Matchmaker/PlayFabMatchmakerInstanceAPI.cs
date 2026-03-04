@@ -8,9 +8,7 @@ using PlayFab.SharedModels;
 
 namespace PlayFab
 {
-    /// <summary>
-    /// Enables the use of an external match-making service in conjunction with PlayFab hosted Game Server instances
-    /// </summary>
+
     public class PlayFabMatchmakerInstanceAPI : IPlayFabInstanceApi
     {
         public readonly PlayFabApiSettings apiSettings = null;
@@ -31,10 +29,6 @@ namespace PlayFab
             authenticationContext = context;
         }
 
-        /// <summary>
-        /// Clear the Client SessionToken which allows this Client to call API calls requiring login.
-        /// A new/fresh login will be required after calling this.
-        /// </summary>
         public void ForgetAllCredentials()
         {
             if (authenticationContext != null)
@@ -43,9 +37,6 @@ namespace PlayFab
             }
         }
 
-        /// <summary>
-        /// Validates a user with the PlayFab service
-        /// </summary>
         [Obsolete("No longer available", true)]
         public void AuthUser(AuthUserRequest request, Action<AuthUserResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
@@ -55,9 +46,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Matchmaker/AuthUser", request, AuthType.DevSecretKey, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Informs the PlayFab game server hosting service that the indicated user has joined the Game Server Instance specified
-        /// </summary>
         [Obsolete("No longer available", true)]
         public void PlayerJoined(PlayerJoinedRequest request, Action<PlayerJoinedResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
@@ -67,9 +55,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Matchmaker/PlayerJoined", request, AuthType.DevSecretKey, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Informs the PlayFab game server hosting service that the indicated user has left the Game Server Instance specified
-        /// </summary>
         [Obsolete("No longer available", true)]
         public void PlayerLeft(PlayerLeftRequest request, Action<PlayerLeftResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
@@ -79,10 +64,6 @@ namespace PlayFab
             PlayFabHttp.MakeApiCall("/Matchmaker/PlayerLeft", request, AuthType.DevSecretKey, resultCallback, errorCallback, customData, extraHeaders, context, callSettings, this);
         }
 
-        /// <summary>
-        /// Retrieves the relevant details for a specified user, which the external match-making service can then use to compute
-        /// effective matches
-        /// </summary>
         [Obsolete("No longer available", true)]
         public void UserInfo(UserInfoRequest request, Action<UserInfoResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {

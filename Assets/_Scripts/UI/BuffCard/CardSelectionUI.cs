@@ -1,9 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
-/// Quản lý UI chọn card khi level up
-/// </summary>
 public class CardSelectionUI : MonoBehaviour
 {
     [Header("UI References")]
@@ -32,7 +29,6 @@ public class CardSelectionUI : MonoBehaviour
             Debug.LogError("BuffCardManager instance not found!");
         }
 
-        // Subscribe to level up event
         PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
         if (levelSystem != null)
         {
@@ -51,9 +47,6 @@ public class CardSelectionUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Hiển thị danh sách cards để chọn
-    /// </summary>
     public void ShowCards(List<BuffCardConfig> cards)
     {
         if (cards == null || cards.Count == 0)
@@ -62,27 +55,22 @@ public class CardSelectionUI : MonoBehaviour
             return;
         }
 
-        // Clear previous cards
         ClearCards();
 
-        // Show panel
         if (selectionPanel != null)
             selectionPanel.SetActive(true);
 
-        // Pause game
         if (pauseGameOnShow)
             Time.timeScale = 0f;
+            
+        if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(false);
 
-        // Spawn card UIs
         foreach (BuffCardConfig card in cards)
         {
             SpawnCardUI(card);
         }
     }
 
-    /// <summary>
-    /// Spawn 1 card UI
-    /// </summary>
     private void SpawnCardUI(BuffCardConfig card)
     {
         if (cardUIPrefab == null || cardsContainer == null)
@@ -102,9 +90,6 @@ public class CardSelectionUI : MonoBehaviour
         spawnedCardUIs.Add(cardObj);
     }
 
-    /// <summary>
-    /// Xóa tất cả card UIs hiện tại
-    /// </summary>
     private void ClearCards()
     {
         foreach (GameObject cardObj in spawnedCardUIs)
@@ -115,53 +100,43 @@ public class CardSelectionUI : MonoBehaviour
         spawnedCardUIs.Clear();
     }
 
-    /// <summary>
-    /// Callback khi player chọn 1 card
-    /// </summary>
     public void OnCardSelected(BuffCardConfig card)
     {
         if (card == null || cardManager == null) return;
 
         Debug.Log($"Card selected: {card.cardName}");
 
-        // Apply buff
         cardManager.ApplyCard(card);
 
-        // Hide UI and resume game
         HideCards();
     }
 
-    /// <summary>
-    /// Ẩn UI và resume game
-    /// </summary>
     public void HideCards()
     {
-        // Clear cards
+
         ClearCards();
 
-        // Hide panel
         if (selectionPanel != null)
             selectionPanel.SetActive(false);
 
-        // Resume game
         if (pauseGameOnShow)
             Time.timeScale = 1f;
+            
+        if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(true);
     }
 
     private void OnDestroy()
     {
-        // Unsubscribe
+
         PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
         if (levelSystem != null)
         {
             levelSystem.OnLevelUp.RemoveListener(OnPlayerLevelUp);
         }
 
-        // Clear cards
         ClearCards();
     }
 
-    // Public test method
     [ContextMenu("Test Show Cards")]
     public void TestShowCards()
     {

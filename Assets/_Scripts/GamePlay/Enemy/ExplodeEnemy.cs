@@ -1,15 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Exploder Enemy — Kamikaze.
-/// Khi vào tầm: dừng lại, show indicator 0.8s → lao thẳng về player →
-/// nổ khi chạm vật cản/hết tầm. Nếu bị giết trong lúc charge → nổ nhỏ.
-/// </summary>
 public class ExplodeEnemy : Enemy
 {
     [Header("Exploder Visual")]
-    [SerializeField] private LineRenderer chargeIndicator; // Gán LineRenderer trong Inspector
+    [SerializeField] private LineRenderer chargeIndicator; 
     [SerializeField] private ParticleSystem explosionParticle;
 
     private ExplodeEnemyConfig explodeConfig;
@@ -52,12 +47,10 @@ public class ExplodeEnemy : Enemy
         if (exploderState != ExploderState.Idle) yield break;
         exploderState = ExploderState.Warning;
 
-        // Hướng lao = hướng đến player tại điểm bắt đầu cảnh báo
         chargeDirection = (player.position - transform.position).normalized;
         chargeDirection.y = 0f;
         chargeStartPos  = transform.position;
 
-        // Hiển thị indicator
         ShowChargeIndicator();
 
         float warningTime = explodeConfig != null ? explodeConfig.warningDuration : 0.8f;
@@ -81,7 +74,6 @@ public class ExplodeEnemy : Enemy
         else
             transform.position += move;
 
-        // Kiểm tra đã đi đủ khoảng cách chưa
         if (Vector3.Distance(transform.position, chargeStartPos) >= maxDist)
         {
             Explode(1f);
@@ -124,11 +116,9 @@ public class ExplodeEnemy : Enemy
         float baseDmg = explodeConfig != null ? explodeConfig.explosionDamage : 50f;
         float dmg = baseDmg * damageMult;
 
-        // Spawn explosion particle
         if (explosionParticle != null)
             Instantiate(explosionParticle, transform.position, Quaternion.identity);
 
-        // Gây damage AoE
         Collider[] hits = Physics.OverlapSphere(transform.position, radius);
         foreach (var col in hits)
         {
@@ -147,7 +137,6 @@ public class ExplodeEnemy : Enemy
         Die();
     }
 
-    /// <summary>Override TakeDamage — nếu bị giết khi đang charge → nổ nhỏ</summary>
     public override void TakeDamage(float damage, Vector3 hitPoint, Vector3 hitDirection)
     {
         base.TakeDamage(damage, hitPoint, hitDirection);

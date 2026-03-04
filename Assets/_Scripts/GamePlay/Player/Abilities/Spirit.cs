@@ -1,17 +1,11 @@
 using UnityEngine;
 
-/// <summary>
-/// Loại tinh linh — xác định cơ chế tấn công
-/// </summary>
 public enum SpiritType
 {
-    Pierce,     // Bắn đạn xuyên qua enemy
-    Explosion,  // Bắn đạn nổ AoE
+    Pierce,     
+    Explosion,  
 }
 
-/// <summary>
-/// Tinh linh luôn di chuyển theo player, bắn đạn vào enemy gần nhất theo timer độc lập.
-/// </summary>
 public class Spirit : MonoBehaviour
 {
     [Header("Spirit Config")]
@@ -45,14 +39,11 @@ public class Spirit : MonoBehaviour
     [Header("AoE (Explosion type)")]
     public float aoeRadius = 4f;
 
-    // Runtime
     private Transform player;
     private float idOffset;
     private float attackTimer;
     private Vector3 currentVelocity;
     private bool isShooting;
-
-    // ─────────────────────────────────────────────────────────────
 
     public void Initialize(Transform playerTransform, float startAngle, LayerMask layer)
     {
@@ -65,16 +56,12 @@ public class Spirit : MonoBehaviour
         if (col != null) col.isTrigger = true;
     }
 
-    // ─────────────────────────────────────────────────────────────
-
     void Update()
     {
         if (player == null) return;
 
-        // Luôn di chuyển theo player — KHÔNG dừng lại khi bắn
         MoveToFollowTarget();
 
-        // Timer bắn chạy độc lập
         attackTimer -= Time.deltaTime;
         if (attackTimer <= 0f)
         {
@@ -91,38 +78,29 @@ public class Spirit : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────────
-
     private void MoveToFollowTarget()
     {
         float t = Time.time;
 
-        // ── Orbit: mỗi tinh linh xoay quanh player với pha riêng (idOffset) ──
         float angle = idOffset + t * orbitSpeed;
         float rad = angle * Mathf.Deg2Rad;
 
-        // Khoảng cách dao động giữa min và max
         float targetDist = Mathf.Lerp(minFollowDist, maxFollowDist,
             Mathf.PerlinNoise(t * 0.15f + idOffset + 5f, 0f));
 
         Vector3 orbitPos = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * targetDist;
 
-        // ── Drift x/z độc lập: mỗi trục dùng Perlin riêng để tạo chuyển động hữu cơ ──
         float driftAmp = targetDist * driftAmplitude;
         float noiseX = (Mathf.PerlinNoise(t * driftFrequency + idOffset * 0.13f, 0f) * 2f - 1f) * driftAmp;
         float noiseZ = (Mathf.PerlinNoise(0f, t * driftFrequency + idOffset * 0.13f + 7.3f) * 2f - 1f) * driftAmp;
 
-        // Điểm đích = orbit + drift ngẫu nhiên
         Vector3 goal = player.position + orbitPos + new Vector3(noiseX, 0f, noiseZ);
 
-        // Bobbing Y
         float bob = Mathf.Sin(t * hoverFrequency + idOffset) * hoverAmplitude;
         goal.y = player.position.y + hoverHeight + bob;
 
-        // SmoothDamp tới điểm đích
         transform.position = Vector3.SmoothDamp(transform.position, goal, ref currentVelocity, 1f / followSpeed);
 
-        // Quay mặt hướng di chuyển
         Vector3 flatVel = new Vector3(currentVelocity.x, 0f, currentVelocity.z);
         if (flatVel.sqrMagnitude > 0.05f && !isShooting)
         {
@@ -130,8 +108,6 @@ public class Spirit : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 8f);
         }
     }
-
-    // ─────────────────────────────────────────────────────────────
 
     private void FireProjectile(Transform target)
     {
@@ -170,10 +146,10 @@ public class Spirit : MonoBehaviour
 
         Vector3 origScale = Vector3.one;
         Vector3 targetScale = origScale * 1.5f;
-        
+
         float t = 0;
         float halfDuration = 0.1f;
-        
+
         while (t < halfDuration)
         {
             t += Time.deltaTime;
@@ -192,8 +168,6 @@ public class Spirit : MonoBehaviour
         transform.localScale = origScale;
         isShooting = false;
     }
-
-    // ─────────────────────────────────────────────────────────────
 
     private Transform FindNearestEnemy()
     {

@@ -1,9 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 
-/// <summary>
-/// Editor Window để visualize và edit spawn points của tất cả waves
-/// </summary>
 public class WaveSpawnVisualizer : EditorWindow
 {
     private WaveConfig waveConfig;
@@ -23,7 +20,6 @@ public class WaveSpawnVisualizer : EditorWindow
         EditorGUILayout.LabelField("Wave Spawn Point Visualizer", EditorStyles.boldLabel);
         EditorGUILayout.Space(5);
 
-        // Wave Config selector
         WaveConfig newConfig = (WaveConfig)EditorGUILayout.ObjectField("Wave Config", waveConfig, typeof(WaveConfig), false);
 
         if (newConfig != waveConfig)
@@ -41,7 +37,6 @@ public class WaveSpawnVisualizer : EditorWindow
 
         EditorGUILayout.Space(10);
 
-        // Wave selector
         if (waveConfig.waves.Count > 0)
         {
             selectedWave = EditorGUILayout.IntSlider("Selected Wave", selectedWave, 0, waveConfig.waves.Count - 1);
@@ -50,7 +45,6 @@ public class WaveSpawnVisualizer : EditorWindow
 
             EditorGUILayout.Space(5);
 
-            // Wave info
             SimpleWaveData wave = waveConfig.waves[selectedWave];
             EditorGUILayout.LabelField($"Wave {selectedWave + 1} Info:", EditorStyles.boldLabel);
             EditorGUILayout.LabelField($"Groups: {wave.enemyGroups.Count}");
@@ -58,7 +52,6 @@ public class WaveSpawnVisualizer : EditorWindow
 
             EditorGUILayout.Space(10);
 
-            // Groups list
             EditorGUILayout.LabelField("Enemy Groups:", EditorStyles.boldLabel);
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
@@ -96,7 +89,6 @@ public class WaveSpawnVisualizer : EditorWindow
 
             EditorGUILayout.Space(10);
 
-            // Buttons
             if (GUILayout.Button("Focus on All Spawn Points"))
             {
                 FocusOnAllSpawnPoints();
@@ -130,7 +122,7 @@ public class WaveSpawnVisualizer : EditorWindow
 
         if (showAllWaves)
         {
-            // Draw all waves
+
             for (int w = 0; w < waveConfig.waves.Count; w++)
             {
                 DrawWaveGizmos(waveConfig.waves[w], w, w == selectedWave);
@@ -138,7 +130,7 @@ public class WaveSpawnVisualizer : EditorWindow
         }
         else if (selectedWave < waveConfig.waves.Count)
         {
-            // Draw selected wave only
+
             DrawWaveGizmos(waveConfig.waves[selectedWave], selectedWave, true);
         }
     }
@@ -152,12 +144,10 @@ public class WaveSpawnVisualizer : EditorWindow
             EnemyGroup group = wave.enemyGroups[i];
             Color groupColor = Color.HSVToRGB((i * 0.2f) % 1f, 0.8f, isSelected ? 1f : 0.5f);
 
-            // Draw spawn point
             Handles.color = groupColor;
             Handles.DrawWireDisc(group.spawnPosition, Vector3.up, group.spreadRadius);
             Handles.DrawSolidDisc(group.spawnPosition, Vector3.up, 0.3f);
 
-            // Label
             GUIStyle style = new GUIStyle(GUI.skin.label);
             style.normal.textColor = isSelected ? Color.white : new Color(1, 1, 1, 0.5f);
             style.fontStyle = FontStyle.Bold;

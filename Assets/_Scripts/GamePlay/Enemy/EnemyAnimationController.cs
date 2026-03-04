@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Manages enemy animations based on enemy state. Works similar to PlayerAnimationController.
-/// </summary>
 [RequireComponent(typeof(Enemy))]
 public class EnemyAnimationController : MonoBehaviour
 {
@@ -18,7 +15,6 @@ public class EnemyAnimationController : MonoBehaviour
     [SerializeField] private float transitionTime = 0.15f;
     [SerializeField] private bool debugMode = false;
 
-    // Enemy state enum for animation mapping
     public enum EnemyAnimState
     {
         Idle,
@@ -31,7 +27,6 @@ public class EnemyAnimationController : MonoBehaviour
     private EnemyAnimState previousAnimState = EnemyAnimState.Idle;
     private EnemyState lastEnemyState = EnemyState.Idle;
 
-    // Animation hash IDs - cached for performance
     private int idleHash;
     private int runHash;
     private int dashHash;
@@ -40,7 +35,6 @@ public class EnemyAnimationController : MonoBehaviour
     {
         enemy = GetComponent<Enemy>();
 
-        // Auto-find animator if not assigned
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
@@ -53,7 +47,6 @@ public class EnemyAnimationController : MonoBehaviour
             return;
         }
 
-        // Cache animation hashes for better performance
         idleHash = Animator.StringToHash(idleAnimationName);
         runHash = Animator.StringToHash(runAnimationName);
         dashHash = Animator.StringToHash(dashAnimationName);
@@ -70,12 +63,11 @@ public class EnemyAnimationController : MonoBehaviour
 
     private void OnEnable()
     {
-        // Force reset state when re-spawned from ObjectPool
+
         if (animator != null)
         {
             animator.enabled = true;
-            // Force play idle immediately from the beginning 
-            // so we don't start from an interrupted death animation frame
+
             int hash = GetStateHash(EnemyAnimState.Idle);
             if (hash != 0)
             {
@@ -97,14 +89,10 @@ public class EnemyAnimationController : MonoBehaviour
         UpdateAnimationBasedOnEnemyState();
     }
 
-    /// <summary>
-    /// Update animation based on current enemy state
-    /// </summary>
     private void UpdateAnimationBasedOnEnemyState()
     {
         EnemyState currentEnemyState = enemy.GetCurrentState();
 
-        // Only change animation when enemy state actually changes
         if (currentEnemyState != lastEnemyState)
         {
             EnemyAnimState newAnimState = MapEnemyStateToAnimation(currentEnemyState);
@@ -124,9 +112,6 @@ public class EnemyAnimationController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Map enemy state to animation state
-    /// </summary>
     private EnemyAnimState MapEnemyStateToAnimation(EnemyState enemyState)
     {
         switch (enemyState)
@@ -134,9 +119,9 @@ public class EnemyAnimationController : MonoBehaviour
             case EnemyState.Idle:
             case EnemyState.Attacking:
                 return EnemyAnimState.Idle;
-                
+
             case EnemyState.Dead:
-                // Thay vì return Idle để nó phát CrossFade, ta tắt luôn Animator để dừng mọi chạy/dash
+
                 if (animator != null) animator.enabled = false;
                 return EnemyAnimState.Idle;
 
@@ -152,13 +137,10 @@ public class EnemyAnimationController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Play animation by state enum. Handles transitions automatically.
-    /// </summary>
     private void PlayAnimation(EnemyAnimState state)
     {
         if (animator == null) return;
-        if (currentAnimState == state) return; // Don't replay same animation
+        if (currentAnimState == state) return; 
 
         previousAnimState = currentAnimState;
         currentAnimState = state;
@@ -172,9 +154,6 @@ public class EnemyAnimationController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Play animation immediately without transition
-    /// </summary>
     public void PlayAnimationImmediate(EnemyAnimState state)
     {
         if (animator == null) return;
@@ -191,9 +170,6 @@ public class EnemyAnimationController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Get animation hash from state enum
-    /// </summary>
     private int GetStateHash(EnemyAnimState state)
     {
         switch (state)
@@ -210,9 +186,6 @@ public class EnemyAnimationController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Public methods to manually trigger animations if needed
-    /// </summary>
     public void PlayIdle() => PlayAnimation(EnemyAnimState.Idle);
     public void PlayRun() => PlayAnimation(EnemyAnimState.Run);
     public void PlayDash() => PlayAnimation(EnemyAnimState.Dash);
@@ -220,9 +193,6 @@ public class EnemyAnimationController : MonoBehaviour
     public EnemyAnimState GetCurrentAnimState() => currentAnimState;
     public EnemyAnimState GetPreviousAnimState() => previousAnimState;
 
-    /// <summary>
-    /// Set animator speed (useful for slow-motion effects)
-    /// </summary>
     public void SetAnimationSpeed(float speed)
     {
         if (animator != null)

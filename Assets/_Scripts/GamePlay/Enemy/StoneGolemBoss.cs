@@ -1,12 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Boss Wave 10 — Stone Golem.
-/// P1: melee + 3 đạn quạt/3s
-/// P2 (60%): +30% tốc độ, triệu hồi 2 melee minion
-/// P3 (30%): bắn 6 đạn tròn/2s + ground slam/5s
-/// </summary>
 public class StoneGolemBoss : BossEnemy
 {
     [Header("Stone Golem")]
@@ -23,14 +17,12 @@ public class StoneGolemBoss : BossEnemy
         base.Update();
         if (isDead) return;
 
-        // P1/P2: bắn quạt định kỳ
         if (currentPhase < 3 && bossShootTimer <= 0f)
         {
             int bullets = currentPhase == 1 ? 3 : 5;
             ShootFanAtPlayer(bullets, 20f);
         }
 
-        // P3: bắn vòng tròn + slam
         if (currentPhase == 3)
         {
             if (bossShootTimer <= 0f)
@@ -46,7 +38,7 @@ public class StoneGolemBoss : BossEnemy
     {
         if (minionSpawned) return;
         minionSpawned = true;
-        // Spawn 2 melee minion
+
         for (int i = 0; i < 2; i++)
         {
             Vector3 offset = new Vector3(Random.Range(-3f, 3f), 0f, Random.Range(-3f, 3f));
@@ -65,7 +57,7 @@ public class StoneGolemBoss : BossEnemy
     {
         slamTimer = slamCooldown;
         Debug.Log("[StoneGolem] Ground Slam!");
-        yield return new WaitForSeconds(0.5f); // windup
+        yield return new WaitForSeconds(0.5f); 
 
         Collider[] hits = Physics.OverlapSphere(transform.position, slamRadius);
         foreach (var col in hits)

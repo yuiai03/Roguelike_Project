@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Config cho Melee Enemy (cận chiến)
-/// </summary>
 [CreateAssetMenu(fileName = "MeleeEnemy_", menuName = "Roguelike/Enemy/Melee Enemy Config")]
 public class MeleeEnemyConfig : EnemyConfig
 {

@@ -58,22 +58,21 @@ public class WaveConfig : ScriptableObject
 
         for (int i = 1; i <= 30; i++)
         {
-            bool isBoss = (i % 10 == 0); // wave 10, 20, 30
+            bool isBoss = (i % 10 == 0); 
 
             SimpleWaveData wave = new SimpleWaveData
             {
-                preparationTime = isBoss ? 5f : 3f, // boss wave có thêm TG chuẩn bị
+                preparationTime = isBoss ? 5f : 3f, 
                 isBossWave      = isBoss,
-                bossPoolType    = PoolType.None,     // Gán trong Inspector
+                bossPoolType    = PoolType.None,     
             };
 
-            // Thêm enemy group mặc định (không phải boss wave)
             if (!isBoss)
             {
                 wave.enemyGroups.Add(new EnemyGroup
                 {
                     enemyPoolType = PoolType.MeleeEnemy,
-                    enemyCount    = 3 + i / 3, // tăng dần theo wave
+                    enemyCount    = 3 + i / 3, 
                     spreadRadius  = 3f,
                 });
             }

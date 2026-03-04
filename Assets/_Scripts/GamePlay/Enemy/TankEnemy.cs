@@ -1,25 +1,18 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Tank Enemy — HP x2, shield theo chu kỳ phản đạn. 
-/// Khi shield active: đạn player bị phản ngược về phía player.
-/// </summary>
 public class TankEnemy : Enemy
 {
     [Header("Tank Visual")]
-    [SerializeField] private GameObject shieldVisual; // Assign shield mesh/particle trong Inspector
+    [SerializeField] private GameObject shieldVisual; 
     [SerializeField] private Color shieldColor = new Color(0.3f, 0.8f, 1f, 0.6f);
 
-    // Config riêng
     private TankEnemyConfig tankConfig;
 
-    // Shield state
     private bool isShieldActive;
     private float shieldTimer;
     private Material shieldMaterial;
 
-    // Layer để bắn đạn phản về phía player
     [SerializeField] private LayerMask playerLayer;
 
     protected override void Awake()
@@ -75,15 +68,14 @@ public class TankEnemy : Enemy
 
         if (isShieldActive)
         {
-            // Phản damage ngược lại player
+
             ReflectDamageToPlayer(damage, hitDirection);
-            // Vẫn flash để player biết đạn trúng shield
+
             if (gameObject.activeInHierarchy)
                 StartCoroutine(FlashDamage());
             return;
         }
 
-        // Không có shield: nhận damage bình thường
         base.TakeDamage(damage, hitPoint, hitDirection);
     }
 
@@ -93,14 +85,13 @@ public class TankEnemy : Enemy
 
         float reflectDamage = originalDamage * tankConfig.reflectDamagePercent;
 
-        // Tìm player
         Collider[] players = Physics.OverlapSphere(transform.position, 50f, playerLayer);
         foreach (var col in players)
         {
             IDamageable playerDmg = col.GetComponent<IDamageable>();
             if (playerDmg != null && !playerDmg.IsDead())
             {
-                // Hướng từ tank về phía player
+
                 Vector3 reflectDir = (col.transform.position - transform.position).normalized;
                 playerDmg.TakeDamage(reflectDamage, transform.position, reflectDir);
                 Debug.Log($"[TankEnemy] Phản {reflectDamage:F0} damage về player!");
@@ -112,7 +103,7 @@ public class TankEnemy : Enemy
     protected override void OnEnable()
     {
         base.OnEnable();
-        // Reset shield state mỗi khi spawn
+
         isShieldActive = false;
         shieldTimer = tankConfig != null ? tankConfig.shieldCycleNormal : 4f;
         if (shieldVisual != null) shieldVisual.SetActive(false);

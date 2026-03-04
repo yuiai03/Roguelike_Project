@@ -13,10 +13,7 @@ public class PreGameNPC : MonoBehaviour
     private Transform playerTransform;
     private bool playerInRange = false;
     private bool hasInteracted = false;
-    
-    // Sử dụng chung InputAction từ PlayerController nếu có, 
-    // Nếu dùng trực tiếp Keyboard thì thế này:
-    // Tuy nhiên dự án dùng InputSystem_Actions, tôi sẽ lấy qua InputSystem_Actions hoặc Keyboard:
+
     private InputSystem_Actions inputActions;
 
     private void Awake()
@@ -41,8 +38,7 @@ public class PreGameNPC : MonoBehaviour
         if (playerInRange)
         {
             Debug.Log("Player in range");
-            // Kiểm tra phím F (bằng trực tiếp Keyboard) 
-            // hoăc phím E thông qua Interact (vì hệ thống Input cũ gán Interact cho phím E)
+
             if (Keyboard.current != null && (Keyboard.current.fKey.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame))
             {
                 Interact();
@@ -53,7 +49,7 @@ public class PreGameNPC : MonoBehaviour
     private void Interact()
     {
         hasInteracted = true;
-        
+
         if (uiManager != null)
         {
             uiManager.ShowTutorial(this);
@@ -72,7 +68,7 @@ public class PreGameNPC : MonoBehaviour
         {
             playerTransform = other.transform;
             playerInRange = true;
-            
+
             if (uiManager != null)
             {
                 uiManager.ShowInteractPrompt(true);
@@ -87,7 +83,7 @@ public class PreGameNPC : MonoBehaviour
         if (other.CompareTag("Player") || other.GetComponent<PlayerController>() != null)
         {
             playerInRange = false;
-            
+
             if (uiManager != null)
             {
                 uiManager.ShowInteractPrompt(false);
@@ -95,7 +91,6 @@ public class PreGameNPC : MonoBehaviour
         }
     }
 
-    // Hàm này sẽ được UIManager gọi khi game thực sự bắt đầu
     public void Disappear()
     {
         gameObject.SetActive(false);

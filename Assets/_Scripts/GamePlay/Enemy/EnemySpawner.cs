@@ -6,8 +6,8 @@ public class EnemySpawnInfo
 {
     public GameObject enemyPrefab;
     public EnemyType enemyType;
-    public int spawnWeight = 1; // T? l? spawn
-    public int minWave = 1; // Wave t?i thi?u ?? spawn
+    public int spawnWeight = 1; 
+    public int minWave = 1; 
 }
 
 public class EnemySpawner : MonoBehaviour
@@ -86,11 +86,9 @@ public class EnemySpawner : MonoBehaviour
     {
         if (enemyPrefabs.Count == 0) return;
 
-        // L?c enemies c� th? spawn theo wave
         List<EnemySpawnInfo> availableEnemies = enemyPrefabs.FindAll(e => e.minWave <= currentWave);
         if (availableEnemies.Count == 0) return;
 
-        // Weighted random selection
         int totalWeight = 0;
         foreach (var enemy in availableEnemies)
         {
@@ -124,7 +122,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (enemy != null)
         {
-            // Scale enemy theo wave
+
             EnemyData data = enemy.GetEnemyData();
             if (data != null)
             {
@@ -151,7 +149,6 @@ public class EnemySpawner : MonoBehaviour
             float distance = Random.Range(minSpawnDistance, spawnRadius);
             Vector3 spawnPos = spawnCenter.position + new Vector3(randomCircle.x, 0f, randomCircle.y) * distance;
 
-            // Ki?m tra kh�ng spawn trong v?t c?n
             if (!Physics.CheckSphere(spawnPos, 1f, obstacleLayer))
             {
                 spawnPos.y = spawnCenter.position.y;

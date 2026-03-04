@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Component tự động drop exp khi enemy chết
-/// Attach vào enemy prefab
-/// </summary>
 [RequireComponent(typeof(Enemy))]
 [RequireComponent(typeof(EnemyData))]
 public class ExpDropper : MonoBehaviour

@@ -8,9 +8,7 @@ using PlayFab.SharedModels;
 
 namespace PlayFab
 {
-    /// <summary>
-    /// The Localization APIs give you the tools needed to manage language setup in your title.
-    /// </summary>
+
     public class PlayFabLocalizationInstanceAPI : IPlayFabInstanceApi
     {
         public readonly PlayFabApiSettings apiSettings = null;
@@ -31,18 +29,11 @@ namespace PlayFab
             authenticationContext = context;
         }
 
-        /// <summary>
-        /// Verify entity login.
-        /// </summary>
         public bool IsEntityLoggedIn()
         {
             return authenticationContext == null ? false : authenticationContext.IsEntityLoggedIn();
         }
 
-        /// <summary>
-        /// Clear the Client SessionToken which allows this Client to call API calls requiring login.
-        /// A new/fresh login will be required after calling this.
-        /// </summary>
         public void ForgetAllCredentials()
         {
             if (authenticationContext != null)
@@ -51,9 +42,6 @@ namespace PlayFab
             }
         }
 
-        /// <summary>
-        /// Retrieves the list of allowed languages, only accessible by title entities
-        /// </summary>
         public void GetLanguageList(GetLanguageListRequest request, Action<GetLanguageListResponse> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             var context = (request == null ? null : request.AuthenticationContext) ?? authenticationContext;

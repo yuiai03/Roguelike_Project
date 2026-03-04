@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace PlayFab.Internal
 {
-    //public to be accessible by Unity engine
+
     public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T>
     {
         private static T _instance;
@@ -20,15 +20,15 @@ namespace PlayFab.Internal
         {
             if (_instance == null)
             {
-                //find existing instance
+
                 _instance = FindObjectOfType<T>();
                 if (_instance == null)
                 {
-                    //create new instance
+
                     var go = new GameObject(typeof(T).Name);
                     _instance = go.AddComponent<T>();
                 }
-                //initialize instance if necessary
+
                 if (!_instance.initialized)
                 {
                     _instance.Initialize();
@@ -44,7 +44,6 @@ namespace PlayFab.Internal
                 DontDestroyOnLoad(this);
             }
 
-            //check if instance already exists when reloading original scene
             if (_instance != null)
             {
                 DestroyImmediate (gameObject);

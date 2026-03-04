@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Base ScriptableObject cho tất cả Enemy Config (READ-ONLY)
-/// Chứa các thuộc tính chung cho mọi loại enemy
-/// </summary>
 public abstract class EnemyConfig : ScriptableObject
 {
     [Header("Basic Info")]

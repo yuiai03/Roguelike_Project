@@ -1,10 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
-/// Quản lý tất cả Spirit của player.
-/// Add/remove spirits, tự động sắp xếp orbit angle đều nhau.
-/// </summary>
 public class SpiritManager : MonoBehaviour
 {
     [Header("Settings")]
@@ -13,7 +9,6 @@ public class SpiritManager : MonoBehaviour
 
     private readonly List<Spirit> spirits = new List<Spirit>();
 
-    /// <summary>Thêm một spirit mới loại type, nếu loại đó đã có thì không làm gì</summary>
     public void AddSpirit(SpiritType type)
     {
         if (HasSpiritOfType(type))
@@ -26,7 +21,7 @@ public class SpiritManager : MonoBehaviour
         GameObject obj = ObjectPool.Instance.Spawn(poolType, transform.position, Quaternion.identity);
 
         if (obj == null) return;
-        obj.transform.parent = null; // Spirit KHÔNG là con của player — orbit độc lập
+        obj.transform.parent = null; 
 
         Spirit spirit = obj.GetComponent<Spirit>();
         if (spirit == null)
@@ -49,7 +44,6 @@ public class SpiritManager : MonoBehaviour
         Debug.Log($"[SpiritManager] Added {type} spirit. Total: {spirits.Count}");
     }
 
-    /// <summary>Sắp xếp lại góc orbit đều nhau cho tất cả spirit</summary>
     private void RecalculateOrbitAngles()
     {
         if (spirits.Count == 0) return;
@@ -61,7 +55,6 @@ public class SpiritManager : MonoBehaviour
         }
     }
 
-    /// <summary>Xoá spirit đã chết hoặc null khỏi list</summary>
     void Update()
     {
         spirits.RemoveAll(s => s == null);

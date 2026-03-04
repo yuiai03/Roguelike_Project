@@ -78,7 +78,7 @@ namespace PlayFab.Internal
                     request = new UnityWebRequest(fullUrl, "POST");
                     request.uploadHandler = (UploadHandler)new UploadHandlerRaw(payload);
                     request.SetRequestHeader("Content-Type", "application/json");
-                    
+
                     if (PlayFabSettings.staticSettings.CompressResponses)
                     {
                         request.SetRequestHeader("Accept-Encoding", "gzip");
@@ -91,10 +91,9 @@ namespace PlayFab.Internal
                     }
                 }
 
-
 #if UNITY_2017_2_OR_NEWER
 #if !UNITY_2019_1_OR_NEWER
-                request.chunkedTransfer = false; // can be removed after Unity's PUT will be more stable
+                request.chunkedTransfer = false; 
 #endif
                 yield return request.SendWebRequest();
 #else
@@ -123,7 +122,6 @@ namespace PlayFab.Internal
             CallRequestContainer reqContainer = (CallRequestContainer)reqContainerObj;
             reqContainer.RequestHeaders["Content-Type"] = "application/json";
 
-            // Start the www corouting to Post, and get a response or error which is then passed to the callbacks.
             PlayFabHttp.instance.StartCoroutine(Post(reqContainer));
         }
 
@@ -220,7 +218,7 @@ namespace PlayFab.Internal
 
                 if (httpResult.code == 200)
                 {
-                    // We have a good response from the server
+
                     reqContainer.JsonResponse = serializer.SerializeObject(httpResult.data);
                     reqContainer.DeserializeResultJson();
                     reqContainer.ApiResult.Request = reqContainer.ApiRequest;

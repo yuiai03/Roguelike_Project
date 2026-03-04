@@ -2,12 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// Hiển thị Health Bar, Level, Exp Bar và Wave hiện tại
-/// </summary>
 public class PlayerStatsUI : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private GameObject panel;
     [SerializeField] private PlayerHealth playerHealth;
 
     [Header("Health Bar")]
@@ -26,48 +24,30 @@ public class PlayerStatsUI : MonoBehaviour
 
     private PlayerLevelSystem levelSystem => PlayerLevelSystem.Instance;
     private WaveSpawner waveSpawner => WaveSpawner.Instance;
+    private GameStartUIManager gameStartUIManager => GameStartUIManager.Instance;
 
     private void Start()
     {
-        if (playerHealth != null)
-        {
-            playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
+        UpdateHealthBar(playerHealth.GetCurrentHealth(), playerHealth.GetMaxHealth());
+        UpdateLevel(levelSystem.GetCurrentLevel(), 999);
+        UpdateExp(levelSystem.GetCurrentExp(), levelSystem.GetExpToNextLevel());
+        UpdateWave(waveSpawner.GetCurrentWave());
 
-            UpdateHealthBar(playerHealth.GetCurrentHealth(), playerHealth.GetMaxHealth());
-        }
-
-        if (levelSystem != null)
-        {
-            levelSystem.OnLevelChanged.AddListener(UpdateLevel);
-            levelSystem.OnExpChanged.AddListener(UpdateExp);
-
-            // Initial update
-            UpdateLevel(levelSystem.GetCurrentLevel(), 999);
-            UpdateExp(levelSystem.GetCurrentExp(), levelSystem.GetExpToNextLevel());
-        }
-
-        if (waveSpawner != null)
-        {
-            waveSpawner.OnWaveStart.AddListener(UpdateWave);
-
-            // Initial update
-            UpdateWave(waveSpawner.GetCurrentWave());
-        }
+        playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
+        levelSystem.OnLevelChanged.AddListener(UpdateLevel);
+        levelSystem.OnExpChanged.AddListener(UpdateExp);
+        waveSpawner.OnWaveStart.AddListener(UpdateWave);
+        gameStartUIManager.onGameStart.AddListener(() => panel.SetActive(true));
+        
+        panel.SetActive(false);
     }
 
     private void Update()
     {
-        // Update wave in real-time (optional, nếu wave có thể thay đổi mà không trigger event)
-        if (waveSpawner != null)
-        {
-            int currentWave = waveSpawner.GetCurrentWave();
-            int totalWaves = waveSpawner.GetTotalWaves();
+        int currentWave = waveSpawner.GetCurrentWave();
+        int totalWaves = waveSpawner.GetTotalWaves();
 
-            if (waveText != null)
-            {
-                waveText.text = $"Wave: {currentWave}/{totalWaves}";
-            }
-        }
+        waveText.text = $"Wave: {currentWave}/{totalWaves}";
     }
 
     private void UpdateLevel(int currentLevel, int maxLevel)
@@ -115,7 +95,7 @@ public class PlayerStatsUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Unsubscribe from events
+
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged.RemoveListener(UpdateHealthBar);

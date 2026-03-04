@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Config cho Ranged Enemy (tầm xa)
-/// </summary>
 [CreateAssetMenu(fileName = "RangedEnemy_", menuName = "Roguelike/Enemy/Ranged Enemy Config")]
 public class RangedEnemyConfig : EnemyConfig
 {

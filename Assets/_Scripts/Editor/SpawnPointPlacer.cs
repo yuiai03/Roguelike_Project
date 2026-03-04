@@ -1,9 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 
-/// <summary>
-/// Scene tool để tạo spawn points bằng cách click vào Scene view
-/// </summary>
 public class SpawnPointPlacer : EditorWindow
 {
     private WaveConfig targetConfig;
@@ -36,7 +33,6 @@ public class SpawnPointPlacer : EditorWindow
 
         EditorGUILayout.Space(10);
 
-        // Config selector
         targetConfig = (WaveConfig)EditorGUILayout.ObjectField("Target Wave Config", targetConfig, typeof(WaveConfig), false);
 
         if (targetConfig == null)
@@ -45,7 +41,6 @@ public class SpawnPointPlacer : EditorWindow
             return;
         }
 
-        // Wave selector
         if (targetConfig.waves.Count > 0)
         {
             targetWaveIndex = EditorGUILayout.IntSlider("Target Wave", targetWaveIndex, 0, targetConfig.waves.Count - 1);
@@ -60,7 +55,6 @@ public class SpawnPointPlacer : EditorWindow
 
             EditorGUILayout.Space(10);
 
-            // Placement mode toggle
             Color originalColor = GUI.backgroundColor;
             if (placementMode)
             {
@@ -82,11 +76,9 @@ public class SpawnPointPlacer : EditorWindow
 
             EditorGUILayout.Space(10);
 
-            // Current wave info
             SimpleWaveData wave = targetConfig.waves[targetWaveIndex];
             EditorGUILayout.LabelField($"Wave {targetWaveIndex + 1} - Current Groups: {wave.enemyGroups.Count}", EditorStyles.miniLabel);
 
-            // Quick remove last
             if (wave.enemyGroups.Count > 0)
             {
                 if (GUILayout.Button("Remove Last Spawn Point"))
@@ -121,13 +113,12 @@ public class SpawnPointPlacer : EditorWindow
         if (!placementMode || targetConfig == null || targetWaveIndex >= targetConfig.waves.Count)
             return;
 
-        // Draw cursor preview
         Event e = Event.current;
         Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            // Draw preview at mouse position
+
             Handles.color = new Color(0, 1, 0, 0.5f);
             Handles.DrawWireDisc(hit.point, Vector3.up, spreadRadius);
             Handles.DrawSolidDisc(hit.point, Vector3.up, 0.3f);
@@ -135,7 +126,6 @@ public class SpawnPointPlacer : EditorWindow
             Handles.color = Color.green;
             Handles.Label(hit.point + Vector3.up * 2f, $"Click to place\n{enemyCount}x {enemyType}", EditorStyles.whiteLargeLabel);
 
-            // Handle click
             if (e.type == EventType.MouseDown && e.button == 0)
             {
                 PlaceSpawnPoint(hit.point);
@@ -143,14 +133,12 @@ public class SpawnPointPlacer : EditorWindow
             }
         }
 
-        // Draw instruction
         Handles.BeginGUI();
         GUILayout.BeginArea(new Rect(10, 10, 300, 100));
         GUILayout.Box("PLACEMENT MODE ACTIVE\nClick in Scene to place spawn point\nPress ESC to cancel", GUILayout.Width(300));
         GUILayout.EndArea();
         Handles.EndGUI();
 
-        // ESC to cancel
         if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
         {
             placementMode = false;

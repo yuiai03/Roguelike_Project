@@ -2,9 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// Hiển thị 1 card trong UI selection
-/// </summary>
 public class BuffCardUI : MonoBehaviour
 {
     [Header("UI References")]
@@ -33,7 +30,6 @@ public class BuffCardUI : MonoBehaviour
 
         if (card == null) return;
 
-        // Set card info
         if (nameText != null)
             nameText.text = card.cardName;
 
@@ -43,7 +39,6 @@ public class BuffCardUI : MonoBehaviour
         if (iconImage != null && card.icon != null)
             iconImage.sprite = card.icon;
 
-        // Set rarity color
         Color rarityColor = card.GetRarityColor();
 
         if (cardBackground != null)

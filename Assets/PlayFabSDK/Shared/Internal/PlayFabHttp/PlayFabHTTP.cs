@@ -8,12 +8,10 @@ using UnityEngine;
 
 namespace PlayFab.Internal
 {
-    /// <summary>
-    /// This is a wrapper for Http So we can better separate the functionaity of Http Requests delegated to WWW or HttpWebRequest
-    /// </summary>
+
     public class PlayFabHttp : SingletonMonoBehaviour<PlayFabHttp>
     {
-        private static List<CallRequestContainer> _apiCallQueue = new List<CallRequestContainer>(); // Starts initialized, and is nulled when it's flushed
+        private static List<CallRequestContainer> _apiCallQueue = new List<CallRequestContainer>(); 
 
         public delegate void ApiProcessingEvent<in TEventArgs>(TEventArgs e);
         public delegate void ApiProcessErrorEvent(PlayFabRequestCommon request, PlayFabError error);
@@ -40,19 +38,12 @@ namespace PlayFab.Internal
         public static event ApiRequestTimingEvent ApiRequestTimingEventHandler;
 #endif
 
-        /// <summary>
-        /// Return the number of api calls that are waiting for results from the server
-        /// </summary>
-        /// <returns></returns>
         public static int GetPendingMessages()
         {
             var transport = PluginManager.GetPlugin<ITransportPlugin>(PluginContract.PlayFab_Transport);
             return transport.IsInitialized ? transport.GetPendingMessages() : 0;
         }
 
-        /// <summary>
-        /// This initializes the GameObject and ensures it is in the scene.
-        /// </summary>
         public static void InitializeHttp()
         {
             if (string.IsNullOrEmpty(PlayFabSettings.TitleId))
@@ -62,12 +53,9 @@ namespace PlayFab.Internal
                 return;
 
             transport.Initialize();
-            CreateInstance(); // Invoke the SingletonMonoBehaviour
+            CreateInstance(); 
         }
 
-        /// <summary>
-        /// This initializes the GameObject and ensures it is in the scene.
-        /// </summary>
         public static void InitializeLogger(IPlayFabLogger setLogger = null)
         {
             if (_logger != null)
@@ -78,20 +66,13 @@ namespace PlayFab.Internal
         }
 
 #if !DISABLE_PLAYFABENTITY_API && !DISABLE_PLAYFABCLIENT_API
-        /// <summary>
-        /// This initializes ScreenTimeTracker object and notifying it to start sending info.
-        /// </summary>
-        /// <param name="playFabUserId">Result of the user's login, represent user ID</param>
+
         public static void InitializeScreenTimeTracker(string entityId, string entityType, string playFabUserId)
         {
             screenTimeTracker.ClientSessionStart(entityId, entityType, playFabUserId);
             instance.StartCoroutine(SendScreenTimeEvents(delayBetweenBatches));
         }
 
-        /// <summary>
-        /// This function will send Screen Time events on a periodic basis.
-        /// </summary>
-        /// <param name="secondsBetweenBatches">Delay between batches, in seconds</param>
         private static IEnumerator SendScreenTimeEvents(float secondsBetweenBatches)
         {
             WaitForSeconds delay = new WaitForSeconds(secondsBetweenBatches);
@@ -109,7 +90,6 @@ namespace PlayFab.Internal
             InitializeHttp();
             PluginManager.GetPlugin<ITransportPlugin>(PluginContract.PlayFab_Transport).SimpleGetCall(fullUrl, successCallback, errorCallback);
         }
-
 
         public static void SimplePutCall(string fullUrl, byte[] payload, Action<byte[]> successCallback, Action<string> errorCallback)
         {
@@ -139,13 +119,10 @@ namespace PlayFab.Internal
             where TResult : PlayFabResultCommon
         {
             apiSettings = apiSettings ?? PlayFabSettings.staticSettings;
-            // This will not be called if environment file does not exist or does not contain property the debugging URI
+
             _MakeApiCall(null, fullUri, request, authType, resultCallback, errorCallback, customData, extraHeaders, false, authenticationContext, apiSettings, instanceApi);
         }
 
-        /// <summary>
-        /// Internal method for Make API Calls
-        /// </summary>
         private static void _MakeApiCall<TResult>(string apiEndpoint, string fullUrl,
             PlayFabRequestCommon request, AuthType authType, Action<TResult> resultCallback,
             Action<PlayFabError> errorCallback, object customData, Dictionary<string, string> extraHeaders, bool allowQueueing, PlayFabAuthenticationContext authenticationContext, PlayFabApiSettings apiSettings, IPlayFabInstanceApi instanceApi)
@@ -165,10 +142,10 @@ namespace PlayFab.Internal
                 Payload = Encoding.UTF8.GetBytes(serializer.SerializeObject(request)),
                 ApiRequest = request,
                 ErrorCallback = errorCallback,
-                RequestHeaders = extraHeaders ?? new Dictionary<string, string>(), // Use any headers provided by the customer
+                RequestHeaders = extraHeaders ?? new Dictionary<string, string>(), 
                 instanceApi = instanceApi
             };
-            // Append any additional headers
+
             foreach (var pair in GlobalHeaderInjection)
                 if (!reqContainer.RequestHeaders.ContainsKey(pair.Key))
                     reqContainer.RequestHeaders[pair.Key] = pair.Value;
@@ -178,10 +155,9 @@ namespace PlayFab.Internal
             reqContainer.Timing.ApiEndpoint = apiEndpoint;
 #endif
 
-            // Add PlayFab Headers
             var transport = PluginManager.GetPlugin<ITransportPlugin>(PluginContract.PlayFab_Transport);
-            reqContainer.RequestHeaders["X-ReportErrorAsSuccess"] = "true"; // Makes processing PlayFab errors a little easier
-            reqContainer.RequestHeaders["X-PlayFabSDK"] = PlayFabSettings.VersionString; // Tell PlayFab which SDK this is
+            reqContainer.RequestHeaders["X-ReportErrorAsSuccess"] = "true"; 
+            reqContainer.RequestHeaders["X-PlayFabSDK"] = PlayFabSettings.VersionString; 
             switch (authType)
             {
 #if ENABLE_PLAYFABSERVER_API || ENABLE_PLAYFABADMIN_API || UNITY_EDITOR || ENABLE_PLAYFAB_SECRETKEY
@@ -207,7 +183,6 @@ namespace PlayFab.Internal
                     break;
             }
 
-            // These closures preserve the TResult generic information in a way that's safe for all the devices
             reqContainer.DeserializeResultJson = () =>
             {
                 reqContainer.ApiResult = serializer.DeserializeObject<TResult>(reqContainer.JsonResponse);
@@ -233,9 +208,6 @@ namespace PlayFab.Internal
             }
         }
 
-        /// <summary>
-        /// Internal code shared by IPlayFabHTTP implementations
-        /// </summary>
         internal void OnPlayFabApiResult(CallRequestContainer reqContainer)
         {
             var result = reqContainer.ApiResult;
@@ -267,9 +239,6 @@ namespace PlayFab.Internal
 #endif
         }
 
-        /// <summary>
-        /// MonoBehaviour OnEnable Method
-        /// </summary>
         private void OnEnable()
         {
             if (_logger != null)
@@ -285,9 +254,6 @@ namespace PlayFab.Internal
 #endif
         }
 
-        /// <summary>
-        /// MonoBehaviour OnDisable
-        /// </summary>
         private void OnDisable()
         {
             if (_logger != null)
@@ -303,9 +269,6 @@ namespace PlayFab.Internal
 #endif
         }
 
-        /// <summary>
-        /// MonoBehaviour OnDestroy
-        /// </summary>
         private void OnDestroy()
         {
             var transport = PluginManager.GetPlugin<ITransportPlugin>(PluginContract.PlayFab_Transport);
@@ -327,9 +290,6 @@ namespace PlayFab.Internal
 #endif
         }
 
-        /// <summary>
-        /// MonoBehaviour OnApplicationFocus
-        /// </summary>
         public void OnApplicationFocus(bool isFocused)
         {
 #if !DISABLE_PLAYFABENTITY_API && !DISABLE_PLAYFABCLIENT_API
@@ -340,9 +300,6 @@ namespace PlayFab.Internal
 #endif
         }
 
-        /// <summary>
-        /// MonoBehaviour OnApplicationQuit
-        /// </summary>
         public void OnApplicationQuit()
         {
 #if !DISABLE_PLAYFABENTITY_API && !DISABLE_PLAYFABCLIENT_API
@@ -353,9 +310,6 @@ namespace PlayFab.Internal
 #endif
         }
 
-        /// <summary>
-        /// MonoBehaviour Update
-        /// </summary>
         private void Update()
         {
             var transport = PluginManager.GetPlugin<ITransportPlugin>(PluginContract.PlayFab_Transport);
@@ -364,8 +318,8 @@ namespace PlayFab.Internal
                 if (_apiCallQueue != null)
                 {
                     foreach (var eachRequest in _apiCallQueue)
-                        transport.MakeApiCall(eachRequest); // Flush the queue
-                    _apiCallQueue = null; // null this after it's flushed
+                        transport.MakeApiCall(eachRequest); 
+                    _apiCallQueue = null; 
                 }
                 transport.Update();
             }
@@ -391,17 +345,17 @@ namespace PlayFab.Internal
             var serializer = PluginManager.GetPlugin<ISerializerPlugin>(PluginContract.PlayFab_Serializer);
             try
             {
-                // Deserialize the error
+
                 errorDict = serializer.DeserializeObject<Dictionary<string, object>>(json);
             }
-            catch (Exception) { /* Unusual, but shouldn't actually matter */ }
+            catch (Exception) {  }
             try
             {
                 object errorDetailsString;
                 if (errorDict != null && errorDict.TryGetValue("errorDetails", out errorDetailsString))
                     errorDetails = serializer.DeserializeObject<Dictionary<string, List<string>>>(errorDetailsString.ToString());
             }
-            catch (Exception) { /* Unusual, but shouldn't actually matter */ }
+            catch (Exception) {  }
 
             return new PlayFabError
             {

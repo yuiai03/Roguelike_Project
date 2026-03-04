@@ -10,7 +10,7 @@ public abstract class HealthBarUIBase : MonoBehaviour
     protected TextMeshProUGUI healthText;
     protected Camera mainCamera;
     protected CanvasGroup canvasGroup;
-    
+
     protected virtual void Awake()
     {
         mainCamera = Camera.main;
@@ -29,14 +29,14 @@ public abstract class HealthBarUIBase : MonoBehaviour
 
         Initialize();
     }
-    
+
     protected virtual void Start()
     {
         float currentHealth = GetCurrentHealth();
         float maxHealth = GetMaxHealth();
         UpdateHealthBar(currentHealth, maxHealth);
     }
- 
+
     protected abstract void Initialize();
     protected abstract float GetCurrentHealth();
     protected abstract float GetMaxHealth();
@@ -44,7 +44,7 @@ public abstract class HealthBarUIBase : MonoBehaviour
     public virtual void UpdateHealthBar(float currentHealth, float maxHealth)
     {
         if (maxHealth <= 0) return;
-        
+
         if (hideWhenFull && canvasGroup != null)
         {
             bool isFullHealth = currentHealth >= maxHealth;
@@ -52,7 +52,7 @@ public abstract class HealthBarUIBase : MonoBehaviour
         }
 
         float healthPercent = Mathf.Clamp01(currentHealth / maxHealth);
-        
+
         fillImage.fillAmount = healthPercent;
 
         healthText.text = $"{currentHealth}";

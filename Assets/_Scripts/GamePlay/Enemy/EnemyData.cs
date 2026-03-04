@@ -52,29 +52,24 @@ public class EnemyData : MonoBehaviour
 
     private void Awake()
     {
-        // Load data từ Config nếu có
+
         if (dataConfig != null)
         {
             LoadFromConfig();
         }
     }
 
-    /// <summary>
-    /// Load dữ liệu từ ScriptableObject Config (READ-ONLY, không modify Config)
-    /// </summary>
     public void LoadFromConfig()
     {
         if (dataConfig == null) return;
 
-        // Tính toán thông số ngẫu nhiên cho mỗi con quái
         float var = randomVariation;
-        
-        // Randomize các chỉ số chính (± variation %)
+
         maxHealth = dataConfig.maxHealth;
         currentHealth = maxHealth;
 
         moveSpeed = dataConfig.moveSpeed * UnityEngine.Random.Range(1f - var, 1f + var);
-        attackRange = dataConfig.attackRange; // Tầm đánh giữ nguyên để không bị lỗi logic
+        attackRange = dataConfig.attackRange; 
         rotationSpeed = dataConfig.rotationSpeed;
 
         groundDistance = dataConfig.groundDistance;
@@ -83,9 +78,8 @@ public class EnemyData : MonoBehaviour
         knockbackForce = dataConfig.knockbackForce;
         knockbackDuration = dataConfig.knockbackDuration;
 
-        expValue = dataConfig.expValue; // EXP rớt ra giữ nguyên
+        expValue = dataConfig.expValue; 
 
-        // Load specific data based on config type
         if (dataConfig is MeleeEnemyConfig meleeConfig)
         {
             contactDamage = meleeConfig.contactDamage;
@@ -105,14 +99,11 @@ public class EnemyData : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Reset về giá trị mặc định từ Config (hoặc hardcoded nếu không có Config)
-    /// </summary>
     public void ResetData()
     {
         if (dataConfig != null)
         {
-            // Nếu có Config, load từ Config
+
             LoadFromConfig();
         }
     }
@@ -133,12 +124,9 @@ public class EnemyData : MonoBehaviour
         return currentHealth <= 0f;
     }
 
-    /// <summary>
-    /// Helper: Lấy config của enemy theo kiểu cụ thể (ví dụ TankEnemyConfig)
-    /// </summary>
     public T GetConfig<T>() where T : EnemyConfig
     {
-        // EnemyConfig lưu dưới dạng private field, truy cập qua đối tượng này
+
         return dataConfig as T;
     }
 }

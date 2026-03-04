@@ -33,11 +33,6 @@ namespace PlayFab.Internal
         }
         #endregion
 
-        /// <summary>
-        /// When a PlayFab login occurs, check the result information, and
-        ///   relay it to _OnPlayFabLogin where the information is used
-        /// </summary>
-        /// <param name="result"></param>
         public static void OnPlayFabLogin(PlayFabResultCommon result, PlayFabApiSettings settings, IPlayFabInstanceApi instanceApi)
         {
             var loginResult = result as ClientModels.LoginResult;
@@ -45,7 +40,6 @@ namespace PlayFab.Internal
             if (loginResult == null && registerResult == null)
                 return;
 
-            // Gather things common to the result types
             ClientModels.UserSettings settingsForUser = null;
             string playFabId = null;
             string entityId = null;
@@ -75,11 +69,6 @@ namespace PlayFab.Internal
             _OnPlayFabLogin(settingsForUser, playFabId, entityId, entityType, settings, instanceApi);
         }
 
-        /// <summary>
-        /// Separated from OnPlayFabLogin, to explicitly lose the refs to loginResult and registerResult, because
-        ///   only one will be defined, but both usually have all the information we REALLY need here.
-        /// But the result signatures are different and clunky, so do the separation above, and processing here
-        /// </summary>
         private static void _OnPlayFabLogin(ClientModels.UserSettings settingsForUser, string playFabId, string entityId, string entityType, PlayFabApiSettings settings, IPlayFabInstanceApi instanceApi)
         {
             _needsAttribution = _gatherDeviceInfo = _gatherScreenTime = false;
@@ -90,7 +79,6 @@ namespace PlayFab.Internal
                 _gatherScreenTime = settingsForUser.GatherFocusInfo;
             }
 
-            // Device information gathering
             SendDeviceInfoToPlayFab(settings, instanceApi);
 
 #if !DISABLE_PLAYFABENTITY_API

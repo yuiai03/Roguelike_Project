@@ -5,10 +5,7 @@ using System.Collections.Generic;
 
 namespace Roguelike.Systems.Leaderboard
 {
-    /// <summary>
-    /// Script quản lý kết nối và gửi/nhận dữ liệu Leaderboard từ PlayFab.
-    /// Có hỗ trợ cập nhật Tên người chơi (DisplayName).
-    /// </summary>
+
     public class PlayFabLeaderboardManager : Singleton<PlayFabLeaderboardManager>
     {
         [Header("PlayFab Settings")]
@@ -22,6 +19,8 @@ namespace Roguelike.Systems.Leaderboard
         public event OnLeaderboardLoaded OnLeaderboardDataArrived;
 
         public event System.Action OnLoginSuccessEvent;
+        public event System.Action OnProfileLoadedEvent;
+        public event System.Action OnSubmitNameFailed;
 
         [HideInInspector]
         public string CurrentDisplayName = "";
@@ -44,9 +43,7 @@ namespace Roguelike.Systems.Leaderboard
         }
 
         #region 1. L O G I N
-        /// <summary>
-        /// Đăng nhập ẩn danh vào PlayFab dựa trên Custom ID (Ví dụ: System Info của device).
-        /// </summary>
+
         public void Login()
         {
             string customId = GetOrCreateCustomId();
@@ -56,21 +53,21 @@ namespace Roguelike.Systems.Leaderboard
 #else
             var request = new LoginWithCustomIDRequest { CustomId = customId, CreateAccount = true };
 #endif
-            
+
             Debug.Log($"Đang kết nối tới PlayFab với CustomId: {customId}...");
             PlayFabClientAPI.LoginWithCustomID(request, OnLoginSuccess, OnError);
         }
 
         private string GetOrCreateCustomId()
         {
-            // Kiểm tra xem đã lưu CustomID ở local chưa
+
             if (PlayerPrefs.HasKey("PlayFab_CustomId"))
             {
                 return PlayerPrefs.GetString("PlayFab_CustomId");
             }
             else
             {
-                // Nếu chưa có, tạo mới dựa trên Device ID, hoặc sinh ngẫu nhiên nếu bạn muốn
+
                 string newId = SystemInfo.deviceUniqueIdentifier;
                 PlayerPrefs.SetString("PlayFab_CustomId", newId);
                 PlayerPrefs.Save();
@@ -83,7 +80,6 @@ namespace Roguelike.Systems.Leaderboard
             CurrentPlayFabId = result.PlayFabId;
             Debug.Log("Đăng nhập PlayFab thành công! PlayFabId: " + result.PlayFabId);
 
-            // Tải thông tin Profile để lấy Display Name hiện tại
             GetPlayerProfile();
 
             OnLoginSuccessEvent?.Invoke();
@@ -104,7 +100,19 @@ namespace Roguelike.Systems.Leaderboard
                     CurrentDisplayName = result.PlayerProfile.DisplayName;
                     Debug.Log($"Tên hiện tại: {CurrentDisplayName}");
                 }
-            }, OnError);
+                OnProfileLoadedEvent?.Invoke();
+            }, error =>
+            {
+                OnError(error);
+                OnProfileLoadedEvent?.Invoke();
+            });
+        }
+
+        [ContextMenu("Reset Display Name Only (Test Only)")]
+        public void ResetDisplayNameOnly()
+        {
+            CurrentDisplayName = "";
+            Debug.Log("Đã xóa Display Name cục bộ. Lần chạy tiếp theo sẽ hiện lại form nhập tên (cùng account PlayFab).");
         }
 
         [ContextMenu("Reset PlayFab User (Test Only)")]
@@ -113,11 +121,10 @@ namespace Roguelike.Systems.Leaderboard
             Debug.Log("Đang xóa dữ liệu User ở bộ nhớ Local...");
             PlayFabClientAPI.ForgetAllCredentials();
 
-            // Sinh random CustomID mới để lần sau Login ra account khác
             string newRandomId = System.Guid.NewGuid().ToString();
             PlayerPrefs.SetString("PlayFab_CustomId", newRandomId);
             PlayerPrefs.Save();
-            
+
             CurrentPlayFabId = "";
             CurrentDisplayName = "";
 
@@ -126,35 +133,26 @@ namespace Roguelike.Systems.Leaderboard
         #endregion
 
         #region 2. U P D A T E   D I S P L A Y   N A M E
-        /// <summary>
-        /// Cập nhật tên hiển thị của người chơi trên Leaderboard.
-        /// Gọi hàm này khi người chơi nhập tên vào Input Field.
-        /// </summary>
-        public void SubmitName(string newName)
+        public void SubmitName(string newName, System.Action onFailed = null, System.Action onSuccess = null)
         {
-            if (string.IsNullOrEmpty(newName) || newName.Length > 25)
-            {
-                Debug.LogWarning("Tên không hợp lệ (Trống hoặc dài hơn 25 ký tự).");
-                return;
-            }
-
-            Debug.Log($"Đang gửi yêu cầu đổi tên thành: {newName}");
             var request = new UpdateUserTitleDisplayNameRequest { DisplayName = newName };
-            PlayFabClientAPI.UpdateUserTitleDisplayName(request, OnDisplayNameUpdate, OnError);
-        }
-
-        private void OnDisplayNameUpdate(UpdateUserTitleDisplayNameResult result)
-        {
-            Debug.Log($"Đổi tên thành công: {result.DisplayName}");
-            CurrentDisplayName = result.DisplayName;
+            PlayFabClientAPI.UpdateUserTitleDisplayName(request,
+            resultCallback =>
+            {
+                CurrentDisplayName = resultCallback.DisplayName;
+                onSuccess?.Invoke();
+            },
+            error =>
+            {
+                OnError(error);
+                OnSubmitNameFailed?.Invoke();
+                onFailed?.Invoke();
+            });
         }
         #endregion
 
         #region 3. U P D A T E   S C O R E
-        /// <summary>
-        /// Gửi điểm (XP cuối cùng) lên thống kê (Statistic) của PlayFab.
-        /// Hàm này được gọi khi Game Over.
-        /// </summary>
+
         public void SubmitScore(int finalScore)
         {
             Debug.Log($"Đang gửi điểm {finalScore} lên PlayFab ({LeaderboardStatisticName})...");
@@ -181,9 +179,6 @@ namespace Roguelike.Systems.Leaderboard
         }
         #endregion
 
-        /// <summary>
-        /// Kéo Top 100 từ PlayFab về hiển thị trên UI.
-        /// </summary>
         public void GetLeaderboardData()
         {
             if (!PlayFabClientAPI.IsClientLoggedIn())
@@ -222,9 +217,6 @@ namespace Roguelike.Systems.Leaderboard
 
         public event System.Action<PlayerLeaderboardEntry> OnPlayerLeaderboardDataArrived;
 
-        /// <summary>
-        /// Lấy vị trí và điểm của chính người chơi hiện tại trên Leaderboard.
-        /// </summary>
         public void GetPlayerLeaderboardData()
         {
             if (!PlayFabClientAPI.IsClientLoggedIn()) return;

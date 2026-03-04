@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 
-/// <summary>
-/// Custom Editor cho BuffCardConfig.
-/// Hiển thị field phụ tuỳ theo buffType được chọn.
-/// </summary>
 [CustomEditor(typeof(BuffCardConfig))]
 public class BuffCardConfigEditor : Editor
 {
@@ -12,7 +8,6 @@ public class BuffCardConfigEditor : Editor
     {
         serializedObject.Update();
 
-        // ── Card Info ────────────────────────────────────────────
         EditorGUILayout.LabelField("Card Info", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("cardName"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
@@ -20,7 +15,6 @@ public class BuffCardConfigEditor : Editor
 
         EditorGUILayout.Space();
 
-        // ── Buff Settings ─────────────────────────────────────────
         EditorGUILayout.LabelField("Buff Settings", EditorStyles.boldLabel);
         SerializedProperty buffTypeProp = serializedObject.FindProperty("buffType");
         EditorGUILayout.PropertyField(buffTypeProp);
@@ -29,7 +23,6 @@ public class BuffCardConfigEditor : Editor
 
         EditorGUILayout.Space();
 
-        // ── Extra Settings theo loại buff ─────────────────────────
         BuffType currentType = (BuffType)buffTypeProp.enumValueIndex;
 
         switch (currentType)

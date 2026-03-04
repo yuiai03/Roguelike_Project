@@ -2,9 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-/// <summary>
-/// Quản lý danh sách buff cards và random selection
-/// </summary>
 public class BuffCardManager : Singleton<BuffCardManager>
 {
     [Header("Card Data")]
@@ -20,9 +17,6 @@ public class BuffCardManager : Singleton<BuffCardManager>
 
     private List<BuffCardConfig> selectedCardsHistory = new List<BuffCardConfig>();
 
-    /// <summary>
-    /// Random chọn N cards từ pool
-    /// </summary>
     public List<BuffCardConfig> GetRandomCards(int count)
     {
         if (allCards.Count == 0)
@@ -31,13 +25,11 @@ public class BuffCardManager : Singleton<BuffCardManager>
             return new List<BuffCardConfig>();
         }
 
-        // Nếu số card yêu cầu nhiều hơn số card có sẵn, trả về tất cả
         if (count >= allCards.Count)
         {
             return new List<BuffCardConfig>(allCards);
         }
 
-        // Random với weighted rarity
         List<BuffCardConfig> selectedCards = new List<BuffCardConfig>();
         List<BuffCardConfig> availableCards = new List<BuffCardConfig>(allCards);
 
@@ -45,18 +37,15 @@ public class BuffCardManager : Singleton<BuffCardManager>
         {
             BuffCardConfig card = GetWeightedRandomCard(availableCards);
             selectedCards.Add(card);
-            availableCards.Remove(card); // Không chọn trùng trong cùng 1 lần
+            availableCards.Remove(card); 
         }
 
         return selectedCards;
     }
 
-    /// <summary>
-    /// Chọn random card với xác suất dựa trên rarity
-    /// </summary>
     private BuffCardConfig GetWeightedRandomCard(List<BuffCardConfig> cards)
     {
-        // Tính tổng weight (rarity càng cao càng hiếm)
+
         float totalWeight = 0f;
         foreach (var card in cards)
         {
@@ -64,7 +53,6 @@ public class BuffCardManager : Singleton<BuffCardManager>
             totalWeight += weight;
         }
 
-        // Random pick
         float randomValue = Random.Range(0f, totalWeight);
         float currentWeight = 0f;
 
@@ -79,13 +67,9 @@ public class BuffCardManager : Singleton<BuffCardManager>
             }
         }
 
-        // Fallback
         return cards[cards.Count - 1];
     }
 
-    /// <summary>
-    /// Apply card buff vào player
-    /// </summary>
     public void ApplyCard(BuffCardConfig card)
     {
         if (card == null)
@@ -100,12 +84,10 @@ public class BuffCardManager : Singleton<BuffCardManager>
         Debug.Log($"Applied card: {card.cardName}");
     }
 
-    // Getters
     public List<BuffCardConfig> GetAllCards() => allCards;
     public List<BuffCardConfig> GetSelectedHistory() => selectedCardsHistory;
     public int GetCardsPerSelection() => cardsPerSelection;
 
-    // Public method for external access
     public void SelectCards()
     {
         List<BuffCardConfig> cards = GetRandomCards(cardsPerSelection);

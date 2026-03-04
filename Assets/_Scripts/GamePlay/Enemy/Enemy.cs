@@ -29,7 +29,6 @@ public class Enemy : MonoBehaviour, IDamageable
     public UnityEvent OnAttack;
     public UnityEvent<float, float> OnHealthChanged;
 
-    // Pool management
     private PoolType poolType = PoolType.None;
 
     protected Renderer enemyRenderer;
@@ -44,8 +43,7 @@ public class Enemy : MonoBehaviour, IDamageable
     protected Vector3 knockbackVelocity;
     protected Vector3 velocity;
     protected CharacterController controller;
-    
-    // AI Randomization
+
     protected Vector3 moveOffset;
     protected float offsetChangeTimer;
 
@@ -126,7 +124,6 @@ public class Enemy : MonoBehaviour, IDamageable
             UpdateAI();
         }
 
-        // Nếu Player chết thì khóa vận tốc đi lại ngang, chỉ cho rớt thẳng đứng hoặc knockback
         if (currentState == EnemyState.Idle || currentState == EnemyState.Dead)
         {
             velocity.x = 0;
@@ -143,8 +140,7 @@ public class Enemy : MonoBehaviour, IDamageable
     protected virtual void UpdateAI()
     {
         if (player == null) return;
-        
-        // Nếu Player chết, Enemy đứng yên vĩnh viễn (đưa về trạng thái Idle)
+
         if (PlayerHealth.Instance != null && PlayerHealth.Instance.IsDead())
         {
             if (currentState != EnemyState.Idle)
@@ -154,7 +150,6 @@ public class Enemy : MonoBehaviour, IDamageable
             return;
         }
 
-        // Định kỳ thay đổi hướng offset một chút để quái vật tránh đi cùng 1 đường
         offsetChangeTimer -= Time.deltaTime;
         if (offsetChangeTimer <= 0f)
         {
@@ -178,7 +173,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void UpdateMeleeAI(float distanceToPlayer)
     {
-        // Melee always chases player to get in attack range
+
         if (distanceToPlayer > enemyData.attackRange)
         {
             currentState = EnemyState.Chasing;
@@ -192,18 +187,18 @@ public class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void UpdateRangedAI(float distanceToPlayer)
     {
-        // Ranged moves toward player to get into attack range, then shoots
+
         LookAtPlayer();
 
         if (distanceToPlayer > enemyData.attackRange)
         {
-            // Too far, move closer to attack range
+
             currentState = EnemyState.Chasing;
             MoveTowardsPlayer();
         }
         else
         {
-            // In range, attack!
+
             currentState = EnemyState.Attacking;
             if (attackTimer <= 0f)
             {
@@ -270,7 +265,7 @@ public class Enemy : MonoBehaviour, IDamageable
         OnAttack?.Invoke();
 
         Vector3 spawnPosition = firePoint.position + Vector3.up * 1f;
-        // Bắn ngang: flat hoá trục Y để đạn không rơi xuống
+
         Vector3 targetPosition = player.position + Vector3.up * 1f + moveOffset * 0.3f;
         Vector3 rawDir = targetPosition - spawnPosition;
         rawDir.y = 0f;
@@ -313,7 +308,6 @@ public class Enemy : MonoBehaviour, IDamageable
         OnTakeDamageEvent?.Invoke();
         OnHealthChanged?.Invoke(enemyData.currentHealth, enemyData.maxHealth);
 
-        // Hiển thị damage text tại hitPoint
         if (DamageTextSpawner.Instance != null && damage > 0)
         {
             DamageTextSpawner.Instance.Spawn(damage, hitPoint, isHeal: false, isPlayer: false, isCrit: false);
@@ -328,7 +322,6 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    /// <summary> Cập nhật lại UI máu (được gọi sau khi WaveSpawner thay đổi chỉ số) </summary>
     public void RefreshHealthState()
     {
         if (enemyData != null)
@@ -341,12 +334,11 @@ public class Enemy : MonoBehaviour, IDamageable
     protected virtual void ApplyKnockback(Vector3 direction)
     {
         direction.y = 0f;
-        if (direction == Vector3.zero) return; // không knockback nếu không có hướng
+        if (direction == Vector3.zero) return; 
         knockbackVelocity = direction.normalized * enemyData.knockbackForce;
         knockbackTimer = enemyData.knockbackDuration;
     }
 
-    /// <summary>Áp dụng knockback tùy chỉnh (dùng cho OrbitingBall, AoE, v.v.)</summary>
     public void Knockback(Vector3 direction, float force, float duration = 0.2f)
     {
         if (isDead) return;
@@ -375,7 +367,6 @@ public class Enemy : MonoBehaviour, IDamageable
         currentState = EnemyState.Dead;
         OnDeath?.Invoke();
 
-        // Return to pool sau 0.5s để animation chạy xong
         if (poolType != PoolType.None && ObjectPool.Instance != null)
         {
             ObjectPool.Instance.DespawnAfterDelay(gameObject, poolType, 0.5f);
@@ -386,60 +377,47 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    /// <summary>
-    /// Set pool type cho enemy (gọi bởi spawner)
-    /// </summary>
     public void SetPoolType(PoolType type)
     {
         poolType = type;
     }
 
-    /// <summary>
-    /// Reset enemy khi spawn từ pool
-    /// </summary>
     protected virtual void OnEnable()
     {
-        // Reset states
+
         isDead = false;
         currentState = EnemyState.Idle;
         knockbackTimer = 0f;
         velocity = Vector3.zero;
         knockbackVelocity = Vector3.zero;
 
-        // Reset enemy data về giá trị gốc (và random offset lại chỉ số)
         if (enemyData != null)
         {
             enemyData.ResetData();
         }
 
-        // Delay đánh nhịp đầu ngẫu nhiên để tránh quái bắn/đâm chung 1 lúc
         attackTimer = Random.Range(0.2f, 1f);
-        offsetChangeTimer = 0f; // Sẽ random ngay ở frame đầu của UpdateAI
+        offsetChangeTimer = 0f; 
 
-        // Reset material color
         if (enemyMaterial != null && !isDead)
         {
             enemyMaterial.color = originalColor;
         }
 
-        // Enable controller
         if (controller != null)
         {
             controller.enabled = true;
         }
 
-        // Clear old event listeners để tránh memory leak
         OnDeath.RemoveAllListeners();
 
-        // Notify health changed
         if (enemyData != null)
         {
-            // Reset máu trước khi gọi event
+
             enemyData.ResetHealth();
             OnHealthChanged?.Invoke(enemyData.currentHealth, enemyData.maxHealth);
         }
 
-        // Bật lại Animator (sửa lỗi Animation đơ khi tái sử dụng từ Pool)
         Animator anim = GetComponentInChildren<Animator>();
         if (anim != null) anim.enabled = true;
     }
@@ -490,7 +468,6 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (enemyData == null) return;
 
-        // Only draw attack range (red) since detection range is no longer used
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, enemyData.attackRange);
     }

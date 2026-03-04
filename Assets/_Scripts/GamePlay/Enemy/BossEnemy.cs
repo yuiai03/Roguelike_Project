@@ -2,14 +2,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
 
-/// <summary>
-/// Base class cho tất cả Boss. Quản lý phase transitions.
-/// Subclasses override OnPhase1(), OnPhase2(), OnPhase3() để implement logic riêng.
-/// </summary>
 public abstract class BossEnemy : Enemy
 {
     [Header("Boss Events")]
-    public UnityEvent<int> OnPhaseChanged; // phase (1,2,3)
+    public UnityEvent<int> OnPhaseChanged; 
     public UnityEvent      OnBossDied;
 
     protected BossEnemyConfig bossConfig;
@@ -17,7 +13,6 @@ public abstract class BossEnemy : Enemy
     protected float baseSpeed;
     protected float baseShootCooldown;
 
-    // Projectile shoot timer chung
     protected float bossShootTimer;
 
     protected override void Awake()
@@ -56,7 +51,6 @@ public abstract class BossEnemy : Enemy
         Debug.Log($"[Boss] {bossConfig?.bossName} → Phase {newPhase}!");
         OnPhaseChanged?.Invoke(newPhase);
 
-        // Áp dụng speed multiplier
         if (enemyData != null && bossConfig != null)
         {
             float speedMult = newPhase == 2 ? bossConfig.phase2SpeedMult : bossConfig.phase3SpeedMult;
@@ -75,7 +69,6 @@ public abstract class BossEnemy : Enemy
         base.Die();
         OnBossDied?.Invoke();
 
-        // Trigger buff card drop
         if (bossConfig != null)
         {
             BuffCardManager.Instance?.SelectCards();
@@ -83,12 +76,10 @@ public abstract class BossEnemy : Enemy
         }
     }
 
-    // ── Subclass hooks ──────────────────────────────────────────────────
     protected virtual void OnPhase1() { }
     protected virtual void OnPhase2() { }
     protected virtual void OnPhase3() { }
 
-    /// <summary>Bắn N đạn theo vòng tròn đều nhau</summary>
     protected void ShootRadial(int bulletCount, float damageOverride = -1)
     {
         if (bossConfig == null) return;
@@ -103,7 +94,6 @@ public abstract class BossEnemy : Enemy
         bossShootTimer = bossConfig.bossShootCooldown;
     }
 
-    /// <summary>Bắn N đạn hình quạt về phía player</summary>
     protected void ShootFanAtPlayer(int bulletCount, float spreadAngle = 30f, float damageOverride = -1)
     {
         if (bossConfig == null || player == null) return;

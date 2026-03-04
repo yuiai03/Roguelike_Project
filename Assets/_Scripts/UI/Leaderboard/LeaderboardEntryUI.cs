@@ -9,11 +9,8 @@ namespace Roguelike.UI.Leaderboard
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI scoreText;
 
-        [Header("Background Sprites")]
+        [Header("Background Settings")]
         [SerializeField] private UnityEngine.UI.Image backgroundImage;
-        [SerializeField] private Sprite oddRowSprite;
-        [SerializeField] private Sprite evenRowSprite;
-        [SerializeField] private Sprite myEntrySprite;
 
         public void Setup(int rank, string displayName, int score, bool isMyEntry = false)
         {
@@ -24,13 +21,17 @@ namespace Roguelike.UI.Leaderboard
 
             if (backgroundImage != null)
             {
-                if (rank % 2 == 0)
+                if (isMyEntry)
                 {
-                    if (evenRowSprite != null) backgroundImage.sprite = evenRowSprite;
+                    if (PlayFabLeaderboardUI.Instance != null) backgroundImage.color = PlayFabLeaderboardUI.Instance.myEntryColor;
+                }
+                else if (rank % 2 == 0)
+                {
+                    if (PlayFabLeaderboardUI.Instance != null) backgroundImage.color = PlayFabLeaderboardUI.Instance.evenRowColor;
                 }
                 else
                 {
-                    if (oddRowSprite != null) backgroundImage.sprite = oddRowSprite;
+                    if (PlayFabLeaderboardUI.Instance != null) backgroundImage.color = PlayFabLeaderboardUI.Instance.oddRowColor;
                 }
             }
         }

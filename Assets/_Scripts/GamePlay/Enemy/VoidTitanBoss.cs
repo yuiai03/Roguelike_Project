@@ -1,16 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Boss Wave 30 — Void Titan.
-/// P1: laser thẳng + melee
-/// P2 (50%): tạo vùng AoE chậm trên sàn 5s
-/// P3 (25%): triệu hồi 3 Exploder + 12 đạn tròn/1.5s
-/// </summary>
 public class VoidTitanBoss : BossEnemy
 {
     [Header("Void Titan")]
-    [SerializeField] private PoolType exploderPoolType = PoolType.MeleeEnemy; // đổi thành ExplodeEnemy khi có
+    [SerializeField] private PoolType exploderPoolType = PoolType.MeleeEnemy; 
     [SerializeField] private float laserDamage    = 40f;
     [SerializeField] private float laserRange     = 20f;
     [SerializeField] private float laserCooldown  = 4f;
@@ -27,7 +21,6 @@ public class VoidTitanBoss : BossEnemy
         base.Awake();
         laserTimer = laserCooldown;
 
-        // Void Titan dùng phase3Threshold = 0.25 (override)
         if (bossConfig != null)
             bossConfig.phase3Threshold = 0.25f;
     }
@@ -37,7 +30,6 @@ public class VoidTitanBoss : BossEnemy
         base.Update();
         if (isDead) return;
 
-        // P1 + P2: bắn laser định kỳ
         if (currentPhase <= 2)
         {
             laserTimer -= Time.deltaTime;
@@ -45,7 +37,6 @@ public class VoidTitanBoss : BossEnemy
                 StartCoroutine(FireLaser());
         }
 
-        // P3: bắn 12 đạn vòng tròn
         if (currentPhase == 3 && bossShootTimer <= 0f)
         {
             ShootRadial(12);
@@ -61,7 +52,6 @@ public class VoidTitanBoss : BossEnemy
         Vector3 dir = (player.position - transform.position).normalized;
         dir.y = 0f;
 
-        // Raycast laser về phía player
         if (Physics.Raycast(transform.position + Vector3.up, dir, out RaycastHit hit, laserRange, playerLayer))
         {
             IDamageable dmg = hit.collider.GetComponent<IDamageable>();
@@ -79,7 +69,7 @@ public class VoidTitanBoss : BossEnemy
     {
         while (currentPhase >= 2 && !isDead)
         {
-            // Tạo slow zone tại vị trí hiện tại
+
             StartCoroutine(SlowZoneEffect(transform.position));
             yield return new WaitForSeconds(slowZoneDuration + 2f);
         }
@@ -92,12 +82,12 @@ public class VoidTitanBoss : BossEnemy
         while (elapsed < slowZoneDuration && !isDead)
         {
             elapsed += Time.deltaTime;
-            // Slow player trong vùng
+
             Collider[] hits = Physics.OverlapSphere(center, slowZoneRadius, playerLayer);
             foreach (var col in hits)
             {
                 IFreezable freezable = col.GetComponent<IFreezable>();
-                freezable?.Slow(0.5f, 0.2f); // 50% slow liên tục
+                freezable?.Slow(0.5f, 0.2f); 
             }
             yield return new WaitForSeconds(0.2f);
         }
@@ -108,7 +98,6 @@ public class VoidTitanBoss : BossEnemy
         if (exploderSpawned) return;
         exploderSpawned = true;
 
-        // Spawn 3 Exploder
         for (int i = 0; i < 3; i++)
         {
             Vector3 offset = new Vector3(Random.Range(-5f, 5f), 0f, Random.Range(-5f, 5f));

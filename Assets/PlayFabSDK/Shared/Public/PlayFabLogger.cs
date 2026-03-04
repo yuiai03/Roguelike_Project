@@ -16,15 +16,11 @@ namespace PlayFab.Public
         int port { get; set; }
         string url { get; set; }
 
-        // Unity MonoBehaviour callbacks
         void OnEnable();
         void OnDisable();
         void OnDestroy();
     }
 
-    /// <summary>
-    /// This is some unity-log capturing logic, and threading tools that allow logging to be caught and processed on another thread
-    /// </summary>
     public abstract class PlayFabLoggerBase : IPlayFabLogger
     {
         private static readonly StringBuilder Sb = new StringBuilder();
@@ -34,7 +30,7 @@ namespace PlayFab.Public
         private Thread _writeLogThread;
         private readonly object _threadLock = new object();
         private static readonly TimeSpan _threadKillTimeout = TimeSpan.FromSeconds(60);
-        private DateTime _threadKillTime = DateTime.UtcNow + _threadKillTimeout; // Kill the thread after 1 minute of inactivity
+        private DateTime _threadKillTime = DateTime.UtcNow + _threadKillTimeout; 
         private bool _isApplicationPlaying = true;
         private int _pendingLogsCount;
 
@@ -54,12 +50,12 @@ namespace PlayFab.Public
 
         public virtual void OnEnable()
         {
-            PlayFabHttp.instance.StartCoroutine(RegisterLogger()); // Coroutine helper to set up log-callbacks
+            PlayFabHttp.instance.StartCoroutine(RegisterLogger()); 
         }
 
         private IEnumerator RegisterLogger()
         {
-            yield return new WaitForEndOfFrame(); // Effectively just a short wait before activating this registration
+            yield return new WaitForEndOfFrame(); 
             if (!string.IsNullOrEmpty(PlayFabSettings.LoggerHost))
             {
 #if UNITY_5 || UNITY_5_3_OR_NEWER
@@ -87,28 +83,12 @@ namespace PlayFab.Public
             _isApplicationPlaying = false;
         }
 
-        /// <summary>
-        /// Logs are cached and written in bursts
-        /// BeginUploadLog is called at the begining of each burst
-        /// </summary>
         protected abstract void BeginUploadLog();
-        /// <summary>
-        /// Logs are cached and written in bursts
-        /// UploadLog is called for each cached log, between BeginUploadLog and EndUploadLog
-        /// </summary>
+
         protected abstract void UploadLog(string message);
-        /// <summary>
-        /// Logs are cached and written in bursts
-        /// EndUploadLog is called at the end of each burst
-        /// </summary>
+
         protected abstract void EndUploadLog();
 
-        /// <summary>
-        /// Handler to process Unity logs into our logging system
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="stacktrace"></param>
-        /// <param name="type"></param>
         private void HandleUnityLog(string message, string stacktrace, LogType type)
         {
             if (!PlayFabSettings.EnableRealTimeLogging)
@@ -156,7 +136,7 @@ namespace PlayFab.Public
                 bool active;
                 lock (_threadLock)
                 {
-                    // Kill the thread after 1 minute of inactivity
+
                     _threadKillTime = DateTime.UtcNow + _threadKillTimeout;
                 }
 
@@ -166,32 +146,32 @@ namespace PlayFab.Public
                     lock (LogMessageQueue)
                     {
                         _pendingLogsCount = LogMessageQueue.Count;
-                        while (LogMessageQueue.Count > 0) // Transfer the messages to the local queue
+                        while (LogMessageQueue.Count > 0) 
                             localLogQueue.Enqueue(LogMessageQueue.Dequeue());
                     }
 
                     BeginUploadLog();
-                    while (localLogQueue.Count > 0) // Transfer the messages to the local queue
+                    while (localLogQueue.Count > 0) 
                         UploadLog(localLogQueue.Dequeue());
                     EndUploadLog();
 
                     #region Expire Thread.
-                    // Check if we've been inactive
+
                     lock (_threadLock)
                     {
                         var now = DateTime.UtcNow;
                         if (_pendingLogsCount > 0 && _isApplicationPlaying)
                         {
-                            // Still active, reset the _threadKillTime
+
                             _threadKillTime = now + _threadKillTimeout;
                         }
-                        // Kill the thread after 1 minute of inactivity
+
                         active = now <= _threadKillTime;
                         if (!active)
                         {
                             _writeLogThread = null;
                         }
-                        // This thread will be stopped, so null this now, inside lock (_threadLock)
+
                     }
                     #endregion
 
@@ -213,22 +193,17 @@ namespace PlayFab.Public
         int port { get; set; }
         string url { get; set; }
 
-        // Unity MonoBehaviour callbacks
         void OnEnable();
         void OnDisable();
         void OnDestroy();
     }
 
-    /// <summary>
-    /// This is just a placeholder.  WP8 doesn't support direct threading, but instead makes you use the await command.
-    /// </summary>
     public abstract class PlayFabLoggerBase : IPlayFabLogger
     {
         public string ip { get; set; }
         public int port { get; set; }
         public string url { get; set; }
 
-        // Unity MonoBehaviour callbacks
         public void OnEnable() { }
         public void OnDisable() { }
         public void OnDestroy() { }
@@ -239,30 +214,17 @@ namespace PlayFab.Public
     }
 #endif
 
-    /// <summary>
-    /// This translates the logs up to the PlayFab service via a PlayFab restful API
-    /// TODO: PLAYFAB - attach these to the PlayFab API
-    /// </summary>
     public class PlayFabLogger : PlayFabLoggerBase
     {
-        /// <summary>
-        /// Logs are cached and written in bursts
-        /// BeginUploadLog is called at the begining of each burst
-        /// </summary>
+
         protected override void BeginUploadLog()
         {
         }
-        /// <summary>
-        /// Logs are cached and written in bursts
-        /// UploadLog is called for each cached log, between BeginUploadLog and EndUploadLog
-        /// </summary>
+
         protected override void UploadLog(string message)
         {
         }
-        /// <summary>
-        /// Logs are cached and written in bursts
-        /// EndUploadLog is called at the end of each burst
-        /// </summary>
+
         protected override void EndUploadLog()
         {
         }

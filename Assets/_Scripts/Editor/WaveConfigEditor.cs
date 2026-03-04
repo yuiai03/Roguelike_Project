@@ -1,9 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 
-/// <summary>
-/// Custom Editor cho WaveConfig - Visualize spawn points trong Scene view
-/// </summary>
 [CustomEditor(typeof(WaveConfig))]
 public class WaveConfigEditor : Editor
 {
@@ -15,13 +12,11 @@ public class WaveConfigEditor : Editor
     {
         WaveConfig config = (WaveConfig)target;
 
-        // Draw default inspector
         DrawDefaultInspector();
 
         EditorGUILayout.Space(10);
         EditorGUILayout.LabelField("Spawn Point Visualizer", EditorStyles.boldLabel);
 
-        // Wave selector
         if (config.waves.Count > 0)
         {
             selectedWaveIndex = EditorGUILayout.IntSlider("Preview Wave", selectedWaveIndex, 0, config.waves.Count - 1);
@@ -30,7 +25,7 @@ public class WaveConfigEditor : Editor
 
             if (showPreview)
             {
-                // Repaint scene view để update gizmos
+
                 SceneView.RepaintAll();
             }
 
@@ -41,7 +36,6 @@ public class WaveConfigEditor : Editor
                 MessageType.Info
             );
 
-            // Group selector cho editing
             if (config.waves[selectedWaveIndex].enemyGroups.Count > 0)
             {
                 EditorGUILayout.Space(5);
@@ -65,13 +59,11 @@ public class WaveConfigEditor : Editor
         if (wave == null || wave.enemyGroups.Count == 0)
             return;
 
-        // Draw all spawn points for selected wave
         for (int i = 0; i < wave.enemyGroups.Count; i++)
         {
             EnemyGroup group = wave.enemyGroups[i];
             DrawEnemyGroupGizmo(group, i, selectedGroupIndex == i);
 
-            // Position handle để kéo thả
             EditorGUI.BeginChangeCheck();
             Vector3 newPosition = Handles.PositionHandle(group.spawnPosition, Quaternion.identity);
             if (EditorGUI.EndChangeCheck())
@@ -81,7 +73,6 @@ public class WaveConfigEditor : Editor
                 EditorUtility.SetDirty(config);
             }
 
-            // Click để select group
             if (Handles.Button(group.spawnPosition, Quaternion.identity, 0.5f, 0.5f, Handles.SphereHandleCap))
             {
                 selectedGroupIndex = i;
@@ -99,19 +90,15 @@ public class WaveConfigEditor : Editor
             groupColor = Color.yellow;
         }
 
-        // Draw center sphere
         Handles.color = groupColor;
         Handles.DrawWireDisc(group.spawnPosition, Vector3.up, 0.5f);
         Handles.DrawLine(group.spawnPosition, group.spawnPosition + Vector3.up * 2f);
 
-        // Draw spread radius
         Handles.color = new Color(groupColor.r, groupColor.g, groupColor.b, 0.3f);
         Handles.DrawWireDisc(group.spawnPosition, Vector3.up, group.spreadRadius);
 
-        // Draw filled circle at spread radius
         Handles.DrawSolidDisc(group.spawnPosition, Vector3.up, 0.3f);
 
-        // Draw preview spawn positions
         Handles.color = groupColor;
         int previewCount = Mathf.Min(group.enemyCount, 8);
         for (int i = 0; i < previewCount; i++)
@@ -122,7 +109,6 @@ public class WaveConfigEditor : Editor
             Handles.DrawWireDisc(pos, Vector3.up, 0.3f);
         }
 
-        // Draw label
         GUIStyle style = new GUIStyle(GUI.skin.label);
         style.normal.textColor = isSelected ? Color.yellow : Color.white;
         style.fontStyle = FontStyle.Bold;

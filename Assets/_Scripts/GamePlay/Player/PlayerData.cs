@@ -37,40 +37,36 @@ public class PlayerData : MonoBehaviour
     public float attackSpeedBonus = 0f;
 
     [Header("MultiShot")]
-    public int multiShotCount = 1; // 1 = bắn 1 đạn thẳng (mặc định), 2+ = bắn hình quạt
-    public float multiShotAngle = 15f; // Góc mỗi bên so với hướng tâm
-    public float multiShotDamage = 0f; // Damage riêng của đạn MultiShot (0 = dùng damage gốc)
+    public int multiShotCount = 1; 
+    public float multiShotAngle = 15f; 
+    public float multiShotDamage = 0f; 
 
     [Header("AoE Explosion")]
     public bool isAoEEnabled = false;
     public float aoeRadius = 3f;
-    public float aoeDamagePercent = 0.5f; // 50% của damage gốc
-    public float aoeDamage = 0f; // Damage AoE flat (0 = dùng aoeDamagePercent)
+    public float aoeDamagePercent = 0.5f; 
+    public float aoeDamage = 0f; 
 
     [Header("Frost Shot")]
-    public float frostChance = 0f; // 0-1 (0.25 = 25%)
+    public float frostChance = 0f; 
     public float frostDuration = 1.5f;
 
     [Header("Exp Boost")]
-    public float expBonusPercent = 0f; // Stack, 0.25 = +25%
+    public float expBonusPercent = 0f; 
 
     private void Awake()
     {
-        // Load data từ Config nếu có
+
         if (dataConfig != null)
         {
             LoadFromConfig();
         }
     }
 
-    /// <summary>
-    /// Load dữ liệu từ ScriptableObject Config (READ-ONLY, không modify Config)
-    /// </summary>
     public void LoadFromConfig()
     {
         if (dataConfig == null) return;
 
-        // Copy từ Config sang runtime variables
         moveSpeed = dataConfig.moveSpeed;
         gravity = dataConfig.gravity;
         rotationSpeed = dataConfig.rotationSpeed;
@@ -90,7 +86,6 @@ public class PlayerData : MonoBehaviour
         projectileSpeed = dataConfig.projectileSpeed;
         projectileLifetime = dataConfig.projectileLifetime;
 
-        // Bonuses start at 0
         healthBonus = 0f;
         moveSpeedBonus = 0f;
         damageBonus = 0f;
@@ -104,14 +99,11 @@ public class PlayerData : MonoBehaviour
         expBonusPercent = 0f;
     }
 
-    /// <summary>
-    /// Reset về giá trị mặc định từ Config (hoặc hardcoded nếu không có Config)
-    /// </summary>
     public void ResetData()
     {
         if (dataConfig != null)
         {
-            // Nếu có Config, load từ Config
+
             LoadFromConfig();
         }
     }
