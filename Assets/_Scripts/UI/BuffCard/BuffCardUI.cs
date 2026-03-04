@@ -13,7 +13,7 @@ public class BuffCardUI : MonoBehaviour
     [SerializeField] private Button selectButton;
 
     private BuffCardConfig currentCard;
-    private CardSelectionUI parentUI;
+    private CardSelectionPanel parentUI;
 
     private void Awake()
     {
@@ -23,7 +23,7 @@ public class BuffCardUI : MonoBehaviour
         }
     }
 
-    public void Setup(BuffCardConfig card, CardSelectionUI parent)
+    public void Setup(BuffCardConfig card, CardSelectionPanel parent)
     {
         currentCard = card;
         parentUI = parent;

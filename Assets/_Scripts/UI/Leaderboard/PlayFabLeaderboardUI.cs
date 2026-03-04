@@ -15,21 +15,12 @@ namespace Roguelike.UI.Leaderboard
         [Header("My Score UI (Tùy chọn)")]
         [SerializeField] private LeaderboardEntryUI myEntryUI;
 
-        [Header("Name Submission (Tùy chọn)")]
-        [SerializeField] private TMPro.TMP_InputField nameInput;
-        [SerializeField] private Button submitNameButton;
-
         [Header("Entry Colors")]
         public Color oddRowColor = Color.white;
         public Color evenRowColor = new Color(0.9f, 0.9f, 0.9f, 1f);
         public Color myEntryColor = new Color(1f, 0.9f, 0.6f, 1f);
 
-        protected override void Awake()
-        {
-            base.Awake();
-        }
-
-        void Start()
+        private void OnEnable()
         {
             if (PlayFabLeaderboardManager.Instance != null)
             {
@@ -37,17 +28,6 @@ namespace Roguelike.UI.Leaderboard
                 PlayFabLeaderboardManager.Instance.OnPlayerLeaderboardDataArrived += UpdatePlayerLeaderboardUI;
                 PlayFabLeaderboardManager.Instance.OnLoginSuccessEvent += FetchLeaderboard;
             }
-
-            if (submitNameButton != null && nameInput != null)
-            {
-                submitNameButton.onClick.AddListener(OnSubmitNameClicked);
-            }
-
-            FetchLeaderboard();
-        }
-
-        private void OnEnable()
-        {
         }
 
         private void OnDisable()
@@ -57,21 +37,6 @@ namespace Roguelike.UI.Leaderboard
                 PlayFabLeaderboardManager.Instance.OnLeaderboardDataArrived -= UpdateLeaderboardUI;
                 PlayFabLeaderboardManager.Instance.OnPlayerLeaderboardDataArrived -= UpdatePlayerLeaderboardUI;
                 PlayFabLeaderboardManager.Instance.OnLoginSuccessEvent -= FetchLeaderboard;
-            }
-
-            if (submitNameButton != null)
-            {
-                submitNameButton.onClick.RemoveListener(OnSubmitNameClicked);
-            }
-        }
-
-        private void OnSubmitNameClicked()
-        {
-            if (PlayFabLeaderboardManager.Instance != null && nameInput != null)
-            {
-                PlayFabLeaderboardManager.Instance.SubmitName(nameInput.text);
-
-                nameInput.text = ""; 
             }
         }
 

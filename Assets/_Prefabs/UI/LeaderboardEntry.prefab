@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -122,9 +122,6 @@ MonoBehaviour:
   nameText: {fileID: 1018712229022736237}
   scoreText: {fileID: 5762471622446693586}
   backgroundImage: {fileID: 1053407074305370386}
-  oddRowSprite: {fileID: 21300000, guid: 8cba899b2bd69a54281bd2aa75f7d901, type: 3}
-  evenRowSprite: {fileID: 21300000, guid: 5e45c66e740d99748a142bdd35fcf852, type: 3}
-  myEntrySprite: {fileID: 21300000, guid: 8cba899b2bd69a54281bd2aa75f7d901, type: 3}
 --- !u!1 &6728882007252867877
 GameObject:
   m_ObjectHideFlags: 0

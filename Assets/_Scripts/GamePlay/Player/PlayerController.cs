@@ -159,6 +159,10 @@ public class PlayerController : Singleton<PlayerController>
             moveInput = Vector2.zero;
             dashPressed = false;
         }
+        else
+        {
+            moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        }
     }
 
     public PlayerData GetPlayerData()

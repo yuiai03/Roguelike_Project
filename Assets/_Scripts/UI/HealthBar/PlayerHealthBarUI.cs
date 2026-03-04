@@ -11,16 +11,10 @@ public class PlayerHealthBarUI : HealthBarUIBase
         playerHealth = GetComponentInParent<PlayerHealth>();
         playerData = GetComponentInParent<PlayerData>();
 
-        playerHealth?.OnHealthChanged?.AddListener(UpdateHealthBar);
+        playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
     }
 
-    protected override float GetCurrentHealth()
-    {
-        return playerData.currentHealth;
-    }
+    protected override float GetCurrentHealth() => playerData.currentHealth;
 
-    protected override float GetMaxHealth()
-    {
-        return playerData.maxHealth;
-    }
+    protected override float GetMaxHealth() => playerData.maxHealth;
 }

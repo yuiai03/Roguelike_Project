@@ -7,16 +7,10 @@ public class EnemyHealthBarUI : HealthBarUIBase
     protected override void Initialize()
     {
         enemy = GetComponentInParent<Enemy>();
-        enemy?.OnHealthChanged?.AddListener(UpdateHealthBar);
+        enemy.OnHealthChanged.AddListener(UpdateHealthBar);
     }
 
-    protected override float GetCurrentHealth()
-    {
-        return enemy != null ? enemy.GetCurrentHealth() : 0f;
-    }
+    protected override float GetCurrentHealth() => enemy.GetCurrentHealth();
 
-    protected override float GetMaxHealth()
-    {
-        return enemy != null ? enemy.GetMaxHealth() : 0f;
-    }
+    protected override float GetMaxHealth() => enemy.GetMaxHealth();
 }

@@ -1,74 +1,32 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using TMPro;
 
-public class LeaderboardNPC : MonoBehaviour
+public class LeaderboardNPC : NPC
 {
-    [Header("UI Reference")]
-    [SerializeField] private GameObject leaderboardPanel;
-    [Header("Settings")]
-    [Tooltip("Tốc độ xoay tự động của NPC")]
-    [SerializeField] private float rotationSpeed = 50f;
-    [SerializeField] private string interactText = "Bấm F để xem bảng xếp hạng";
+    protected override bool CanShowPrompt() =>
+        WaveSpawner.Instance == null || WaveSpawner.Instance.GetCurrentWave() <= 0;
 
-    private Transform playerTransform;
-    private bool playerInRange = false;
-    private InputSystem_Actions inputActions;
-    private void Awake()
+    protected override void OnEnable()
     {
-        inputActions = new InputSystem_Actions();
+        base.OnEnable();
+        LeaderboardPanel.OnClosed += OnPanelClosed;
     }
-    private void OnEnable()
+
+    protected override void OnDisable()
     {
-        inputActions.Enable();
+        base.OnDisable();
+        LeaderboardPanel.OnClosed -= OnPanelClosed;
     }
-    private void OnDisable()
+
+    protected override bool IsPanelOpen() =>
+        GameUI.Instance?.LeaderboardPanel?.IsOpen == true;
+
+    protected override void Interact()
     {
-        inputActions.Disable();
+        GameUI.Instance?.LeaderboardPanel?.Show();
     }
-    private void Update()
+
+    protected override void OnPlayerExit()
     {
-        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
-        if (playerInRange)
-        {
-            if (Keyboard.current != null && (Keyboard.current.fKey.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame))
-            {
-                Interact();
-            }
-        }
-    }
-    private void Interact()
-    {
-        GameStartUIManager.Instance.ShowLeaderboard();
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (WaveSpawner.Instance.GetCurrentWave() > 0) return;
-        if (other.CompareTag("Player") || other.GetComponent<PlayerController>() != null)
-        {
-            playerTransform = other.transform;
-            playerInRange = true;
-            {
-                GameStartUIManager.Instance.ShowInteractPrompt(true, interactText);
-            }
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") || other.GetComponent<PlayerController>() != null)
-        {
-            playerInRange = false;
-            {
-                GameStartUIManager.Instance.ShowInteractPrompt(false);
-            }
-            if (leaderboardPanel.activeSelf)
-            {
-                leaderboardPanel.SetActive(false);
-                if (PlayerController.Instance != null)
-                {
-                    PlayerController.Instance.SetInputActive(true);
-                }
-            }
-        }
+        GameUI.Instance?.LeaderboardPanel?.Hide();
     }
 }

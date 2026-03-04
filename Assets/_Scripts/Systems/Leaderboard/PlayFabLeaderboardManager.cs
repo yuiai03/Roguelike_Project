@@ -135,7 +135,16 @@ namespace Roguelike.Systems.Leaderboard
         #region 2. U P D A T E   D I S P L A Y   N A M E
         public void SubmitName(string newName, System.Action onFailed = null, System.Action onSuccess = null)
         {
-            var request = new UpdateUserTitleDisplayNameRequest { DisplayName = newName };
+            string trimmed = newName != null ? newName.Trim() : "";
+            if (trimmed.Length < 3 || trimmed.Length > 25)
+            {
+                Debug.LogWarning($"Tên '{trimmed}' không hợp lệ: phải từ 3 đến 25 ký tự (hiện có {trimmed.Length} ký tự).");
+                OnSubmitNameFailed?.Invoke();
+                onFailed?.Invoke();
+                return;
+            }
+
+            var request = new UpdateUserTitleDisplayNameRequest { DisplayName = trimmed };
             PlayFabClientAPI.UpdateUserTitleDisplayName(request,
             resultCallback =>
             {
@@ -241,8 +250,7 @@ namespace Roguelike.Systems.Leaderboard
         #region E R R O R S
         private void OnError(PlayFabError error)
         {
-            Debug.LogError("Có lỗi xảy ra với PlayFab!");
-            Debug.LogError(error.GenerateErrorReport());
+            Debug.LogError($"PlayFab Error [{error.Error} : {error.ErrorMessage}");
         }
         #endregion
     }

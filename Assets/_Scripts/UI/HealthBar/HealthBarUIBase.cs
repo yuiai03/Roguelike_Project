@@ -25,7 +25,8 @@ public abstract class HealthBarUIBase : MonoBehaviour
             canvasGroup.blocksRaycasts = false;
         }
 
-        healthText = fillImage.gameObject.GetComponentInChildren<TextMeshProUGUI>();
+        if (fillImage != null)
+            healthText = fillImage.GetComponentInChildren<TextMeshProUGUI>();
 
         Initialize();
     }
@@ -51,10 +52,8 @@ public abstract class HealthBarUIBase : MonoBehaviour
             canvasGroup.alpha = isFullHealth ? 0f : 1f;
         }
 
-        float healthPercent = Mathf.Clamp01(currentHealth / maxHealth);
+        fillImage.fillAmount = currentHealth / maxHealth;
 
-        fillImage.fillAmount = healthPercent;
-
-        healthText.text = $"{currentHealth}";
+        if (healthText != null) healthText.text = currentHealth.ToString();
     }
 }

@@ -13,7 +13,7 @@ public class BuffCardManager : Singleton<BuffCardManager>
     [Header("References")]
     [SerializeField] private PlayerData playerData;
     [SerializeField] private PlayerHealth playerHealth;
-    [SerializeField] private CardSelectionUI cardSelectionUI;
+    [SerializeField] private CardSelectionPanel cardSelectionUI;
 
     private List<BuffCardConfig> selectedCardsHistory = new List<BuffCardConfig>();
 
@@ -37,7 +37,7 @@ public class BuffCardManager : Singleton<BuffCardManager>
         {
             BuffCardConfig card = GetWeightedRandomCard(availableCards);
             selectedCards.Add(card);
-            availableCards.Remove(card); 
+            availableCards.Remove(card);
         }
 
         return selectedCards;
@@ -98,7 +98,7 @@ public class BuffCardManager : Singleton<BuffCardManager>
         }
         else
         {
-            Debug.LogError("CardSelectionUI not found in scene!");
+            Debug.LogError("CardSelectionPanel not found in scene!");
         }
     }
 
