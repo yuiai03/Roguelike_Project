@@ -21,17 +21,20 @@ namespace Roguelike.UI.Leaderboard
 
             if (backgroundImage != null)
             {
-                if (isMyEntry)
+                if (GameUI.Instance != null && GameUI.Instance.LeaderboardPanel != null)
                 {
-                    if (PlayFabLeaderboardUI.Instance != null) backgroundImage.color = PlayFabLeaderboardUI.Instance.myEntryColor;
-                }
-                else if (rank % 2 == 0)
-                {
-                    if (PlayFabLeaderboardUI.Instance != null) backgroundImage.color = PlayFabLeaderboardUI.Instance.evenRowColor;
-                }
-                else
-                {
-                    if (PlayFabLeaderboardUI.Instance != null) backgroundImage.color = PlayFabLeaderboardUI.Instance.oddRowColor;
+                    if (isMyEntry)
+                    {
+                        backgroundImage.color = GameUI.Instance.LeaderboardPanel.myEntryColor;
+                    }
+                    else if (rank % 2 == 0)
+                    {
+                        backgroundImage.color = GameUI.Instance.LeaderboardPanel.evenRowColor;
+                    }
+                    else
+                    {
+                        backgroundImage.color = GameUI.Instance.LeaderboardPanel.oddRowColor;
+                    }
                 }
             }
         }

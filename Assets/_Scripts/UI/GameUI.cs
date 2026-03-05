@@ -13,6 +13,7 @@ public class GameUI : Singleton<GameUI>
     [SerializeField] private NameInputPanel nameInputPanel;
     [SerializeField] private CardSelectionPanel cardSelectionPanel;
     [SerializeField] private PlayerStatsPanel playerStatsPanel;
+    [SerializeField] private NotiPanel notiPanel;
 
     public InteractPanel InteractPanel => interactPanel;
     public ChallengePanel ChallengePanel => challengePanel;
@@ -20,4 +21,5 @@ public class GameUI : Singleton<GameUI>
     public NameInputPanel NameInputPanel => nameInputPanel;
     public CardSelectionPanel CardSelectionPanel => cardSelectionPanel;
     public PlayerStatsPanel PlayerStatsPanel => playerStatsPanel;
+    public NotiPanel NotiPanel => notiPanel;
 }
