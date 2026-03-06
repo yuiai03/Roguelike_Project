@@ -76,7 +76,16 @@ public class CardSelectionPanel : PanelBase
 
         if (cardUI != null)
         {
-            cardUI.Setup(card, this);
+            int currentLevel = 0;
+            int maxLevel = 0;
+
+            if (cardManager != null)
+            {
+                currentLevel = cardManager.GetCardLevel(card.buffType);
+                maxLevel = cardManager.GetMaxLevelForBuff(card);
+            }
+
+            cardUI.Setup(card, this, currentLevel, maxLevel);
         }
 
         spawnedCardUIs.Add(cardObj);

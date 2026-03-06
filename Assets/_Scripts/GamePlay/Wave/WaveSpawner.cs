@@ -93,43 +93,39 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
     private SimpleWaveData GenerateEndlessWave(int waveNumber)
     {
-        bool isBoss = (waveNumber % 10 == 0);
+        if (waveConfig == null || waveConfig.waves.Count == 0) return null;
 
-        SimpleWaveData wave = new SimpleWaveData
+        int baseIndex = (waveNumber - 1) % waveConfig.waves.Count;
+        int loopCount = (waveNumber - 1) / waveConfig.waves.Count; // Số vòng lặp đã trôi qua
+
+        SimpleWaveData baseWave = waveConfig.waves[baseIndex];
+
+        SimpleWaveData endlessWave = new SimpleWaveData
         {
-            preparationTime = isBoss ? 5f : 3f,
-            isBossWave = isBoss,
-            bossPoolType = isBoss ? PoolType.VoidTitanBoss : PoolType.None,
+            preparationTime = baseWave.preparationTime,
+            isBossWave = baseWave.isBossWave,
+            bossPoolType = baseWave.bossPoolType,
             enemyGroups = new List<EnemyGroup>()
         };
 
-        if (!isBoss)
+        // Mỗi vòng lặp (10 wave) sẽ tăng thêm 1 con quái
+        int extraEnemies = loopCount * 1; 
+        // Bán kính spawn rải rác cũng tăng thêm 1 đơn vị
+        float extraRadius = loopCount * 1f; 
+
+        foreach (var baseGroup in baseWave.enemyGroups)
         {
-            int extraWaves = waveNumber - waveConfig.waves.Count;
-            int baseCount = 10;
-            int additionalCount = Mathf.FloorToInt(extraWaves * 1.5f);
-
-            wave.enemyGroups.Add(new EnemyGroup
+            endlessWave.enemyGroups.Add(new EnemyGroup
             {
-                enemyPoolType = PoolType.MeleeEnemy,
-                enemyCount = Mathf.Min(baseCount + additionalCount, 40), 
-                spreadRadius = 6f,
-                spawnDelay = 0f
+                enemyPoolType = baseGroup.enemyPoolType,
+                enemyCount = baseGroup.enemyCount + extraEnemies,
+                spawnPosition = baseGroup.spawnPosition,
+                spreadRadius = baseGroup.spreadRadius + extraRadius,
+                spawnDelay = baseGroup.spawnDelay
             });
-
-            if (waveNumber > 35)
-            {
-                wave.enemyGroups.Add(new EnemyGroup
-                {
-                    enemyPoolType = PoolType.RangedEnemy,
-                    enemyCount = Mathf.Min(5 + Mathf.FloorToInt((waveNumber - 35) * 0.8f), 20), 
-                    spreadRadius = 8f,
-                    spawnDelay = 1f
-                });
-            }
         }
 
-        return wave;
+        return endlessWave;
     }
 
     private IEnumerator RunWave(SimpleWaveData wave)

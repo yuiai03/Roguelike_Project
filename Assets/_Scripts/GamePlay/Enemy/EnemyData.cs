@@ -39,6 +39,13 @@ public class EnemyData : MonoBehaviour
     public float projectileLifetime = 10f;
     public float shootCooldown = 2f;
 
+    [Header("Combat - Fly")]
+    public int burstCount = 6;
+    public float burstDelay = 0.15f;
+    public float stopDistance = 8f;
+    public float bobFrequency = 4f;
+    public float bobAmplitude = 0.3f;
+
     [Header("Knockback")]
     public float knockbackForce = 3f;
     public float knockbackDuration = 0.2f;
@@ -97,6 +104,19 @@ public class EnemyData : MonoBehaviour
             projectileLifetime = rangedConfig.projectileLifetime;
             shootCooldown = rangedConfig.shootCooldown * UnityEngine.Random.Range(1f - var, 1f + var);
         }
+        else if (dataConfig is FlyEnemyConfig flyConfig)
+        {
+            projectileDamage = flyConfig.projectileDamage;
+            projectileSpeed = flyConfig.projectileSpeed * UnityEngine.Random.Range(1f - var, 1f + var);
+            projectileLifetime = flyConfig.projectileLifetime;
+            shootCooldown = flyConfig.shootCooldown * UnityEngine.Random.Range(1f - var, 1f + var);
+
+            burstCount = flyConfig.burstCount;
+            burstDelay = flyConfig.burstDelay;
+            stopDistance = flyConfig.stopDistance;
+            bobFrequency = flyConfig.bobFrequency;
+            bobAmplitude = flyConfig.bobAmplitude;
+        }
     }
 
     public void ResetData()
@@ -138,4 +158,5 @@ public enum EnemyType
     Tank,
     Exploder,
     Boss,
+    Fly,
 }

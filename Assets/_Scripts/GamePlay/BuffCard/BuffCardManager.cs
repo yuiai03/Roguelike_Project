@@ -16,6 +16,7 @@ public class BuffCardManager : Singleton<BuffCardManager>
     [SerializeField] private CardSelectionPanel cardSelectionUI;
 
     private List<BuffCardConfig> selectedCardsHistory = new List<BuffCardConfig>();
+    private Dictionary<BuffType, int> cardLevels = new Dictionary<BuffType, int>();
 
     public List<BuffCardConfig> GetRandomCards(int count)
     {
@@ -31,7 +32,23 @@ public class BuffCardManager : Singleton<BuffCardManager>
         }
 
         List<BuffCardConfig> selectedCards = new List<BuffCardConfig>();
-        List<BuffCardConfig> availableCards = new List<BuffCardConfig>(allCards);
+        List<BuffCardConfig> availableCards = new List<BuffCardConfig>();
+
+        foreach (var c in allCards)
+        {
+            int currentLevel = GetCardLevel(c.buffType);
+            int maxLevel = GetMaxLevelForBuff(c);
+            
+            if (maxLevel == 0 || currentLevel < maxLevel)
+            {
+                availableCards.Add(c);
+            }
+        }
+
+        if (count >= availableCards.Count)
+        {
+            return new List<BuffCardConfig>(availableCards);
+        }
 
         for (int i = 0; i < count && availableCards.Count > 0; i++)
         {
@@ -45,11 +62,12 @@ public class BuffCardManager : Singleton<BuffCardManager>
 
     private BuffCardConfig GetWeightedRandomCard(List<BuffCardConfig> cards)
     {
+        float luck = (playerData != null) ? playerData.luckBonus : 0f;
 
         float totalWeight = 0f;
         foreach (var card in cards)
         {
-            float weight = Utils.GetRarityWeight(card.rarity);
+            float weight = Utils.GetRarityWeight(card.rarity, luck);
             totalWeight += weight;
         }
 
@@ -58,7 +76,7 @@ public class BuffCardManager : Singleton<BuffCardManager>
 
         foreach (var card in cards)
         {
-            float weight = Utils.GetRarityWeight(card.rarity);
+            float weight = Utils.GetRarityWeight(card.rarity, luck);
             currentWeight += weight;
 
             if (randomValue <= currentWeight)
@@ -81,7 +99,26 @@ public class BuffCardManager : Singleton<BuffCardManager>
         card.ApplyBuff(playerData, playerHealth);
         selectedCardsHistory.Add(card);
 
-        Debug.Log($"Applied card: {card.cardName}");
+        if (cardLevels.ContainsKey(card.buffType))
+        {
+            cardLevels[card.buffType]++;
+        }
+        else
+        {
+            cardLevels[card.buffType] = 1;
+        }
+
+        Debug.Log($"Applied card: {card.cardName} (Level {cardLevels[card.buffType]})");
+    }
+
+    public int GetCardLevel(BuffType type)
+    {
+        return cardLevels.ContainsKey(type) ? cardLevels[type] : 0;
+    }
+
+    public int GetMaxLevelForBuff(BuffCardConfig card)
+    {
+        return card.maxLevel;
     }
 
     public List<BuffCardConfig> GetAllCards() => allCards;

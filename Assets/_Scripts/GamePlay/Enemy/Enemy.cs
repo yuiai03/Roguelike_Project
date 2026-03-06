@@ -409,8 +409,6 @@ public class Enemy : MonoBehaviour, IDamageable
             controller.enabled = true;
         }
 
-        OnDeath.RemoveAllListeners();
-
         if (enemyData != null)
         {
 

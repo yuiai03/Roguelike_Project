@@ -10,10 +10,11 @@ public class Projectile : MonoBehaviour
     protected GameObject owner;
 
     private float timer;
+    protected TrailRenderer trailRenderer;
 
     protected virtual void Awake()
     {
-
+        trailRenderer = GetComponentInChildren<TrailRenderer>();
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -36,6 +37,11 @@ public class Projectile : MonoBehaviour
         if (this.direction != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(this.direction);
+        }
+
+        if (trailRenderer != null)
+        {
+            trailRenderer.Clear();
         }
     }
 

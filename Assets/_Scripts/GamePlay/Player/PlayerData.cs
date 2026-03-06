@@ -35,10 +35,11 @@ public class PlayerData : MonoBehaviour
     public float moveSpeedBonus = 0f;
     public float damageBonus = 0f;
     public float attackSpeedBonus = 0f;
+    public float luckBonus = 0f;
 
     [Header("MultiShot")]
     public int multiShotCount = 1; 
-    public float multiShotAngle = 15f; 
+    public float multiShotAngle = 10f; 
     public float multiShotDamage = 0f; 
 
     [Header("AoE Explosion")]
@@ -90,6 +91,7 @@ public class PlayerData : MonoBehaviour
         moveSpeedBonus = 0f;
         damageBonus = 0f;
         attackSpeedBonus = 0f;
+        luckBonus = 0f;
 
         multiShotCount = 1;
         multiShotDamage = 0f;

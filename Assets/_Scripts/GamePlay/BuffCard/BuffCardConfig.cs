@@ -21,6 +21,8 @@ public enum BuffType
 
     SpiritPierce,
     SpiritExplosion,
+
+    IncreaseLuck,
 }
 
 public enum RarityType
@@ -44,6 +46,8 @@ public class BuffCardConfig : ScriptableObject
     public BuffType buffType;
     public float value; 
     public RarityType rarity = RarityType.Common;
+    [Tooltip("Giới hạn tối đa (0 = không giới hạn)")]
+    public int maxLevel = 0;
 
     [Header("MultiShot Settings")]
     [Tooltip("Số đạn bắn thêm mỗi lần pick (chỉ dùng với buff MultiShot)")]
@@ -141,11 +145,23 @@ public class BuffCardConfig : ScriptableObject
                 Debug.Log($"[Buff] Spirit {sType} added");
                 break;
             }
+
+            case BuffType.IncreaseLuck:
+                playerData.luckBonus += value;
+                Debug.Log($"[Buff] Luck +{value} → total {playerData.luckBonus}");
+                break;
         }
     }
 
-    public string GetFormattedDescription()
+    public string GetFormattedDescription(int currentLevel)
     {
-        return description.Replace("{value}", value.ToString());
+        string finalDesc = description;
+        
+        if (currentLevel > 0 && buffType == BuffType.AoEExplosion)
+        {
+            finalDesc = "Tăng thêm sát thương đạn nổ: +{value}";
+        }
+
+        return finalDesc.Replace("{value}", value.ToString());
     }
 }

@@ -23,5 +23,5 @@ MonoBehaviour:
   attackDamage: 50
   attackCooldown: 1
   attackRange: 50
-  projectileSpeed: 20
+  projectileSpeed: 30
   projectileLifetime: 10

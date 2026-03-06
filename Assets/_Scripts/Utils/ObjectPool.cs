@@ -18,6 +18,7 @@ public enum PoolType
     StoneGolemBoss = 12,
     ShadowStalkerBoss = 13,
     VoidTitanBoss = 14,
+    FlyEnemy = 15,
 }
 
 [System.Serializable]

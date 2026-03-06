@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   maxHealth: 100
-  moveSpeed: 5
+  moveSpeed: 6
   attackRange: 2
   rotationSpeed: 1440
   groundDistance: 0.4
   gravity: -10
-  knockbackForce: 3
-  knockbackDuration: 0.2
-  expValue: 50
+  knockbackForce: 0
+  knockbackDuration: 0
+  expValue: 20
   contactDamage: 10
   attackCooldown: 1
   lungeSpeed: 12

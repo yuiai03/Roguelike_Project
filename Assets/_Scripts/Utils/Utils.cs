@@ -21,9 +21,24 @@ public static class Utils
         return rarity.ToString();
     }
 
-    public static float GetRarityWeight(RarityType rarity)
+    public static float GetRarityWeight(RarityType rarity, float luckBonus = 0f)
     {
-        return 5f - (int)rarity;
+        float baseWeight = rarity switch
+        {
+            RarityType.Common => 100f,
+            RarityType.Rare => 30f,
+            RarityType.Epic => 10f,
+            RarityType.Legendary => 2f,
+            _ => 100f
+        };
+
+        if (rarity != RarityType.Common)
+        {
+            float bonusMultiplier = 1f + luckBonus;
+            baseWeight *= bonusMultiplier;
+        }
+
+        return baseWeight;
     }
 
     #endregion

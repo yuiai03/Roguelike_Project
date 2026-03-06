@@ -14,40 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waves:
   - enemyGroups:
-    - enemyPoolType: 3
+    - enemyPoolType: 15
       enemyCount: 1
       spawnPosition: {x: -16.724743, y: 0, z: 8.444865}
-      spreadRadius: 3
-      spawnDelay: 1
-    - enemyPoolType: 3
-      enemyCount: 1
-      spawnPosition: {x: 17.282757, y: 0, z: 7.9623575}
-      spreadRadius: 3
-      spawnDelay: 1
-    - enemyPoolType: 3
-      enemyCount: 1
-      spawnPosition: {x: -16.466976, y: 0, z: -9.622473}
-      spreadRadius: 3
-      spawnDelay: 1
-    - enemyPoolType: 3
-      enemyCount: 1
-      spawnPosition: {x: 17.282757, y: 0, z: -9.38702}
       spreadRadius: 3
       spawnDelay: 1
     preparationTime: 0
     isBossWave: 0
     bossPoolType: 0
   - enemyGroups:
-    - enemyPoolType: 4
+    - enemyPoolType: 15
       enemyCount: 3
       spawnPosition: {x: -17.722677, y: 0, z: -10.23188}
       spreadRadius: 3
       spawnDelay: 0
-    - enemyPoolType: 3
-      enemyCount: 3
-      spawnPosition: {x: -17.742294, y: 0, z: 8.538152}
-      spreadRadius: 3
-      spawnDelay: 1
     preparationTime: 0
     isBossWave: 0
     bossPoolType: 0

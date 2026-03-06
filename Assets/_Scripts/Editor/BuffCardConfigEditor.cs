@@ -20,6 +20,7 @@ public class BuffCardConfigEditor : Editor
         EditorGUILayout.PropertyField(buffTypeProp);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("value"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("rarity"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("maxLevel"));
 
         EditorGUILayout.Space();
 

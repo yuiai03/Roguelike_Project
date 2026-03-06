@@ -23,7 +23,7 @@ public class BuffCardUI : MonoBehaviour
         }
     }
 
-    public void Setup(BuffCardConfig card, CardSelectionPanel parent)
+    public void Setup(BuffCardConfig card, CardSelectionPanel parent, int currentLevel, int maxLevel)
     {
         currentCard = card;
         parentUI = parent;
@@ -31,10 +31,15 @@ public class BuffCardUI : MonoBehaviour
         if (card == null) return;
 
         if (nameText != null)
-            nameText.text = card.cardName;
+        {
+            if (maxLevel > 0)
+                nameText.text = $"{card.cardName} ({currentLevel}/{maxLevel})";
+            else
+                nameText.text = $"{card.cardName} (Lv. {currentLevel + 1})";
+        }
 
         if (descriptionText != null)
-            descriptionText.text = card.GetFormattedDescription();
+            descriptionText.text = card.GetFormattedDescription(currentLevel);
 
         if (iconImage != null && card.icon != null)
             iconImage.sprite = card.icon;

@@ -7,27 +7,27 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     [SerializeField] private int currentLevel = 1;
     [SerializeField] private float currentExp = 0f;
     [SerializeField] private float expToNextLevel = 100f;
-    [SerializeField] private float expScalingFactor = 1.1f; 
+    [SerializeField] private float expScalingFactor = 1.1f;
 
     [Header("Leaderboard Data")]
-    public float totalExpGained = 0f; 
+    public float totalExpGained = 0f;
 
     [Header("Events")]
-    public UnityEvent<int> OnLevelUp; 
-    public UnityEvent<float, float> OnExpChanged; 
-    public UnityEvent<int, int> OnLevelChanged; 
+    public UnityEvent<int> OnLevelUp;
+    public UnityEvent<float, float> OnExpChanged;
+    public UnityEvent<int, int> OnLevelChanged;
 
     private void Start()
     {
 
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
-        OnLevelChanged?.Invoke(currentLevel, 999); 
+        OnLevelChanged?.Invoke(currentLevel, 999);
     }
 
     public void AddExp(float amount)
     {
         currentExp += amount;
-        totalExpGained += amount; 
+        totalExpGained += amount;
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
 
         while (currentExp >= expToNextLevel)

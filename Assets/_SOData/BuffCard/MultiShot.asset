@@ -19,6 +19,7 @@ MonoBehaviour:
   buffType: 3
   value: 10
   rarity: 1
+  maxLevel: 3
   shotCount: 2
   aoeRadius: 2
   ballCount: 2

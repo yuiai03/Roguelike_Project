@@ -17,6 +17,7 @@ public class ExpDropper : MonoBehaviour
     {
         if (enemy != null)
         {
+            Debug.Log("Enemy found!");
             enemy.OnDeath.AddListener(DropExp);
         }
     }
