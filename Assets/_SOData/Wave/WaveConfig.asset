@@ -14,20 +14,717 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waves:
   - enemyGroups:
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -20.875603, y: 0.75, z: 11.731218}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -22.948551, y: 0.75, z: 14.584388}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -26.302654, y: 0.75, z: 13.494574}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -26.302654, y: 0.75, z: 9.967863}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -22.948551, y: 0.75, z: 8.878049}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 23.499474, y: 0.75, z: 11.525108}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 21.426525, y: 0.75, z: 14.378278}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 18.072422, y: 0.75, z: 13.288464}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 18.072422, y: 0.75, z: 9.761753}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 21.426525, y: 0.75, z: 8.671939}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 3.8535452, y: 0.75, z: -12.243548}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 1.7805961, y: 0.75, z: -9.390379}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -1.5735059, y: 0.75, z: -10.480193}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -1.5735059, y: 0.75, z: -14.006904}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 1.7805965, y: 0.75, z: -15.096718}
+      spreadRadius: 1
+      spawnDelay: 2
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups:
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -25.228153, y: 0.75, z: 12.810116}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 22.693007, y: 0.75, z: 11.55394}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -24.474215, y: 0.75, z: -13.599904}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 26.242502, y: 0.75, z: -14.200584}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -4.952829, y: 0.75, z: 13.046598}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -1.9528288, y: 0.75, z: 13.046598}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 1.0471712, y: 0.75, z: 13.046598}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 4.047171, y: 0.75, z: 13.046598}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 7.047171, y: 0.75, z: 13.046598}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -5.466538, y: 0.75, z: -14.60677}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -2.466538, y: 0.75, z: -14.60677}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 0.53346217, y: 0.75, z: -14.60677}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 3.533462, y: 0.75, z: -14.60677}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 6.533462, y: 0.75, z: -14.60677}
+      spreadRadius: 1
+      spawnDelay: 2
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups:
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 15.0810175, y: 0.75, z: -0.548234}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 12.216272, y: 0.75, z: 8.268544}
+      spreadRadius: 1
+      spawnDelay: 0.2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 4.716272, y: 0.75, z: 13.717614}
+      spreadRadius: 1
+      spawnDelay: 0.4
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -4.5542364, y: 0.75, z: 13.717614}
+      spreadRadius: 1
+      spawnDelay: 0.6
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -12.054238, y: 0.75, z: 8.268544}
+      spreadRadius: 1
+      spawnDelay: 0.8
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -14.9189825, y: 0.75, z: -0.5482353}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -12.054238, y: 0.75, z: -9.365011}
+      spreadRadius: 1
+      spawnDelay: 1.2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -4.554239, y: 0.75, z: -14.814081}
+      spreadRadius: 1
+      spawnDelay: 1.4
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 4.7162743, y: 0.75, z: -14.814081}
+      spreadRadius: 1
+      spawnDelay: 1.6
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 12.216271, y: 0.75, z: -9.365013}
+      spreadRadius: 1
+      spawnDelay: 1.8
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups:
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 0.37831306, y: 0.75, z: 16.50755}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -10.667707, y: 0.75, z: 10.482843}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -15.707594, y: 6.495161, z: -0.15849209}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -10.284692, y: 0.75, z: -10.207674}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 0.8246212, y: 0.75, z: -16.175434}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 12.609081, y: 0.75, z: -10.642649}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 19.912102, y: 0.75, z: -0.73389196}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 13.881739, y: 0.75, z: 10.703796}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -2.417953, y: 0.75, z: 16.043018}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -13.088905, y: 0.75, z: 8.476324}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -17.412361, y: 0.75, z: -2.8115706}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -7.8789215, y: 0.75, z: -12.737488}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 5.177687, y: 0.75, z: -18.116951}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 16.330587, y: 0.75, z: -9.196102}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 22.615374, y: 0.75, z: 2.0001702}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 12.16818, y: 0.75, z: 13.268764}
+      spreadRadius: 1
+      spawnDelay: 0
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups:
     - enemyPoolType: 15
       enemyCount: 1
-      spawnPosition: {x: -16.724743, y: 0, z: 8.444865}
-      spreadRadius: 3
+      spawnPosition: {x: 8.870914, y: 0.75, z: 6.536231}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -11.129086, y: 0.75, z: 6.536231}
+      spreadRadius: 1
+      spawnDelay: 0.2
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 8.870914, y: 0.75, z: -13.463769}
+      spreadRadius: 1
+      spawnDelay: 0.4
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -11.129086, y: 0.75, z: -13.463769}
+      spreadRadius: 1
+      spawnDelay: 0.6
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -5.7693615, y: 0.75, z: 12.153981}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -2.7693615, y: 0.75, z: 12.153981}
+      spreadRadius: 1
+      spawnDelay: 0.2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 0.2306385, y: 0.75, z: 12.153981}
+      spreadRadius: 1
+      spawnDelay: 0.4
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 3.2306385, y: 0.75, z: 12.153981}
+      spreadRadius: 1
+      spawnDelay: 0.6
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 6.2306385, y: 0.75, z: 12.153981}
+      spreadRadius: 1
+      spawnDelay: 0.8
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -5.436645, y: 0.75, z: -17.418127}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -2.436645, y: 0.75, z: -17.418127}
+      spreadRadius: 1
+      spawnDelay: 0.2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 0.56335497, y: 0.75, z: -17.418127}
+      spreadRadius: 1
+      spawnDelay: 0.4
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 3.563355, y: 0.75, z: -17.418127}
+      spreadRadius: 1
+      spawnDelay: 0.6
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 6.563355, y: 0.75, z: -17.418127}
+      spreadRadius: 1
+      spawnDelay: 0.8
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups:
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -2.6814795, y: 0.75, z: 11.661545}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -15.180548, y: 0.75, z: 9.843066}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -17.844587, y: 0.75, z: -10.3262005}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -7.3891835, y: 0.75, z: -0.8033309}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 7.144413, y: 0.75, z: -16.424585}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 22.576324, y: 0.75, z: -6.5454006}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 22.833492, y: 0.75, z: 1.704381}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 7.8027897, y: 0.75, z: 4.2730403}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -28.33355, y: 0.75, z: 1.3511314}
+      spreadRadius: 1
+      spawnDelay: 0
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -4.512849, y: 0.75, z: 4.162196}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 5.683072, y: 0.75, z: 7.5611253}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 3.3505878, y: 0.75, z: -12.794727}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 17.663303, y: 0.75, z: -16.234648}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 24.19701, y: 0.75, z: -0.09567022}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -8.581409, y: 0.75, z: 0.14016676}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -14.382794, y: 0.75, z: -8.997647}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -17.789911, y: 0.75, z: 5.5774527}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -5.6129274, y: 0.75, z: -12.190481}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 11.909692, y: 0.75, z: -7.0474286}
+      spreadRadius: 1
+      spawnDelay: 2
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups:
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -15.1156845, y: 0.75, z: 10.523876}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 1.7609229, y: 0.75, z: 12.964153}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -17.63617, y: 0.75, z: -3.6196177}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -21.727804, y: 0.75, z: -15.537159}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 11.628661, y: 0.75, z: -15.428776}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 33.281986, y: 0.75, z: -1.3856711}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 12.584761, y: 0.75, z: 9.19046}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -24.487463, y: 0.75, z: 6.4009056}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -24.06022, y: 0.75, z: -8.984484}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -0.78893185, y: 0.75, z: -6.7556934}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 3.4485455, y: 0.75, z: 4.452189}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 24.136736, y: 0.75, z: -4.4848375}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 23.093395, y: 0.75, z: -11.637617}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -3.837421, y: 0.75, z: -4.2206707}
+      spreadRadius: 1
       spawnDelay: 1
     preparationTime: 0
     isBossWave: 0
     bossPoolType: 0
   - enemyGroups:
     - enemyPoolType: 15
-      enemyCount: 3
-      spawnPosition: {x: -17.722677, y: 0, z: -10.23188}
-      spreadRadius: 3
-      spawnDelay: 0
+      enemyCount: 1
+      spawnPosition: {x: -28.672785, y: 0.75, z: 1.5628324}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -30.858633, y: 0.75, z: -4.049862}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -23.649904, y: 0.75, z: -4.7087603}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -22.437065, y: 0.75, z: 1.404202}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -2.449157, y: 0.75, z: 15.598511}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 5.8025923, y: 0.75, z: 16.024588}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -2.855341, y: 0.75, z: 9.953996}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 5.253185, y: 0.75, z: 10.707197}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 23.883068, y: 0.75, z: -0.09849501}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 31.018288, y: 0.75, z: 4.0462136}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 30.38987, y: 0.75, z: -6.169845}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 31.972834, y: 0.75, z: -0.8712878}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -2.2425733, y: 0.75, z: -17.93071}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 9.114887, y: 0.75, z: -17.450731}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 6.557969, y: 0.75, z: -14.319656}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 1.4651688, y: 0.75, z: -14.5585785}
+      spreadRadius: 1
+      spawnDelay: 3
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups:
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -20.513443, y: 0.75, z: 8.892569}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -1.9904137, y: 0.75, z: 9.961782}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 13.748717, y: 0.75, z: 12.496904}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 21.81825, y: 0.75, z: 0.4137702}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 21.851679, y: 0.75, z: -12.237215}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -26.006275, y: 0.75, z: -12.765793}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -4.6482525, y: 0.75, z: -1.5168009}
+      spreadRadius: 1
+      spawnDelay: 3
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -0.6844115, y: 0.75, z: -11.949856}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 6.9408073, y: 0.75, z: -17.375706}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 15.9258, y: 0.75, z: -6.300025}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: 15.588282, y: 0.75, z: 2.1762414}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: -11.42049, y: 0.75, z: -9.171313}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -10.237991, y: 0.75, z: 15.060508}
+      spreadRadius: 1
+      spawnDelay: 1
+    - enemyPoolType: 3
+      enemyCount: 1
+      spawnPosition: {x: -24.28575, y: 0.75, z: -3.4716225}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: -12.787783, y: 0.75, z: 3.978664}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 15
+      enemyCount: 1
+      spawnPosition: {x: 9.521818, y: 0.75, z: 5.8232627}
+      spreadRadius: 1
+      spawnDelay: 2
+    - enemyPoolType: 4
+      enemyCount: 1
+      spawnPosition: {x: 16.726677, y: 0.75, z: -12.185432}
+      spreadRadius: 1
+      spawnDelay: 2
+    preparationTime: 0
+    isBossWave: 0
+    bossPoolType: 0
+  - enemyGroups: []
     preparationTime: 0
     isBossWave: 0
     bossPoolType: 0

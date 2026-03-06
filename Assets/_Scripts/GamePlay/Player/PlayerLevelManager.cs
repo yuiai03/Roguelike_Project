@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
 {
     [Header("Level Settings")]
-    [SerializeField] private int currentLevel = 1;
+    [SerializeField] private int currentLevel = 0;
     [SerializeField] private float currentExp = 0f;
     [SerializeField] private float expToNextLevel = 100f;
     [SerializeField] private float expScalingFactor = 1.1f;
@@ -19,9 +19,12 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
 
     private void Start()
     {
-
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
         OnLevelChanged?.Invoke(currentLevel, 999);
+        ChallengePanel.onGameStart += () =>
+        {
+            LevelUp();
+        };
     }
 
     public void AddExp(float amount)

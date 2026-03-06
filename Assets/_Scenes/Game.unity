@@ -46820,6 +46820,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LeaderboardPost
       objectReference: {fileID: 0}
+    - target: {fileID: 2702329455833900669, guid: 265929a8541b61d4f8ed979c7ea5f9d5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3317094471497749451, guid: 265929a8541b61d4f8ed979c7ea5f9d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -15.77
@@ -46933,6 +46937,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChallengePost
       objectReference: {fileID: 0}
+    - target: {fileID: 3557631176528167181, guid: b9c3f11ab976c83458d5fcf6cf9a6a12, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5006157754805442875, guid: b9c3f11ab976c83458d5fcf6cf9a6a12, type: 3}
       propertyPath: uiManager
       value: 
@@ -47010,9 +47018,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6513874433162146272, guid: d6e3d252ced370c459fb36616c7687ed, type: 3}
+      propertyPath: orbitSpeed
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 6513874433162146272, guid: d6e3d252ced370c459fb36616c7687ed, type: 3}
+      propertyPath: orbitRadius
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7199019697923020187, guid: d6e3d252ced370c459fb36616c7687ed, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7199019697923020187, guid: d6e3d252ced370c459fb36616c7687ed, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7549286588722665512, guid: d6e3d252ced370c459fb36616c7687ed, type: 3}
       propertyPath: m_IsActive

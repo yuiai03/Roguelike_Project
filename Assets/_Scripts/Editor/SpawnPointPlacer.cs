@@ -37,6 +37,7 @@ public class SpawnPointPlacer : EditorWindow
     private bool placementMode = false;
 
     private Vector2 scrollPos;
+    private Vector2 listScrollPos;
 
     [MenuItem("Tools/Wave/Spawn Point Placer")]
     public static void ShowWindow()
@@ -175,7 +176,7 @@ public class SpawnPointPlacer : EditorWindow
         // ─── Spawn Point List with Delete ─────────────────────────────
         EditorGUILayout.LabelField("Current Spawn Points", EditorStyles.boldLabel);
 
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.MaxHeight(180));
+        listScrollPos = EditorGUILayout.BeginScrollView(listScrollPos, GUILayout.MaxHeight(180));
         for (int i = 0; i < wave.enemyGroups.Count; i++)
         {
             EnemyGroup g = wave.enemyGroups[i];
@@ -184,7 +185,7 @@ public class SpawnPointPlacer : EditorWindow
                 GUI.backgroundColor = new Color(0.4f, 0.8f, 1f);
 
             EditorGUILayout.BeginHorizontal("box");
-            EditorGUILayout.LabelField($"[{i+1}] {g.enemyCount}x {g.enemyPoolType}  pos={g.spawnPosition:F1}  r={g.spreadRadius:F1}", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField($"[{i+1}] {g.enemyCount}x {g.enemyPoolType}  pos={g.spawnPosition:F1}  r={g.spreadRadius:F1}  d={g.spawnDelay:F1}s", EditorStyles.miniLabel);
 
             if (GUILayout.Button("⊙", GUILayout.Width(28)))
             {
@@ -268,7 +269,7 @@ public class SpawnPointPlacer : EditorWindow
                 Handles.DrawWireDisc(wave.enemyGroups[i].spawnPosition, Vector3.up, wave.enemyGroups[i].spreadRadius);
                 Handles.DrawSolidDisc(wave.enemyGroups[i].spawnPosition, Vector3.up, 0.35f);
                 Handles.Label(wave.enemyGroups[i].spawnPosition + Vector3.up * 2f,
-                    $"[{i+1}] {wave.enemyGroups[i].enemyCount}x {wave.enemyGroups[i].enemyPoolType}");
+                    $"[{i+1}] {wave.enemyGroups[i].enemyCount}x {wave.enemyGroups[i].enemyPoolType}\nDelay: {wave.enemyGroups[i].spawnDelay}s");
             }
         }
 
@@ -376,7 +377,6 @@ public class SpawnPointPlacer : EditorWindow
         Undo.RecordObject(targetConfig, "Add Spawn Point(s)");
 
         List<Vector3> positions = GetPatternPositions(center);
-        float delay = spawnDelay;
 
         foreach (var pos in positions)
         {
@@ -388,10 +388,8 @@ public class SpawnPointPlacer : EditorWindow
                 enemyCount    = enemyCount,
                 spawnPosition = pos,
                 spreadRadius  = spreadRadius,
-                spawnDelay    = delay
+                spawnDelay    = spawnDelay // Giữ nguyên delay theo setting, không tự động cộng thêm
             });
-
-            delay += 0.2f; // nhỏ delay giữa các group để không spawn đồng loạt
         }
 
         EditorUtility.SetDirty(targetConfig);

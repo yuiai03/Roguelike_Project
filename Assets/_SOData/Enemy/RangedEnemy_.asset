@@ -19,8 +19,8 @@ MonoBehaviour:
   rotationSpeed: 5
   groundDistance: 0.4
   gravity: -10
-  knockbackForce: 0
-  knockbackDuration: 0
+  knockbackForce: 2
+  knockbackDuration: 0.2
   expValue: 50
   projectileDamage: 15
   projectileSpeed: 30

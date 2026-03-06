@@ -152,10 +152,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
         {
             for (int i = 0; i < wave.enemyGroups.Count; i++)
             {
-                EnemyGroup group = wave.enemyGroups[i];
-                if (group.spawnDelay > 0f)
-                    yield return new WaitForSeconds(group.spawnDelay);
-                SpawnGroup(group, i + 1);
+                StartCoroutine(SpawnGroupRoutine(wave.enemyGroups[i], i + 1));
             }
         }
 
@@ -167,36 +164,61 @@ public class WaveSpawner : Singleton<WaveSpawner>
         }
     }
 
+    private IEnumerator SpawnGroupRoutine(EnemyGroup group, int groupIndex)
+    {
+        if (group.spawnDelay > 0f)
+            yield return new WaitForSeconds(group.spawnDelay);
+            
+        SpawnGroup(group, groupIndex);
+    }
+
     private IEnumerator SpawnCircle(SimpleWaveData wave)
     {
         pendingSpawns.Clear();
 
         foreach (EnemyGroup group in wave.enemyGroups)
         {
-            List<Vector3> usedPositions = new List<Vector3>();
-
-            for (int i = 0; i < group.enemyCount; i++)
-            {
-                Vector3 spawnPos = CalculateRandomSpawnPosition(group.spawnPosition, group.spreadRadius, usedPositions);
-                usedPositions.Add(spawnPos);
-
-                if (spawnEffectPoolType != PoolType.None)
-                {
-                    GameObject effect = ObjectPool.Instance.Spawn(spawnEffectPoolType, spawnPos, Quaternion.identity);
-                    ObjectPool.Instance.DespawnAfterDelay(effect, spawnEffectPoolType, effectDuration);
-                }
-
-                pendingSpawns.Add(new SpawnPoint
-                {
-                    position = spawnPos,
-                    poolType = group.enemyPoolType
-                });
-            }
+            StartCoroutine(SpawnCircleGroupRoutine(group));
         }
 
-        yield return new WaitForSeconds(effectDuration);
+        yield return null; // We started coroutines, so we can yield once here and let them run
+    }
 
-        foreach (SpawnPoint sp in pendingSpawns)
+    private IEnumerator SpawnCircleGroupRoutine(EnemyGroup group)
+    {
+        // 1. Chờ đúng bằng thời gian delay của Group này (nếu có)
+        if (group.spawnDelay > 0f)
+            yield return new WaitForSeconds(group.spawnDelay);
+
+        List<Vector3> usedPositions = new List<Vector3>();
+        List<SpawnPoint> groupPendingSpawns = new List<SpawnPoint>();
+
+        for (int i = 0; i < group.enemyCount; i++)
+        {
+            Vector3 spawnPos = CalculateRandomSpawnPosition(group.spawnPosition, group.spreadRadius, usedPositions);
+            usedPositions.Add(spawnPos);
+
+            if (spawnEffectPoolType != PoolType.None)
+            {
+                GameObject effect = ObjectPool.Instance.Spawn(spawnEffectPoolType, spawnPos, Quaternion.identity);
+                ObjectPool.Instance.DespawnAfterDelay(effect, spawnEffectPoolType, effectDuration);
+            }
+
+            groupPendingSpawns.Add(new SpawnPoint
+            {
+                position = spawnPos,
+                poolType = group.enemyPoolType
+            });
+        }
+
+        // 2. Chờ hiệu ứng circle sinh ra chạy xong (nếu bạn bật effect thì mới chờ đoạn này)
+        if (spawnEffectPoolType != PoolType.None || effectDuration > 0f)
+        {
+            yield return new WaitForSeconds(effectDuration);
+        }
+
+        // 3. Drop quái xuống map
+        foreach (SpawnPoint sp in groupPendingSpawns)
         {
             SpawnEnemyFromPool(sp.poolType, sp.position);
             totalEnemiesSpawned++;
@@ -393,7 +415,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
 #if UNITY_EDITOR
                     UnityEditor.Handles.Label(
                         group.spawnPosition + Vector3.up * 2f,
-                        $"Circle Mode - Group {groupIndex + 1}\n{group.enemyCount} enemies\nEffect: {effectDuration}s"
+                        $"Circle Mode - Group {groupIndex + 1}\n{group.enemyCount} enemies\nDelay: {group.spawnDelay}s\nEffect: {effectDuration}s"
                     );
 #endif
 
