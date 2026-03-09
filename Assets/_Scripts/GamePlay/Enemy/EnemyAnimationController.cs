@@ -10,6 +10,7 @@ public class EnemyAnimationController : MonoBehaviour
     [SerializeField] private string idleAnimationName = "selen_idle";
     [SerializeField] private string runAnimationName = "selen_run";
     [SerializeField] private string dashAnimationName = "selen_dash";
+    [SerializeField] private string attackAnimationName = "selen_attack";
 
     [Header("Settings")]
     [SerializeField] private float transitionTime = 0.15f;
@@ -19,7 +20,8 @@ public class EnemyAnimationController : MonoBehaviour
     {
         Idle,
         Run,
-        Dash
+        Dash,
+        Attack
     }
 
     private Enemy enemy;
@@ -30,6 +32,7 @@ public class EnemyAnimationController : MonoBehaviour
     private int idleHash;
     private int runHash;
     private int dashHash;
+    private int attackHash;
 
     private void Awake()
     {
@@ -50,6 +53,7 @@ public class EnemyAnimationController : MonoBehaviour
         idleHash = Animator.StringToHash(idleAnimationName);
         runHash = Animator.StringToHash(runAnimationName);
         dashHash = Animator.StringToHash(dashAnimationName);
+        attackHash = Animator.StringToHash(attackAnimationName);
 
         if (debugMode)
         {
@@ -77,6 +81,40 @@ public class EnemyAnimationController : MonoBehaviour
         currentAnimState = EnemyAnimState.Idle;
         previousAnimState = EnemyAnimState.Idle;
         lastEnemyState = EnemyState.Idle;
+
+        if (enemy != null)
+        {
+            enemy.OnAttack.AddListener(OnEnemyAttack);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (enemy != null)
+        {
+            enemy.OnAttack.RemoveListener(OnEnemyAttack);
+        }
+    }
+
+    private void OnEnemyAttack()
+    {
+        if (animator == null) return;
+        
+        // Use CrossFade or Play with the state hash directly instead of a Trigger
+        animator.Play(attackHash, 0, 0f);
+        
+        // Prevent state checker from immediately overriding this with Idle
+        if (enemy != null)
+        {
+            lastEnemyState = enemy.GetCurrentState();
+        }
+        previousAnimState = currentAnimState;
+        currentAnimState = EnemyAnimState.Attack;
+
+        if (debugMode)
+        {
+            Debug.Log($"[{gameObject.name}] Played Attack Animation (Hash: {attackHash})");
+        }
     }
 
     private void Update()
@@ -180,6 +218,8 @@ public class EnemyAnimationController : MonoBehaviour
                 return runHash;
             case EnemyAnimState.Dash:
                 return dashHash;
+            case EnemyAnimState.Attack:
+                return attackHash;
             default:
                 Debug.LogWarning($"[EnemyAnimationController] Unknown animation state: {state}");
                 return idleHash;

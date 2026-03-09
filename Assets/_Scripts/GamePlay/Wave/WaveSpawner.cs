@@ -140,9 +140,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
         foreach (EnemyGroup group in wave.enemyGroups)
             totalEnemiesToSpawn += group.enemyCount;
 
-        if (wave.isBossWave && wave.bossPoolType != PoolType.None)
-            totalEnemiesToSpawn += 1;
-
         Debug.Log($"=== Wave {currentWave} Started! ===");
         OnWaveStart?.Invoke(currentWave);
 
@@ -154,13 +151,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
             {
                 StartCoroutine(SpawnGroupRoutine(wave.enemyGroups[i], i + 1));
             }
-        }
-
-        if (wave.isBossWave && wave.bossPoolType != PoolType.None)
-        {
-            Vector3 bossPos = transform.position + Vector3.forward * 5f;
-            SpawnEnemyFromPool(wave.bossPoolType, bossPos);
-            totalEnemiesSpawned++;
         }
     }
 
@@ -351,6 +341,14 @@ public class WaveSpawner : Singleton<WaveSpawner>
         Debug.Log($"=== Wave {currentWave} Complete! ===");
 
         OnWaveComplete?.Invoke(currentWave);
+
+        if (currentWave > 0 && currentWave % 10 == 0)
+        {
+            // Spawn Buff Chest in the middle of the map
+            Vector3 chestPos = Vector3.zero; 
+            GameObject chest = ObjectPool.Instance.Spawn(PoolType.BuffChest, chestPos, Quaternion.identity);
+            Debug.Log("Spawned BuffChest!");
+        }
 
         Invoke(nameof(StartNextWave), 5f);
     }

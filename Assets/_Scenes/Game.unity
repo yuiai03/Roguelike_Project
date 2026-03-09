@@ -14060,7 +14060,7 @@ GameObject:
   - component: {fileID: 1081393078}
   - component: {fileID: 1081393077}
   m_Layer: 0
-  m_Name: Pool
+  m_Name: -----Pool-----
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14115,6 +14115,12 @@ MonoBehaviour:
   - poolType: 15
     initialSize: 10
     prefab: {fileID: 8464065373959321113, guid: 23ebe8a9a78c21c4892c540469bed332, type: 3}
+  - poolType: 16
+    initialSize: 10
+    prefab: {fileID: 6104123187357548443, guid: 851f8b0850a20f54ca5d77c4608134ec, type: 3}
+  - poolType: 22
+    initialSize: 10
+    prefab: {fileID: 3222193543008427709, guid: a6e40d0597a453349aa1c929e9d3f6b8, type: 3}
 --- !u!4 &1081393078
 Transform:
   m_ObjectHideFlags: 0

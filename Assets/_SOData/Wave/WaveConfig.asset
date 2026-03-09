@@ -89,6 +89,11 @@ MonoBehaviour:
       spawnPosition: {x: 1.7805965, y: 0.75, z: -15.096718}
       spreadRadius: 1
       spawnDelay: 2
+    - enemyPoolType: 16
+      enemyCount: 1
+      spawnPosition: {x: 1.8052619, y: 0.75, z: 4.9528913}
+      spreadRadius: 3
+      spawnDelay: 0
     preparationTime: 0
     isBossWave: 0
     bossPoolType: 0

@@ -117,6 +117,15 @@ public class EnemyData : MonoBehaviour
             bobFrequency = flyConfig.bobFrequency;
             bobAmplitude = flyConfig.bobAmplitude;
         }
+        else if (dataConfig is BossEnemyConfig bossConfig)
+        {
+            projectileDamage = bossConfig.bossProjectileDamage;
+            projectileSpeed = bossConfig.bossProjectileSpeed * UnityEngine.Random.Range(1f - var, 1f + var);
+            projectileLifetime = bossConfig.bossProjectileLifetime;
+            shootCooldown = bossConfig.bossShootCooldown * UnityEngine.Random.Range(1f - var, 1f + var);
+            // Optionally set contact damage if used for melee parts of boss
+            contactDamage = bossConfig.bossProjectileDamage * 0.5f; 
+        }
     }
 
     public void ResetData()
