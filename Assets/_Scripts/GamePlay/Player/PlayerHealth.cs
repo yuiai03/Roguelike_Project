@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private bool isDead;
     private PlayerData playerData;
+    private HealthBarUIBase healthBarUI;
 
     public static PlayerHealth Instance { get; private set; }
 
@@ -20,6 +21,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         else Instance = this;
 
         playerData = GetComponent<PlayerData>();
+        healthBarUI = GetComponentInChildren<HealthBarUIBase>();
     }
 
     private void Start()
@@ -45,7 +47,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         if (DamageTextSpawner.Instance != null && damage > 0)
         {
-            DamageTextSpawner.Instance.Spawn(damage, transform.position + Vector3.up * 1f, isHeal: false, isPlayer: true);
+            Vector3 spawnPos = healthBarUI != null ? healthBarUI.transform.position : transform.position + Vector3.up * 1f;
+            DamageTextSpawner.Instance.Spawn(damage, spawnPos, isHeal: false, isPlayer: true);
         }
 
         if (playerData.currentHealth <= 0f)
@@ -66,7 +69,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         if (DamageTextSpawner.Instance != null && amount > 0)
         {
-            DamageTextSpawner.Instance.Spawn(amount, transform.position + Vector3.up * 1f, isHeal: true, isPlayer: false);
+            Vector3 spawnPos = healthBarUI != null ? healthBarUI.transform.position : transform.position + Vector3.up * 1f;
+            DamageTextSpawner.Instance.Spawn(amount, spawnPos, isHeal: true, isPlayer: false);
         }
 
         Debug.Log($"Player healed {amount}. Current Health: {playerData.currentHealth}/{playerData.GetMaxHealth()}");

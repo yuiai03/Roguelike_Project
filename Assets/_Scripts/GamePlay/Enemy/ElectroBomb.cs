@@ -37,8 +37,15 @@ public class ElectroBomb : MonoBehaviour
             timer += Time.deltaTime;
             float t = Mathf.Clamp01(timer / dropDuration);
             
-            // Apply ease-in for a gravity effect: t * t
-            transform.position = Vector3.Lerp(startPos, targetPos, t * t);
+            // XZ interpolation
+            Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
+            
+            // Y interpolation (Parabola)
+            float heightScale = isBigBomb ? 5f : 3f; // Peak height adjusting
+            float parabolaY = Mathf.Sin(t * Mathf.PI) * heightScale; 
+            currentPos.y += parabolaY;
+
+            transform.position = currentPos;
             yield return null;
         }
 
@@ -94,14 +101,14 @@ public class ElectroBomb : MonoBehaviour
                 }
             }
 
-            // Spawn Small Bomb
-            Vector3 smallStartPos = spawnTarget + Vector3.up * (transform.position.y - targetPos.y) * 0.7f; // starting slightly lower
+            // Spawn Small Bomb starting from the big bomb's current impact position
+            Vector3 smallStartPos = transform.position;
             GameObject smallBombObj = ObjectPool.Instance.Spawn(smallBombPoolType, smallStartPos, Quaternion.identity);
             
             ElectroBomb smallBomb = smallBombObj.GetComponent<ElectroBomb>();
             if (smallBomb != null)
             {
-                // Damaged decreased for small bombs, 1/3 of the big bomb
+                // Damage decreased for small bombs, 1/3 of the big bomb
                 smallBomb.Initialize(damage * 0.33f, dropDuration * 0.7f, spawnTarget, damageLayer, owner, false);
             }
         }

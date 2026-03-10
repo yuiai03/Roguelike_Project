@@ -35,13 +35,13 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
 
         while (currentExp >= expToNextLevel)
         {
+            currentExp -= expToNextLevel;
             LevelUp();
         }
     }
 
     private void LevelUp()
     {
-        currentExp -= expToNextLevel;
         currentLevel++;
 
         expToNextLevel = Mathf.Floor(expToNextLevel * expScalingFactor);

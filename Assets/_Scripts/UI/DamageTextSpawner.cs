@@ -19,8 +19,7 @@ public class DamageTextSpawner : MonoBehaviour
     {
         if (amount <= 0 || ObjectPool.Instance == null) return;
 
-        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-        Vector3 radialOffset = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * Random.Range(0f, spawnRadius);
+        Vector3 radialOffset = new Vector3(Random.Range(-spawnRadius, spawnRadius), 0f, Random.Range(-spawnRadius, spawnRadius));
 
         Vector3 upOffset = new Vector3(
             Random.Range(-randomOffset.x, randomOffset.x),

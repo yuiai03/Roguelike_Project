@@ -21,7 +21,7 @@ MonoBehaviour:
   gravity: -20
   knockbackForce: 3
   knockbackDuration: 0.2
-  expValue: 10
+  expValue: 200
   bossName: Boss
   phase2Threshold: 0.6
   phase3Threshold: 0.3

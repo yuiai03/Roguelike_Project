@@ -46,8 +46,10 @@ public class LawaChurl_Geo : Enemy
         isAttackingAnimation = true;
         velocity.x = 0;
         velocity.z = 0;
+        OnAttack?.Invoke();
+        yield return new WaitForSeconds(1.3f);
         ShootProjectile();
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.5f);
         isAttackingAnimation = false;
     }
 
@@ -56,7 +58,6 @@ public class LawaChurl_Geo : Enemy
         if (projectilePrefab == null) return;
 
         attackTimer = enemyData.shootCooldown;
-        OnAttack?.Invoke();
 
         Vector3 spawnPosition = firePoint.position + Vector3.up * 1f;
         Vector3 targetPosition = player.position + Vector3.up * 1f + moveOffset * 0.3f;

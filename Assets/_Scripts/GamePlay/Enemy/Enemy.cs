@@ -48,11 +48,13 @@ public class Enemy : MonoBehaviour, IDamageable
     protected float offsetChangeTimer;
 
     protected EnemyState currentState = EnemyState.Idle;
+    protected HealthBarUIBase healthBarUI;
 
     protected virtual void Awake()
     {
         controller = GetComponent<CharacterController>();
         enemyData = GetComponent<EnemyData>();
+        healthBarUI = GetComponentInChildren<HealthBarUIBase>();
         if (controller == null)
         {
             controller = gameObject.AddComponent<CharacterController>();
@@ -310,7 +312,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
         if (DamageTextSpawner.Instance != null && damage > 0)
         {
-            DamageTextSpawner.Instance.Spawn(damage, hitPoint, isHeal: false, isPlayer: false, isCrit: false);
+            Vector3 spawnPos = healthBarUI != null ? healthBarUI.transform.position : hitPoint;
+            DamageTextSpawner.Instance.Spawn(damage, spawnPos, isHeal: false, isPlayer: false, isCrit: false);
         }
 
         ApplyKnockback(hitDirection);
@@ -380,6 +383,11 @@ public class Enemy : MonoBehaviour, IDamageable
     public void SetPoolType(PoolType type)
     {
         poolType = type;
+    }
+
+    public PoolType GetPoolType()
+    {
+        return poolType;
     }
 
     protected virtual void OnEnable()

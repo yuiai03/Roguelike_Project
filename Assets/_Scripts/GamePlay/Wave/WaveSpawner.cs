@@ -192,6 +192,28 @@ public class WaveSpawner : Singleton<WaveSpawner>
             {
                 GameObject effect = ObjectPool.Instance.Spawn(spawnEffectPoolType, spawnPos, Quaternion.identity);
                 ObjectPool.Instance.DespawnAfterDelay(effect, spawnEffectPoolType, effectDuration);
+
+                Transform circleTransform = null;
+                for (int j = 0; j < effect.transform.childCount; j++)
+                {
+                    Transform child = effect.transform.GetChild(j);
+                    if (child.name.Equals("circle", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        circleTransform = child;
+                        break;
+                    }
+                }
+
+                if (circleTransform == null)
+                {
+                    circleTransform = effect.transform.Find("circle");
+                    if (circleTransform == null) circleTransform = effect.transform.Find("Circle");
+                }
+
+                if (circleTransform != null)
+                {
+                    StartCoroutine(ScaleCircleRoutine(circleTransform, effectDuration));
+                }
             }
 
             groupPendingSpawns.Add(new SpawnPoint
@@ -215,6 +237,30 @@ public class WaveSpawner : Singleton<WaveSpawner>
         }
 
         OnEnemyCountChanged?.Invoke(activeEnemies.Count, totalEnemiesToSpawn);
+    }
+
+    private IEnumerator ScaleCircleRoutine(Transform circleTransform, float duration)
+    {
+        float elapsed = 0f;
+        Vector3 startScale = Vector3.zero;
+        Vector3 endScale = new Vector3(1.2f, 1.2f, 1.2f);
+        
+        if (circleTransform != null)
+            circleTransform.localScale = startScale;
+        
+        while (elapsed < duration)
+        {
+            if (circleTransform == null || !circleTransform.gameObject.activeInHierarchy) yield break;
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            circleTransform.localScale = Vector3.Lerp(startScale, endScale, t);
+            yield return null;
+        }
+        
+        if (circleTransform != null)
+        {
+            circleTransform.localScale = endScale;
+        }
     }
 
     private void SpawnGroup(EnemyGroup group, int groupIndex)
@@ -366,7 +412,16 @@ public class WaveSpawner : Singleton<WaveSpawner>
         {
             if (enemy != null && !enemy.IsDead())
             {
-                Destroy(enemy.gameObject);
+                PoolType pType = enemy.GetPoolType();
+                if (pType != PoolType.None && ObjectPool.Instance != null)
+                {
+                    enemy.gameObject.SetActive(false);
+                    ObjectPool.Instance.Despawn(enemy.gameObject, pType);
+                }
+                else
+                {
+                    Destroy(enemy.gameObject);
+                }
             }
         }
         activeEnemies.Clear();

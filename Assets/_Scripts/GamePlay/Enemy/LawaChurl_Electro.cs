@@ -81,8 +81,8 @@ public class LawaChurl_Electro : Enemy
             }
         }
 
-        // Spawn Big Bomb high up
-        Vector3 bombSpawnPos = targetPos + Vector3.up * spawnHeight;
+        // Spawn Big Bomb from fire point instead of high up
+        Vector3 bombSpawnPos = firePoint != null ? firePoint.position : transform.position + Vector3.up * 2f;
         GameObject bombObj = ObjectPool.Instance.Spawn(PoolType.ElectroBomb_Big, bombSpawnPos, Quaternion.identity);
         
         ElectroBomb bombScript = bombObj.GetComponent<ElectroBomb>();

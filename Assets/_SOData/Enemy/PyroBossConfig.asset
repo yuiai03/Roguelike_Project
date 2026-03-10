@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PyroBossConfig
   m_EditorClassIdentifier: 
   enemyType: 4
-  maxHealth: 100
+  maxHealth: 1000
   moveSpeed: 5
   attackRange: 50
   rotationSpeed: 1440
