@@ -77,7 +77,7 @@ public class LawaChurl_Electro : Enemy
                 {
                     // Bomb should ideally already hit visual wise, we trigger the hit logic / secondary bombs here
                 });
-                warningCircle.StartWarning(bombDropDuration);
+                warningCircle.StartWarning(bombDropDuration, 2f);
             }
         }
 

@@ -36,4 +36,4 @@ MonoBehaviour:
   bossProjectileDamage: 25
   bossShootCooldown: 10
   buffCardDropCount: 2
-  rockSpeedMultiplier: 1.5
+  rockSpeedMultiplier: 3

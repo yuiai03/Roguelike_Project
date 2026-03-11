@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4672277768046325091}
   - component: {fileID: 6185847887394683596}
   m_Layer: 0
-  m_Name: Ball
+  m_Name: OrbitingBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.8
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &4672277768046325091
 Rigidbody:

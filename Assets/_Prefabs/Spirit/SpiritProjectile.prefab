@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3820205468119193113}
   - component: {fileID: 5009101076753417627}
   m_Layer: 0
-  m_Name: TinhLinhProjectile
+  m_Name: SpiritProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

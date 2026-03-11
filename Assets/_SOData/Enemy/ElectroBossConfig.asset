@@ -34,7 +34,7 @@ MonoBehaviour:
   bossProjectileSpeed: 15
   bossProjectileLifetime: 6
   bossProjectileDamage: 25
-  bossShootCooldown: 3
+  bossShootCooldown: 6
   buffCardDropCount: 2
   bombDropDuration: 2
   bombSpawnHeight: 15

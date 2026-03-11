@@ -269,6 +269,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hideWhenFull: 1
   fillImage: {fileID: 5545936764236848087}
+  yOffset: 1
+  headTransform: {fileID: 2111132438716721244}
 --- !u!1 &4978515877708181952
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,7 +465,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 8
-  m_Radius: 2
+  m_Radius: 3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -681,6 +683,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5da795005cbc1d9449a63c59a3999dae, type: 3}
+--- !u!4 &2111132438716721244 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 983399772750591305, guid: 5da795005cbc1d9449a63c59a3999dae, type: 3}
+  m_PrefabInstance: {fileID: 1218649375651929365}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7095951268499013169 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8255204991512453924, guid: 5da795005cbc1d9449a63c59a3999dae, type: 3}

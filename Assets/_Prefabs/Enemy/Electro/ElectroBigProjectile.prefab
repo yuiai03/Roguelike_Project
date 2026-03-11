@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8614665076657155540}
-  - component: {fileID: 7185336486113499518}
+  - component: {fileID: 8824624178148026408}
   m_Layer: 0
   m_Name: ElectroBigProjectile
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 8938207412500046233}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7185336486113499518
+--- !u!114 &8824624178148026408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932f19fddafdb974f89c0bc65d25df32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionRadius: 5
-  smallBombPoolType: 20
+  explosionRadius: 4
+  smallBombPoolType: 21
   smallBombCount: 6
-  smallBombSpreadRadius: 5
+  smallBombSpreadRadius: 10
 --- !u!1001 &8899215348187350642
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,7 +6,9 @@ public abstract class HealthBarUIBase : MonoBehaviour
 {
     [SerializeField] protected bool hideWhenFull = false;
     [SerializeField] protected Image fillImage;
+    [SerializeField] protected float yOffset = 1f;
 
+    [SerializeField] protected Transform headTransform;
     protected TextMeshProUGUI healthText;
     protected Camera mainCamera;
     protected CanvasGroup canvasGroup;
@@ -29,6 +31,14 @@ public abstract class HealthBarUIBase : MonoBehaviour
             healthText = fillImage.GetComponentInChildren<TextMeshProUGUI>();
 
         Initialize();
+    }
+
+    protected virtual void LateUpdate()
+    {
+        if (headTransform != null)
+        {
+            transform.position = headTransform.position + Vector3.up * yOffset;
+        }
     }
 
     protected virtual void Start()

@@ -74,13 +74,13 @@ public class LawaChurl_Pyro : Enemy
             {
                 // Clear any old listeners to prevent memory stringing if pooled poorly
                 warningCircle.OnWarningComplete.RemoveAllListeners();
-                
-                warningCircle.OnWarningComplete.AddListener(() => 
+
+                warningCircle.OnWarningComplete.AddListener(() =>
                 {
                     // Spawn Ice effect from below ground when warning completes
                     SpawnPyroEffect(targetPos);
                 });
-                warningCircle.StartWarning(warningDuration);
+                warningCircle.StartWarning(warningDuration, 3.5f);
             }
         }
     }
@@ -88,7 +88,7 @@ public class LawaChurl_Pyro : Enemy
     private void SpawnPyroEffect(Vector3 position)
     {
         GameObject effectObj = ObjectPool.Instance.Spawn(PoolType.LawaChurlPyroEffect, position, Quaternion.identity);
-        
+
         // Cần gắn script gây damage lên effectObj: projectile hoặc một collider tự nổ
         // Tái sử dụng logic Projectile hoặc viết script AOEDamage riêng trên prefab
         Projectile proj = effectObj.GetComponent<Projectile>();

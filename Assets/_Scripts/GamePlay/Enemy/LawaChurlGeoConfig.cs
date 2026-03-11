@@ -5,5 +5,5 @@ public class LawaChurlGeoConfig : BossEnemyConfig
 {
     [Header("Geo Boss Skills")]
     [Tooltip("Hệ số tốc độ bay của đá (so với bossProjectileSpeed mặc định)")]
-    public float rockSpeedMultiplier = 1.5f;
+    public float rockSpeedMultiplier = 3f;
 }
