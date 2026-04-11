@@ -54,8 +54,13 @@ public class CardSelectionPanel : PanelBase
 
         Show();
 
-        Time.timeScale = 0f;
-        if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(false);
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetState(GameFlowState.LevelUp);
+        else
+        {
+            Time.timeScale = 0f;
+            if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(false);
+        }
 
         foreach (BuffCardConfig card in cards)
         {
@@ -116,8 +121,13 @@ public class CardSelectionPanel : PanelBase
     {
         Hide(() =>
         {
-            Time.timeScale = 1f;
-            if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(true);
+            if (GameStateManager.Instance != null)
+                GameStateManager.Instance.SetState(GameFlowState.Playing);
+            else
+            {
+                Time.timeScale = 1f;
+                if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(true);
+            }
         });
     }
 

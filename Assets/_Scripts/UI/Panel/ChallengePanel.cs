@@ -37,7 +37,10 @@ public class ChallengePanel : PanelBase
     {
         GameUI.Instance?.InteractPanel?.Hide();
 
-        PlayerController.Instance.SetInputActive(false);
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetState(GameFlowState.Tutorial);
+        else
+            PlayerController.Instance.SetInputActive(false);
 
         bg.SetActive(true);
         startGameButton.gameObject.SetActive(false);
@@ -73,7 +76,10 @@ public class ChallengePanel : PanelBase
 
         Hide(() =>
         {
-            PlayerController.Instance.SetInputActive(true);
+            if (GameStateManager.Instance != null)
+                GameStateManager.Instance.SetState(GameFlowState.Playing);
+            else
+                PlayerController.Instance.SetInputActive(true);
             OnClosed?.Invoke();
 
             bg.SetActive(false);
@@ -82,7 +88,9 @@ public class ChallengePanel : PanelBase
 
     public void StartGame()
     {
-        if (PlayerController.Instance != null)
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetState(GameFlowState.Playing);
+        else if (PlayerController.Instance != null)
             PlayerController.Instance.SetInputActive(true);
 
         if (WaveSpawner.Instance != null)

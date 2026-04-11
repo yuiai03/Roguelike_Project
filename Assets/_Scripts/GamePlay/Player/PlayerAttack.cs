@@ -30,21 +30,27 @@ public class PlayerAttack : MonoBehaviour
 
         if (attackTimer <= 0f)
         {
-            TryAttack();
-            attackTimer = playerData.attackCooldown;
+            bool attacked = TryAttack();
+            if (!attacked)
+            {
+                attackTimer = Mathf.Min(0.1f, playerData.GetAttackCooldown());
+            }
         }
     }
 
-    private void TryAttack()
+    private bool TryAttack()
     {
-        if (attackTimer > 0f) return;
+        if (attackTimer > 0f) return false;
 
         Transform target = FindNearestEnemy();
         if (target != null)
         {
             currentTarget = target;
             PerformAttack();
+            return true;
         }
+
+        return false;
     }
 
     private void PerformAttack()

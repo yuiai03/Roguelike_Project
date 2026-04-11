@@ -21,10 +21,17 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     {
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
         OnLevelChanged?.Invoke(currentLevel, 999);
-        ChallengePanel.onGameStart += () =>
-        {
-            LevelUp();
-        };
+        ChallengePanel.onGameStart += HandleGameStart;
+    }
+
+    private void OnDestroy()
+    {
+        ChallengePanel.onGameStart -= HandleGameStart;
+    }
+
+    private void HandleGameStart()
+    {
+        LevelUp();
     }
 
     public void AddExp(float amount)
@@ -53,7 +60,10 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
         OnLevelUp?.Invoke(currentLevel);
 
-        Time.timeScale = 0f;
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetState(GameFlowState.LevelUp);
+        else
+            Time.timeScale = 0f;
     }
 
     public int GetCurrentLevel() => currentLevel;

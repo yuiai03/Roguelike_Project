@@ -20,6 +20,16 @@ public class PauseMenuManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (GameStateManager.Instance != null)
+            {
+                if (GameStateManager.Instance.IsInState(GameFlowState.LevelUp) ||
+                    GameStateManager.Instance.IsInState(GameFlowState.Tutorial) ||
+                    GameStateManager.Instance.IsInState(GameFlowState.GameOver))
+                {
+                    return;
+                }
+            }
+
             if (isPaused)
             {
                 ResumeGame();
@@ -36,9 +46,14 @@ public class PauseMenuManager : MonoBehaviour
         {
             pauseMenuPanel.SetActive(true);
         }
-        Time.timeScale = 0f;
-        
-        if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(false);
+
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetState(GameFlowState.Paused);
+        else
+        {
+            Time.timeScale = 0f;
+            if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(false);
+        }
     }
     public void ResumeGame()
     {
@@ -46,17 +61,26 @@ public class PauseMenuManager : MonoBehaviour
         {
             pauseMenuPanel.SetActive(false);
         }
-        Time.timeScale = 1f;
-        
-        if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(true);
+
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetState(GameFlowState.Playing);
+        else
+        {
+            Time.timeScale = 1f;
+            if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(true);
+        }
     }
     public void EndGame()
     {
-        Time.timeScale = 1f;
         isPaused = false;
         {
             pauseMenuPanel.SetActive(false);
         }
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetState(GameFlowState.GameOver);
+        else
+            Time.timeScale = 1f;
+
         if (!PlayerHealth.Instance.IsDead())
         {
             PlayerHealth.Instance.TakeDamage(999999f, Vector3.zero, Vector3.zero);

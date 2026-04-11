@@ -38,7 +38,7 @@ public class PlayerStatsPanel : PanelBase
         levelSystem.OnExpChanged.AddListener(UpdateExp);
         waveSpawner.OnWaveStart.AddListener(UpdateWave);
 
-        ChallengePanel.onGameStart += () => Show();
+        ChallengePanel.onGameStart += HandleGameStart;
 
         menu.SetActive(false);
     }
@@ -96,7 +96,7 @@ public class PlayerStatsPanel : PanelBase
 
     private void OnDestroy()
     {
-        ChallengePanel.onGameStart -= () => Show();
+        ChallengePanel.onGameStart -= HandleGameStart;
 
         if (playerHealth != null)
         {
@@ -113,5 +113,10 @@ public class PlayerStatsPanel : PanelBase
         {
             waveSpawner.OnWaveStart.RemoveListener(UpdateWave);
         }
+    }
+
+    private void HandleGameStart()
+    {
+        Show();
     }
 }

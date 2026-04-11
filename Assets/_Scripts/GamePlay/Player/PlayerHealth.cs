@@ -93,6 +93,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         OnDeath?.Invoke();
         Debug.Log("Player died!");
 
+        if (GameStateManager.Instance != null)
+        {
+            GameStateManager.Instance.SetState(GameFlowState.GameOver);
+        }
+
         if (PlayerLevelSystem.Instance != null && Roguelike.Systems.Leaderboard.PlayFabLeaderboardManager.Instance != null)
         {
             int finalScore = Mathf.FloorToInt(PlayerLevelSystem.Instance.GetTotalExpGained());
