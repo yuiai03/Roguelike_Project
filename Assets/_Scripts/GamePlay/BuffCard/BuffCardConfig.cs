@@ -2,33 +2,28 @@ using UnityEngine;
 
 public enum BuffType
 {
-
     IncreaseDamage,
     IncreaseProjectileSpeed,
     IncreaseAttackSpeed,
     MultiShot,
     AoEExplosion,
-
     IncreaseMaxHealth,
     HealthRegen,
-
     IncreaseMoveSpeed,
-
     ExpBoost,
-
     OrbitingBall,
-
     SpiritPierce,
     SpiritExplosion,
-
     IncreaseLuck,
+    SpiritHealing,
+    SpiritTripleShot,
 }
 
 public enum RarityType
 {
-    Common    = 1,
-    Rare      = 2,
-    Epic      = 3,
+    Common = 1,
+    Rare = 2,
+    Epic = 3,
     Legendary = 4
 }
 
@@ -43,27 +38,27 @@ public class BuffCardConfig : ScriptableObject
 
     [Header("Buff Settings")]
     public BuffType buffType;
-    public float value; 
-    [Tooltip("Hệ số sát thương theo ATK hiện tại (1 = 100% ATK, 0.5 = 50% ATK)")]
+    public float value;
+    [Tooltip("Damage or power multiplier based on the player's current ATK (1 = 100% ATK, 0.5 = 50% ATK).")]
     public float attackDamageMultiplier = 1f;
     public RarityType rarity = RarityType.Common;
-    [Tooltip("Giới hạn tối đa (0 = không giới hạn)")]
+    [Tooltip("Maximum number of times this card can be picked (0 = unlimited).")]
     public int maxLevel = 0;
 
     [Header("MultiShot Settings")]
-    [Tooltip("Số đạn bắn thêm mỗi lần pick (chỉ dùng với buff MultiShot)")]
+    [Tooltip("Extra projectiles added each time the MultiShot card is picked.")]
     public int shotCount = 1;
 
     [Header("AoEExplosion Settings")]
-    [Tooltip("Phạm vi nổ AoE (chỉ dùng với buff AoEExplosion)")]
+    [Tooltip("Explosion radius used by the AoEExplosion buff.")]
     public float aoeRadius = 2f;
 
     [Header("OrbitingBall Settings")]
-    [Tooltip("Số bóng spawn thêm mỗi lần pick (chỉ dùng với buff OrbitingBall)")]
+    [Tooltip("Extra orbiting balls added each time the OrbitingBall card is picked.")]
     public int ballCount = 1;
 
-    public Color GetRarityColor()  => Utils.GetRarityColor(rarity);
-    public string GetRarityName()  => Utils.GetRarityName(rarity);
+    public Color GetRarityColor() => Utils.GetRarityColor(rarity);
+    public string GetRarityName() => Utils.GetRarityName(rarity);
 
     public bool UsesAttackDamageMultiplier()
     {
@@ -74,6 +69,8 @@ public class BuffCardConfig : ScriptableObject
             case BuffType.OrbitingBall:
             case BuffType.SpiritPierce:
             case BuffType.SpiritExplosion:
+            case BuffType.SpiritHealing:
+            case BuffType.SpiritTripleShot:
                 return true;
 
             default:
@@ -87,10 +84,9 @@ public class BuffCardConfig : ScriptableObject
 
         switch (buffType)
         {
-
             case BuffType.IncreaseDamage:
                 playerData.damageBonus += value;
-                Debug.Log($"[Buff] Damage +{value} → total {playerData.GetTotalDamage()}");
+                Debug.Log($"[Buff] Damage +{value} -> total {playerData.GetTotalDamage()}");
                 break;
 
             case BuffType.IncreaseProjectileSpeed:
@@ -100,13 +96,13 @@ public class BuffCardConfig : ScriptableObject
 
             case BuffType.IncreaseAttackSpeed:
                 playerData.attackSpeedBonus += value;
-                Debug.Log($"[Buff] AttackSpeed bonus +{value}s → cooldown {playerData.GetAttackCooldown():F2}s");
+                Debug.Log($"[Buff] AttackSpeed bonus +{value}s -> cooldown {playerData.GetAttackCooldown():F2}s");
                 break;
 
             case BuffType.MultiShot:
                 playerData.multiShotAtkMultiplier = attackDamageMultiplier;
                 playerData.multiShotCount += Mathf.Max(1, shotCount);
-                Debug.Log($"[Buff] MultiShot +{shotCount} đạn ({FormatAttackDamageMultiplier()}) → total {playerData.multiShotCount} đạn");
+                Debug.Log($"[Buff] MultiShot +{shotCount} shots ({FormatAttackDamageMultiplier()}) -> total {playerData.multiShotCount} shots");
                 break;
 
             case BuffType.AoEExplosion:
@@ -128,12 +124,12 @@ public class BuffCardConfig : ScriptableObject
 
             case BuffType.IncreaseMoveSpeed:
                 playerData.moveSpeedBonus += value;
-                Debug.Log($"[Buff] MoveSpeed +{value} → {playerData.GetEffectiveMoveSpeed()}");
+                Debug.Log($"[Buff] MoveSpeed +{value} -> {playerData.GetEffectiveMoveSpeed()}");
                 break;
 
             case BuffType.ExpBoost:
                 playerData.expBonusPercent += value / 100f;
-                Debug.Log($"[Buff] ExpBoost +{value}% → total +{playerData.expBonusPercent * 100:F0}%");
+                Debug.Log($"[Buff] ExpBoost +{value}% -> total +{playerData.expBonusPercent * 100f:F0}%");
                 break;
 
             case BuffType.OrbitingBall:
@@ -145,26 +141,28 @@ public class BuffCardConfig : ScriptableObject
                 int count = Mathf.Max(1, ballCount);
                 for (int i = 0; i < count; i++)
                     ballManager.AddBall(attackDamageMultiplier);
-                Debug.Log($"[Buff] OrbitingBall +{count} bóng ({FormatAttackDamageMultiplier()}) → tổng {ballManager.GetBallCount()}");
+                Debug.Log($"[Buff] OrbitingBall +{count} balls ({FormatAttackDamageMultiplier()}) -> total {ballManager.GetBallCount()}");
                 break;
             }
 
             case BuffType.SpiritPierce:
             case BuffType.SpiritExplosion:
+            case BuffType.SpiritHealing:
+            case BuffType.SpiritTripleShot:
             {
                 SpiritManager spiritManager = playerData.GetComponent<SpiritManager>();
                 if (spiritManager == null)
                     spiritManager = playerData.gameObject.AddComponent<SpiritManager>();
 
-                SpiritType sType = buffType == BuffType.SpiritPierce ? SpiritType.Pierce : SpiritType.Explosion;
-                spiritManager.AddSpirit(sType, attackDamageMultiplier);
-                Debug.Log($"[Buff] Spirit {sType} updated ({FormatAttackDamageMultiplier()})");
+                SpiritType spiritType = ResolveSpiritType(buffType);
+                spiritManager.AddSpirit(spiritType, attackDamageMultiplier);
+                Debug.Log($"[Buff] Spirit {spiritType} updated ({FormatAttackDamageMultiplier()})");
                 break;
             }
 
             case BuffType.IncreaseLuck:
                 playerData.luckBonus += value;
-                Debug.Log($"[Buff] Luck +{value} → total {playerData.luckBonus}");
+                Debug.Log($"[Buff] Luck +{value} -> total {playerData.luckBonus}");
                 break;
         }
     }
@@ -194,5 +192,23 @@ public class BuffCardConfig : ScriptableObject
     private string FormatAttackDamageMultiplier()
     {
         return $"{attackDamageMultiplier * 100f:0.#}% ATK";
+    }
+
+    private static SpiritType ResolveSpiritType(BuffType type)
+    {
+        switch (type)
+        {
+            case BuffType.SpiritPierce:
+                return SpiritType.Pierce;
+            case BuffType.SpiritExplosion:
+                return SpiritType.Explosion;
+            case BuffType.SpiritHealing:
+                return SpiritType.Healing;
+            case BuffType.SpiritTripleShot:
+                return SpiritType.TripleShot;
+            default:
+                Debug.LogWarning($"[Buff] {type} is not a spirit buff. Falling back to Pierce.");
+                return SpiritType.Pierce;
+        }
     }
 }

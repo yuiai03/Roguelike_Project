@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class SpiritManager : MonoBehaviour
 {
@@ -30,17 +30,17 @@ public class SpiritManager : MonoBehaviour
             return;
         }
 
-        PoolType poolType = type == SpiritType.Pierce ? PoolType.SpiritPierce : PoolType.SpiritExplosion;
+        PoolType poolType = ResolvePoolType(type);
         GameObject obj = ObjectPool.Instance.Spawn(poolType, transform.position, Quaternion.identity);
 
         if (obj == null) return;
-        obj.transform.parent = null; 
+        obj.transform.parent = null;
 
         Spirit spirit = obj.GetComponent<Spirit>();
         if (spirit == null)
         {
             Destroy(obj);
-            Debug.LogError("[SpiritManager] Spirit prefab thiếu component Spirit!");
+            Debug.LogError("[SpiritManager] Spirit prefab is missing the Spirit component.");
             return;
         }
 
@@ -60,6 +60,7 @@ public class SpiritManager : MonoBehaviour
     private void RecalculateOrbitAngles()
     {
         if (spirits.Count == 0) return;
+
         float step = 360f / spirits.Count;
         for (int i = 0; i < spirits.Count; i++)
         {
@@ -82,11 +83,29 @@ public class SpiritManager : MonoBehaviour
 
     private Spirit FindSpirit(SpiritType type)
     {
-        foreach (var s in spirits)
+        foreach (var spirit in spirits)
         {
-            if (s != null && s.spiritType == type) return s;
+            if (spirit != null && spirit.spiritType == type) return spirit;
         }
 
         return null;
+    }
+
+    private static PoolType ResolvePoolType(SpiritType type)
+    {
+        switch (type)
+        {
+            case SpiritType.Pierce:
+                return PoolType.SpiritPierce;
+            case SpiritType.Explosion:
+                return PoolType.SpiritExplosion;
+            case SpiritType.Healing:
+                return PoolType.SpiritHealing;
+            case SpiritType.TripleShot:
+                return PoolType.SpiritTripleShot;
+            default:
+                Debug.LogWarning($"[SpiritManager] Unknown spirit type {type}, falling back to SpiritPierce pool.");
+                return PoolType.SpiritPierce;
+        }
     }
 }

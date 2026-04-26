@@ -2,8 +2,10 @@ using UnityEngine;
 
 public enum SpiritType
 {
-    Pierce,     
-    Explosion,  
+    Pierce,
+    Explosion,
+    Healing,
+    TripleShot,
 }
 
 public class Spirit : MonoBehaviour
@@ -21,18 +23,18 @@ public class Spirit : MonoBehaviour
     public float hoverFrequency = 2f;
 
     [Header("Orbit & Drift")]
-    [Tooltip("Tốc độ xoay orbit quanh player (độ/giây)")]
+    [Tooltip("Orbit speed around the player in degrees per second.")]
     public float orbitSpeed = 30f;
-    [Tooltip("Biên độ drift x/z ngẫu nhiên (tỉ lệ theo khoảng cách)")]
     [Range(0f, 1f)]
+    [Tooltip("Random x/z drift amount as a ratio of follow distance.")]
     public float driftAmplitude = 0.4f;
-    [Tooltip("Tốc độ thay đổi drift (Hz)")]
+    [Tooltip("How quickly drift changes over time.")]
     public float driftFrequency = 0.35f;
 
     [Header("Attack")]
     public float attackInterval = 4f;
     public float attackRange = 15f;
-    [Tooltip("Damage fallback khi không có owner PlayerData")]
+    [Tooltip("Fallback power when PlayerData is unavailable.")]
     public float damage = 30f;
     public float projectileSpeed = 18f;
     public LayerMask enemyLayer;
@@ -40,7 +42,17 @@ public class Spirit : MonoBehaviour
     [Header("AoE (Explosion type)")]
     public float aoeRadius = 4f;
 
+    [Header("Healing")]
+    [SerializeField] private float healingInterval = 3.5f;
+    [SerializeField] private float fullHealthTolerance = 0.01f;
+
+    [Header("Triple Shot")]
+    [SerializeField] private int tripleShotProjectileCount = 3;
+    [SerializeField] private float tripleShotSpreadAngle = 12f;
+    [SerializeField] private float retargetRetryFactor = 0.3f;
+
     private Transform player;
+    private PlayerHealth ownerHealth;
     private float idOffset;
     private float attackTimer;
     private Vector3 currentVelocity;
@@ -53,10 +65,11 @@ public class Spirit : MonoBehaviour
     public void Initialize(Transform playerTransform, float startAngle, LayerMask layer, PlayerData damageOwner, float atkMultiplier)
     {
         player = playerTransform;
+        ownerHealth = playerTransform != null ? playerTransform.GetComponent<PlayerHealth>() : PlayerHealth.Instance;
         idOffset = startAngle;
         enemyLayer = layer;
         SetDamageSource(damageOwner, atkMultiplier);
-        attackTimer = Random.Range(0f, attackInterval);
+        attackTimer = Random.Range(0f, GetPrimaryInterval());
 
         Collider col = GetComponent<Collider>();
         if (col != null) col.isTrigger = true;
@@ -75,19 +88,9 @@ public class Spirit : MonoBehaviour
         MoveToFollowTarget();
 
         attackTimer -= Time.deltaTime;
-        if (attackTimer <= 0f)
-        {
-            Transform enemy = FindNearestEnemy();
-            if (enemy != null)
-            {
-                FireProjectile(enemy);
-                attackTimer = attackInterval;
-            }
-            else
-            {
-                attackTimer = attackInterval * 0.3f;
-            }
-        }
+        if (attackTimer > 0f) return;
+
+        TryPerformAction();
     }
 
     private void MoveToFollowTarget()
@@ -121,34 +124,102 @@ public class Spirit : MonoBehaviour
         }
     }
 
-    private void FireProjectile(Transform target)
+    private void TryPerformAction()
     {
-        if (target == null) return;
-
-        Vector3 spawnPos = transform.position;
-        Vector3 targetFlat = target.position;
-        targetFlat.y = spawnPos.y;
-        Vector3 dir = (targetFlat - spawnPos).normalized;
-
-        StartCoroutine(ShootAnimationCrt(dir));
-
-        GameObject projObj = ObjectPool.Instance.Spawn(PoolType.SpiritProjectile, spawnPos, Quaternion.LookRotation(dir));
-        if (projObj == null) return;
-
-        bool isPierce = spiritType == SpiritType.Pierce;
-        float shotDamage = ResolveDamage();
-        SpiritProjectileScript proj = projObj.GetComponent<SpiritProjectileScript>();
-        if (proj != null)
-            proj.Initialize(shotDamage, projectileSpeed, 10f, dir, enemyLayer, gameObject,
-                            aoe: !isPierce, aoeRad: aoeRadius, pierce: isPierce);
-        else
+        if (spiritType == SpiritType.Healing)
         {
-            Projectile p = projObj.GetComponent<Projectile>();
-            p?.Initialize(shotDamage, projectileSpeed, 10f, dir, enemyLayer, gameObject);
+            PerformHealingTick();
+            attackTimer = GetPrimaryInterval();
+            return;
+        }
+
+        Transform enemy = FindNearestEnemy();
+        if (enemy != null)
+        {
+            if (spiritType == SpiritType.TripleShot)
+            {
+                FireTripleShot(enemy);
+            }
+            else
+            {
+                FireSingleProjectile(enemy);
+            }
+
+            attackTimer = GetPrimaryInterval();
+            return;
+        }
+
+        attackTimer = GetRetryInterval();
+    }
+
+    private void PerformHealingTick()
+    {
+        if (ownerHealth == null || ownerHealth.IsDead() || !PlayerNeedsHealing()) return;
+
+        float healAmount = ResolveDamageOrPower();
+        if (healAmount > 0f)
+        {
+            ownerHealth.Heal(healAmount);
         }
     }
 
-    private float ResolveDamage()
+    private void FireSingleProjectile(Transform target)
+    {
+        Vector3 dir = GetDirectionToTarget(target);
+        if (dir == Vector3.zero) return;
+
+        StartCoroutine(ShootAnimationCrt(dir));
+        SpawnSpiritProjectile(dir, aoe: spiritType == SpiritType.Explosion, aoeRad: aoeRadius, pierce: spiritType == SpiritType.Pierce);
+    }
+
+    private void FireTripleShot(Transform target)
+    {
+        Vector3 dir = GetDirectionToTarget(target);
+        if (dir == Vector3.zero) return;
+
+        StartCoroutine(ShootAnimationCrt(dir));
+
+        int projectileCount = GetTripleShotProjectileCount();
+        if (projectileCount == 1)
+        {
+            SpawnSpiritProjectile(dir, aoe: false, aoeRad: 0f, pierce: false);
+            return;
+        }
+
+        float spreadStep = GetTripleShotSpreadAngle();
+        float halfCount = (projectileCount - 1) * 0.5f;
+        for (int i = 0; i < projectileCount; i++)
+        {
+            float offsetAngle = (i - halfCount) * spreadStep;
+            Vector3 shotDirection = Quaternion.AngleAxis(offsetAngle, Vector3.up) * dir;
+            SpawnSpiritProjectile(shotDirection, aoe: false, aoeRad: 0f, pierce: false);
+        }
+    }
+
+    private void SpawnSpiritProjectile(Vector3 directionToFire, bool aoe, float aoeRad, bool pierce)
+    {
+        if (directionToFire == Vector3.zero || ObjectPool.Instance == null) return;
+
+        Vector3 spawnPos = transform.position;
+        Quaternion rotation = Quaternion.LookRotation(directionToFire);
+        GameObject projObj = ObjectPool.Instance.Spawn(PoolType.SpiritProjectile, spawnPos, rotation);
+        if (projObj == null) return;
+
+        float shotPower = ResolveDamageOrPower();
+        SpiritProjectileScript proj = projObj.GetComponent<SpiritProjectileScript>();
+        if (proj != null)
+        {
+            proj.Initialize(shotPower, projectileSpeed, 10f, directionToFire, enemyLayer, gameObject,
+                aoe: aoe, aoeRad: aoeRad, pierce: pierce);
+        }
+        else
+        {
+            Projectile fallbackProjectile = projObj.GetComponent<Projectile>();
+            fallbackProjectile?.Initialize(shotPower, projectileSpeed, 10f, directionToFire, enemyLayer, gameObject);
+        }
+    }
+
+    private float ResolveDamageOrPower()
     {
         if (ownerData != null)
         {
@@ -156,6 +227,48 @@ public class Spirit : MonoBehaviour
         }
 
         return damage * attackDamageMultiplier;
+    }
+
+    private Vector3 GetDirectionToTarget(Transform target)
+    {
+        if (target == null) return Vector3.zero;
+
+        Vector3 spawnPos = transform.position;
+        Vector3 targetFlat = target.position;
+        targetFlat.y = spawnPos.y;
+        return (targetFlat - spawnPos).normalized;
+    }
+
+    private bool PlayerNeedsHealing()
+    {
+        float tolerance = fullHealthTolerance > 0f ? fullHealthTolerance : 0.01f;
+        return ownerHealth.GetCurrentHealth() + tolerance < ownerHealth.GetMaxHealth();
+    }
+
+    private float GetPrimaryInterval()
+    {
+        if (spiritType == SpiritType.Healing)
+        {
+            return healingInterval > 0f ? healingInterval : 3.5f;
+        }
+
+        return attackInterval > 0f ? attackInterval : 4f;
+    }
+
+    private float GetRetryInterval()
+    {
+        float retryFactor = retargetRetryFactor > 0f ? retargetRetryFactor : 0.3f;
+        return Mathf.Max(0.1f, GetPrimaryInterval() * retryFactor);
+    }
+
+    private int GetTripleShotProjectileCount()
+    {
+        return tripleShotProjectileCount > 0 ? tripleShotProjectileCount : 3;
+    }
+
+    private float GetTripleShotSpreadAngle()
+    {
+        return tripleShotSpreadAngle > 0f ? tripleShotSpreadAngle : 12f;
     }
 
     private System.Collections.IEnumerator ShootAnimationCrt(Vector3 targetDirection)
@@ -170,7 +283,7 @@ public class Spirit : MonoBehaviour
         Vector3 origScale = Vector3.one;
         Vector3 targetScale = origScale * 1.5f;
 
-        float t = 0;
+        float t = 0f;
         float halfDuration = 0.1f;
 
         while (t < halfDuration)
@@ -180,7 +293,7 @@ public class Spirit : MonoBehaviour
             yield return null;
         }
 
-        t = 0;
+        t = 0f;
         while (t < halfDuration)
         {
             t += Time.deltaTime;
@@ -200,11 +313,17 @@ public class Spirit : MonoBehaviour
 
         foreach (var col in enemies)
         {
-            IDamageable dmg = col.GetComponent<IDamageable>();
-            if (dmg == null || dmg.IsDead()) continue;
-            float d = Vector3.Distance(player.position, col.transform.position);
-            if (d < minDist) { minDist = d; nearest = col.transform; }
+            IDamageable damageable = col.GetComponent<IDamageable>();
+            if (damageable == null || damageable.IsDead()) continue;
+
+            float distance = Vector3.Distance(player.position, col.transform.position);
+            if (distance < minDist)
+            {
+                minDist = distance;
+                nearest = col.transform;
+            }
         }
+
         return nearest;
     }
 

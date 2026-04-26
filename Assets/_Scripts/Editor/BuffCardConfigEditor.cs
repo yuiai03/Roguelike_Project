@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 [CustomEditor(typeof(BuffCardConfig))]
 public class BuffCardConfigEditor : Editor
@@ -38,26 +38,36 @@ public class BuffCardConfigEditor : Editor
         {
             case BuffType.MultiShot:
                 EditorGUILayout.LabelField("MultiShot Settings", EditorStyles.boldLabel);
-                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK cho mỗi tia  |  Shot Count = Số tia cộng thêm mỗi lần pick", MessageType.Info);
+                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK for each extra shot. Shot Count = number of extra shots per pick.", MessageType.Info);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("shotCount"));
                 break;
 
             case BuffType.AoEExplosion:
                 EditorGUILayout.LabelField("AoEExplosion Settings", EditorStyles.boldLabel);
-                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK cho sát thương nổ  |  AoE Radius = Phạm vi nổ", MessageType.Info);
+                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK for the explosion. AoE Radius = explosion size.", MessageType.Info);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("aoeRadius"));
                 break;
 
             case BuffType.OrbitingBall:
                 EditorGUILayout.LabelField("OrbitingBall Settings", EditorStyles.boldLabel);
-                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK cho mỗi bóng  |  Ball Count = Số bóng spawn thêm", MessageType.Info);
+                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK for each orb. Ball Count = extra orbs per pick.", MessageType.Info);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("ballCount"));
                 break;
 
             case BuffType.SpiritPierce:
             case BuffType.SpiritExplosion:
                 EditorGUILayout.LabelField("Spirit Settings", EditorStyles.boldLabel);
-                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK cho đạn tinh linh.", MessageType.Info);
+                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK used by the spirit projectile.", MessageType.Info);
+                break;
+
+            case BuffType.SpiritHealing:
+                EditorGUILayout.LabelField("Spirit Settings", EditorStyles.boldLabel);
+                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK converted into healing per tick.", MessageType.Info);
+                break;
+
+            case BuffType.SpiritTripleShot:
+                EditorGUILayout.LabelField("Spirit Settings", EditorStyles.boldLabel);
+                EditorGUILayout.HelpBox("Attack Damage Multiplier = % ATK used by each projectile in the triple-shot volley.", MessageType.Info);
                 break;
         }
 
@@ -73,6 +83,8 @@ public class BuffCardConfigEditor : Editor
             case BuffType.OrbitingBall:
             case BuffType.SpiritPierce:
             case BuffType.SpiritExplosion:
+            case BuffType.SpiritHealing:
+            case BuffType.SpiritTripleShot:
                 return true;
 
             default:

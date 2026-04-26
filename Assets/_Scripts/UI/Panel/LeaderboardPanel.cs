@@ -44,7 +44,6 @@ public class LeaderboardPanel : PanelBase
     protected override void Awake()
     {
         base.Awake();
-        EnsureLeaderboardTitle();
         RefreshStaticTexts();
 
         if (hideButton != null)
@@ -218,58 +217,6 @@ public class LeaderboardPanel : PanelBase
         {
             backHintText.text = "ESC TO BACK";
             backHintText.gameObject.SetActive(false);
-        }
-    }
-
-    private void EnsureLeaderboardTitle()
-    {
-        if (menu == null)
-        {
-            return;
-        }
-
-        if (leaderboardTitleText == null)
-        {
-            Transform existingTitle = menu.transform.Find("LeaderboardTitle");
-            if (existingTitle != null)
-            {
-                leaderboardTitleText = existingTitle.GetComponent<TextMeshProUGUI>();
-            }
-        }
-
-        if (leaderboardTitleText != null)
-        {
-            return;
-        }
-
-        GameObject titleObject = new GameObject("LeaderboardTitle", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        titleObject.transform.SetParent(menu.transform, false);
-
-        RectTransform titleRect = titleObject.GetComponent<RectTransform>();
-        titleRect.anchorMin = new Vector2(0f, 1f);
-        titleRect.anchorMax = new Vector2(1f, 1f);
-        titleRect.pivot = new Vector2(0.5f, 1f);
-        titleRect.anchoredPosition = new Vector2(0f, -8f);
-        titleRect.sizeDelta = new Vector2(-100f, 42f);
-
-        leaderboardTitleText = titleObject.GetComponent<TextMeshProUGUI>();
-        leaderboardTitleText.fontSize = 32f;
-        leaderboardTitleText.fontStyle = FontStyles.Bold;
-        leaderboardTitleText.alignment = TextAlignmentOptions.Center;
-        leaderboardTitleText.raycastTarget = false;
-
-        if (backHintText != null)
-        {
-            if (backHintText.font != null)
-            {
-                leaderboardTitleText.font = backHintText.font;
-            }
-
-            leaderboardTitleText.color = backHintText.color;
-        }
-        else
-        {
-            leaderboardTitleText.color = Color.white;
         }
     }
 

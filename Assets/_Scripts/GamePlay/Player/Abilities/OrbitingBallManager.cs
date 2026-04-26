@@ -10,8 +10,6 @@ public class OrbitingBallManager : MonoBehaviour
     [Header("Orbit Settings")]
     [SerializeField] private float orbitRadius = 2.5f;
     [SerializeField] private float baseOrbitSpeed = 120f;
-    [SerializeField] private float speedPenaltyPerAdditionalBall = 15f;
-    [SerializeField] private float minOrbitSpeed = 15f;
     [SerializeField] private float heightOffset = 1f;
 
     private readonly List<GameObject> balls = new List<GameObject>();
@@ -30,7 +28,7 @@ public class OrbitingBallManager : MonoBehaviour
         int activeBallCount = balls.Count;
         if (activeBallCount == 0) return;
 
-        masterAngle -= GetEffectiveOrbitSpeed(activeBallCount) * Time.deltaTime;
+        masterAngle -= baseOrbitSpeed * Time.deltaTime;
         if (masterAngle < 0f) masterAngle += 360f;
 
         float step = 360f / activeBallCount;
@@ -130,12 +128,6 @@ public class OrbitingBallManager : MonoBehaviour
     private void CleanupInactiveBalls()
     {
         balls.RemoveAll(ball => ball == null || !ball.activeInHierarchy);
-    }
-
-    private float GetEffectiveOrbitSpeed(int activeBallCount)
-    {
-        float speedReduction = Mathf.Max(0, activeBallCount - 1) * speedPenaltyPerAdditionalBall;
-        return Mathf.Max(minOrbitSpeed, baseOrbitSpeed - speedReduction);
     }
 
 #if UNITY_EDITOR

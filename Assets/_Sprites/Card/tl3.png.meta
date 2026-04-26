@@ -136,50 +136,6 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tl3_0
-      rect:
-        serializedVersion: 2
-        x: 237
-        y: 119
-        width: 22
-        height: 34
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a58f09d4643e5964ca9dbb7b4d8076c5
-      internalID: -679496036
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: tl3_1
-      rect:
-        serializedVersion: 2
-        x: 259
-        y: 139
-        width: 32
-        height: 50
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 265b45886af28b349815c8ac38ef5a59
-      internalID: -1322545182
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: tl3_2
       rect:
         serializedVersion: 2
@@ -197,28 +153,6 @@ TextureImporter:
       bones: []
       spriteID: 61f53cff37e805a458b22229bd2d1b77
       internalID: -1656646969
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: tl3_3
-      rect:
-        serializedVersion: 2
-        x: 267
-        y: 117
-        width: 24
-        height: 21
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1ddb4dfef3b11c24584048bdd44eeb05
-      internalID: -2122806274
       vertices: []
       indices: 
       edges: []

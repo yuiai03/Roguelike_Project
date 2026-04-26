@@ -570,6 +570,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4e74a0808c482654182867540f75e180, type: 2}
   - {fileID: 11400000, guid: d664aeb7710451a4495fd402ce1624c8, type: 2}
   - {fileID: 11400000, guid: 016a0c218f1279949a8c6dc6c1bafb76, type: 2}
+  - {fileID: 11400000, guid: 3ab3ea73f4d247979c3ea799ad00efd8, type: 2}
+  - {fileID: 11400000, guid: ee11e7c904074188b6e03a435b3ff6b3, type: 2}
   cardsPerSelection: 3
   playerData: {fileID: 1335686472}
   playerHealth: {fileID: 1335686474}
@@ -14509,6 +14511,12 @@ MonoBehaviour:
   - poolType: 11
     initialSize: 10
     prefab: {fileID: 6725370750554534045, guid: b1821a260dd585c4698818554ee1c2e1, type: 3}
+  - poolType: 25
+    initialSize: 10
+    prefab: {fileID: 1010004448532723154, guid: a461879011484483aa7b6afa1fdbddd3, type: 3}
+  - poolType: 26
+    initialSize: 10
+    prefab: {fileID: 5564452494086979584, guid: be763ff717bb4d12ad1b13b26bfe7775, type: 3}
   - poolType: 15
     initialSize: 10
     prefab: {fileID: 8464065373959321113, guid: 23ebe8a9a78c21c4892c540469bed332, type: 3}

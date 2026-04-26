@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public enum PoolType
 {
@@ -19,21 +19,25 @@ public enum PoolType
     ShadowStalkerBoss = 13,
     VoidTitanBoss = 14,
     FlyEnemy = 15,
-    
+
     // LawaChurl Bosses
     LawaChurl_Geo = 16,
     LawaChurl_Pyro = 17,
     LawaChurl_Electro = 18,
-    
+
     // Boss Attacks & Effects
     WarningCircle = 19,
     ElectroBomb_Big = 20,
     ElectroBomb_Small = 21,
     LawaChurlGeoRock = 22,
     LawaChurlPyroEffect = 23,
-    
+
     // Interactables
     BuffChest = 24,
+
+    // Spirits
+    SpiritHealing = 25,
+    SpiritTripleShot = 26,
 }
 
 [System.Serializable]
@@ -113,7 +117,6 @@ public class ObjectPool : MonoBehaviour
         else
         {
             Pool poolConfig = poolConfigs[poolType];
-
             objectToSpawn = CreateNewObject(poolConfig.prefab, poolParents[poolType]);
         }
 
@@ -141,7 +144,6 @@ public class ObjectPool : MonoBehaviour
         }
 
         obj.SetActive(false);
-
         obj.transform.SetParent(poolParents[poolType]);
         poolDictionary[poolType].Enqueue(obj);
     }
