@@ -72,6 +72,7 @@ public class NameInputPanel : PanelBase
 
     private void OnSubmitClicked()
     {
+        AudioManager.Instance?.PlayUISfx(AudioCue.UiButtonClick);
         string name = nameInputField != null ? nameInputField.text.Trim() : "";
 
         PlayFabLeaderboardManager.Instance.SubmitName(name,

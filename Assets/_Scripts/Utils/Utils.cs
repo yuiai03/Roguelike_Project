@@ -2,6 +2,28 @@ using UnityEngine;
 
 public static class Utils
 {
+    public static Vector3 GetGroundPosition(
+        Vector3 worldPosition,
+        LayerMask groundMask,
+        float rayStartHeight = 5f,
+        float raycastDistance = 50f)
+    {
+        Vector3 rayOrigin = worldPosition + Vector3.up * rayStartHeight;
+
+        if (Physics.Raycast(
+            rayOrigin,
+            Vector3.down,
+            out RaycastHit hit,
+            raycastDistance,
+            groundMask,
+            QueryTriggerInteraction.Ignore))
+        {
+            return hit.point;
+        }
+
+        return worldPosition;
+    }
+
     #region Rarity Helpers
 
     public static Color GetRarityColor(RarityType rarity)

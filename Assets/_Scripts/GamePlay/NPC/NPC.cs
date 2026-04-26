@@ -18,19 +18,31 @@ public abstract class NPC : MonoBehaviour
 
     protected virtual void Awake()
     {
-        inputActions = new InputSystem_Actions();
+        EnsureInputActions();
     }
 
     protected virtual void OnEnable()
     {
+        EnsureInputActions();
         inputActions.Enable();
         ChallengePanel.onGameStart += OnGameStart;
     }
 
     protected virtual void OnDisable()
     {
-        inputActions.Disable();
+        if (inputActions != null)
+        {
+            inputActions.Disable();
+        }
         ChallengePanel.onGameStart -= OnGameStart;
+    }
+
+    private void EnsureInputActions()
+    {
+        if (inputActions == null)
+        {
+            inputActions = new InputSystem_Actions();
+        }
     }
 
     private void OnGameStart()

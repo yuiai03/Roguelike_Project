@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using PlayFab.ClientModels;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using Roguelike.Systems.Leaderboard;
 using Roguelike.UI.Leaderboard;
 
@@ -19,6 +20,7 @@ public class LeaderboardPanel : PanelBase
     [Header("UI References")]
     [SerializeField] private Transform entriesContainer;
     [SerializeField] private GameObject entryPrefab;
+    [SerializeField] private TextMeshProUGUI backHintText;
 
     [Header("My Score UI")]
     [SerializeField] private LeaderboardEntryUI myEntryUI;
@@ -30,10 +32,18 @@ public class LeaderboardPanel : PanelBase
 
     public static Action OnClosed;
 
+    private bool ownsPlayerInput = true;
+
     protected override void Awake()
     {
         base.Awake();
-        if (hideButton != null) hideButton.onClick.AddListener(() => Hide());
+        if (backHintText != null)
+        {
+            backHintText.text = "ESC TO BACK";
+            backHintText.gameObject.SetActive(false);
+        }
+
+        if (hideButton != null) hideButton.onClick.AddListener(HandleHideClicked);
     }
 
     private void OnEnable()
@@ -68,28 +78,67 @@ public class LeaderboardPanel : PanelBase
         }
     }
 
-    public override void Show(Action onComplete = null)
+    public void Show(bool takeInputOwnership, Action onComplete = null)
     {
+        ownsPlayerInput = takeInputOwnership;
         GameUI.Instance?.InteractPanel?.Hide();
-        PlayerController.Instance.SetInputActive(false);
+        if (ownsPlayerInput && PlayerController.Instance != null)
+        {
+            PlayerController.Instance.SetInputActive(false);
+        }
 
         bg.SetActive(true);
+        if (backHintText != null)
+        {
+            backHintText.gameObject.SetActive(true);
+        }
+
+        AudioManager.Instance?.PlayUISfx(AudioCue.UiLeaderboardOpen);
 
         FetchLeaderboard();
 
         base.Show(onComplete);
     }
 
+    public override void Show(Action onComplete = null)
+    {
+        Show(true, onComplete);
+    }
+
+    public void HideWithoutInputRestore(Action onComplete = null)
+    {
+        HideInternal(false, onComplete);
+    }
+
     public override void Hide(Action onComplete = null)
+    {
+        HideInternal(ownsPlayerInput, onComplete);
+    }
+
+    private void HideInternal(bool restoreInput, Action onComplete = null)
     {
         base.Hide(() =>
         {
             bg.SetActive(false);
-            PlayerController.Instance.SetInputActive(true);
+            if (backHintText != null)
+            {
+                backHintText.gameObject.SetActive(false);
+            }
+
+            AudioManager.Instance?.PlayUISfx(AudioCue.UiLeaderboardClose);
+            if (restoreInput && PlayerController.Instance != null)
+            {
+                PlayerController.Instance.SetInputActive(true);
+            }
 
             OnClosed?.Invoke();
             onComplete?.Invoke();
         });
+    }
+
+    private void HandleHideClicked()
+    {
+        Hide();
     }
 
     private void UpdateLeaderboardUI(List<PlayerLeaderboardEntry> leaderboardData)
@@ -127,6 +176,6 @@ public class LeaderboardPanel : PanelBase
 
     private void OnDestroy()
     {
-        if (hideButton != null) hideButton.onClick.RemoveListener(() => Hide());
+        if (hideButton != null) hideButton.onClick.RemoveListener(HandleHideClicked);
     }
 }

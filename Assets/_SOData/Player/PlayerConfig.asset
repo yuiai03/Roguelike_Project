@@ -15,12 +15,12 @@ MonoBehaviour:
   moveSpeed: 7
   gravity: -20
   rotationSpeed: 1440
-  dashSpeed: 15
+  dashSpeed: 20
   dashDuration: 0.5
   dashCooldown: 1
   groundDistance: 0.3
   maxHealth: 1000
-  attackDamage: 50
+  attackDamage: 500
   attackCooldown: 1
   attackRange: 50
   projectileSpeed: 30

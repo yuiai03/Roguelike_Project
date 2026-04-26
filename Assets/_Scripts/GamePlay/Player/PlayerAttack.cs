@@ -50,6 +50,7 @@ public class PlayerAttack : MonoBehaviour
     private void PerformAttack()
     {
         attackTimer = playerData.GetAttackCooldown();
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.PlayerAttack);
         SpawnProjectiles();
     }
 

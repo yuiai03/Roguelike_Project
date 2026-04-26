@@ -44,6 +44,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         OnHealthChanged?.Invoke(playerData.currentHealth, playerData.GetMaxHealth());
         OnTakeDamage?.Invoke();
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.PlayerHit);
 
         if (DamageTextSpawner.Instance != null && damage > 0)
         {
@@ -91,6 +92,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         isDead = true;
         OnDeath?.Invoke();
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.PlayerDeath);
         Debug.Log("Player died!");
 
         if (PlayerLevelSystem.Instance != null && Roguelike.Systems.Leaderboard.PlayFabLeaderboardManager.Instance != null)

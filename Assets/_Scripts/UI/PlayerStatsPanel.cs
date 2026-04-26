@@ -23,28 +23,45 @@ public class PlayerStatsPanel : PanelBase
 
     private PlayerLevelSystem levelSystem => PlayerLevelSystem.Instance;
     private WaveSpawner waveSpawner => WaveSpawner.Instance;
+    private System.Action startGameHandler;
 
     private void Start()
     {
         menu.SetActive(false);
 
-        UpdateHealthBar(playerHealth.GetCurrentHealth(), playerHealth.GetMaxHealth());
-        UpdateLevel(levelSystem.GetCurrentLevel(), 999);
-        UpdateExp(levelSystem.GetCurrentExp(), levelSystem.GetExpToNextLevel());
-        UpdateWave(waveSpawner.GetCurrentWave());
+        if (playerHealth != null)
+        {
+            UpdateHealthBar(playerHealth.GetCurrentHealth(), playerHealth.GetMaxHealth());
+            playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
+        }
 
-        playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
-        levelSystem.OnLevelChanged.AddListener(UpdateLevel);
-        levelSystem.OnExpChanged.AddListener(UpdateExp);
-        waveSpawner.OnWaveStart.AddListener(UpdateWave);
+        if (levelSystem != null)
+        {
+            UpdateLevel(levelSystem.GetCurrentLevel(), 999);
+            UpdateExp(levelSystem.GetCurrentExp(), levelSystem.GetExpToNextLevel());
+            levelSystem.OnLevelChanged.AddListener(UpdateLevel);
+            levelSystem.OnExpChanged.AddListener(UpdateExp);
+        }
 
-        ChallengePanel.onGameStart += () => Show();
+        if (waveSpawner != null)
+        {
+            UpdateWave(waveSpawner.GetCurrentWave());
+            waveSpawner.OnWaveStart.AddListener(UpdateWave);
+        }
+
+        startGameHandler = () => Show();
+        ChallengePanel.onGameStart += startGameHandler;
 
         menu.SetActive(false);
     }
 
     private void Update()
     {
+        if (waveSpawner == null || waveText == null)
+        {
+            return;
+        }
+
         int currentWave = waveSpawner.GetCurrentWave();
         int totalWaves = waveSpawner.GetTotalWaves();
 
@@ -96,7 +113,10 @@ public class PlayerStatsPanel : PanelBase
 
     private void OnDestroy()
     {
-        ChallengePanel.onGameStart -= () => Show();
+        if (startGameHandler != null)
+        {
+            ChallengePanel.onGameStart -= startGameHandler;
+        }
 
         if (playerHealth != null)
         {

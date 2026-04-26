@@ -3,11 +3,14 @@ using System.Collections;
 
 public class ElectroBomb : MonoBehaviour
 {
+    private const float WarningVisualLift = 0.05f;
+
     private float damage;
     private float dropDuration;
     private Vector3 startPos;
     private Vector3 targetPos;
     private LayerMask damageLayer;
+    private LayerMask groundMask;
     private GameObject owner;
     private bool isBigBomb;
 
@@ -16,13 +19,21 @@ public class ElectroBomb : MonoBehaviour
     [SerializeField] private int smallBombCount = 6;
     [SerializeField] private float smallBombSpreadRadius = 5f;
 
-    public void Initialize(float damageAmount, float duration, Vector3 target, LayerMask layer, GameObject sourceOwner, bool isBig)
+    public void Initialize(
+        float damageAmount,
+        float duration,
+        Vector3 target,
+        LayerMask layer,
+        LayerMask groundLayerMask,
+        GameObject sourceOwner,
+        bool isBig)
     {
         damage = damageAmount;
         dropDuration = duration;
         startPos = transform.position;
-        targetPos = target;
+        targetPos = Utils.GetGroundPosition(target, groundLayerMask);
         damageLayer = layer;
+        groundMask = groundLayerMask;
         owner = sourceOwner;
         isBigBomb = isBig;
 
@@ -87,10 +98,12 @@ public class ElectroBomb : MonoBehaviour
         {
             // Random point around explosion
             Vector2 rand2D = Random.insideUnitCircle * smallBombSpreadRadius;
-            Vector3 spawnTarget = targetPos + new Vector3(rand2D.x, 0, rand2D.y);
+            Vector3 spawnTarget = targetPos + new Vector3(rand2D.x, 0f, rand2D.y);
+            spawnTarget = Utils.GetGroundPosition(spawnTarget, groundMask);
+            Vector3 warningSpawnPos = spawnTarget + Vector3.up * WarningVisualLift;
 
             // Spawn Warning Circle for small bomb
-            GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, spawnTarget, Quaternion.identity);
+            GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, warningSpawnPos, Quaternion.identity);
             if (warningObj != null)
             {
                 WarningCircle wc = warningObj.GetComponent<WarningCircle>();
@@ -109,7 +122,7 @@ public class ElectroBomb : MonoBehaviour
             if (smallBomb != null)
             {
                 // Damage decreased for small bombs, 1/3 of the big bomb
-                smallBomb.Initialize(damage * 0.33f, dropDuration * 0.7f, spawnTarget, damageLayer, owner, false);
+                smallBomb.Initialize(damage * 0.33f, dropDuration * 0.7f, spawnTarget, damageLayer, groundMask, owner, false);
             }
         }
     }

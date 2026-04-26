@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class LawaChurl_Pyro : Enemy
 {
+    private const float WarningVisualLift = 0.05f;
+
     private float warningDuration = 1.5f;
     private float effectLifetime = 3f;
 
@@ -64,9 +66,11 @@ public class LawaChurl_Pyro : Enemy
         OnAttack?.Invoke(); // Trigger smash animation
 
         Vector3 targetPos = player.position;
+        Vector3 groundTargetPos = Utils.GetGroundPosition(targetPos, groundMask);
+        Vector3 warningSpawnPos = groundTargetPos + Vector3.up * WarningVisualLift;
 
         // Spawn Warning Circle
-        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, targetPos, Quaternion.identity);
+        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, warningSpawnPos, Quaternion.identity);
         if (warningObj != null)
         {
             WarningCircle warningCircle = warningObj.GetComponent<WarningCircle>();
@@ -78,7 +82,7 @@ public class LawaChurl_Pyro : Enemy
                 warningCircle.OnWarningComplete.AddListener(() =>
                 {
                     // Spawn Ice effect from below ground when warning completes
-                    SpawnPyroEffect(targetPos);
+                    SpawnPyroEffect(groundTargetPos);
                 });
                 warningCircle.StartWarning(warningDuration, 3.5f);
             }

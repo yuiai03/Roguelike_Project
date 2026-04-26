@@ -265,6 +265,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
         attackTimer = enemyData.shootCooldown;
         OnAttack?.Invoke();
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyAttack);
 
         Vector3 spawnPosition = firePoint.position + Vector3.up * 1f;
 
@@ -297,6 +298,7 @@ public class Enemy : MonoBehaviour, IDamageable
                     damageable.TakeDamage(enemyData.contactDamage, collision.GetContact(0).point, hitDirection);
                     attackTimer = enemyData.attackCooldown;
                     OnAttack?.Invoke();
+                    AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyAttack);
                 }
             }
         }
@@ -309,6 +311,7 @@ public class Enemy : MonoBehaviour, IDamageable
         enemyData.TakeDamage(damage);
         OnTakeDamageEvent?.Invoke();
         OnHealthChanged?.Invoke(enemyData.currentHealth, enemyData.maxHealth);
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyHit);
 
         if (DamageTextSpawner.Instance != null && damage > 0)
         {
@@ -369,6 +372,7 @@ public class Enemy : MonoBehaviour, IDamageable
         isDead = true;
         currentState = EnemyState.Dead;
         OnDeath?.Invoke();
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyDeath);
 
         if (poolType != PoolType.None && ObjectPool.Instance != null)
         {

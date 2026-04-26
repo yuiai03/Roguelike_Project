@@ -9,6 +9,7 @@ public class CardSelectionPanel : PanelBase
 
     private List<GameObject> spawnedCardUIs = new List<GameObject>();
     private BuffCardManager cardManager;
+    private List<BuffCardConfig> pendingCards;
 
     protected override void Awake()
     {
@@ -29,17 +30,36 @@ public class CardSelectionPanel : PanelBase
         {
             levelSystem.OnLevelUp.AddListener(OnPlayerLevelUp);
         }
+
+        if (MapThemeManager.Instance != null)
+        {
+            MapThemeManager.Instance.OnThemeTransitionCompleted += HandleThemeTransitionCompleted;
+        }
     }
 
     private void OnPlayerLevelUp(int newLevel)
     {
-        Debug.Log($"Level up to {newLevel}! Showing card selection...");
+        Debug.Log($"Level up to {newLevel}! Preparing card selection...");
 
-        if (cardManager != null)
+        if (cardManager == null)
         {
-            List<BuffCardConfig> cards = cardManager.GetRandomCards(cardManager.GetCardsPerSelection());
-            ShowCards(cards);
+            return;
         }
+
+        List<BuffCardConfig> cards = cardManager.GetRandomCards(cardManager.GetCardsPerSelection());
+        if (cards == null || cards.Count == 0)
+        {
+            return;
+        }
+
+        MapThemeManager mapThemeManager = MapThemeManager.Instance;
+        if (mapThemeManager != null && (mapThemeManager.IsTransitioning || mapThemeManager.WillThemeChangeForLevel(newLevel)))
+        {
+            pendingCards = new List<BuffCardConfig>(cards);
+            return;
+        }
+
+        ShowCards(cards);
     }
 
     public void ShowCards(List<BuffCardConfig> cards)
@@ -52,6 +72,7 @@ public class CardSelectionPanel : PanelBase
 
         ClearCards();
 
+        AudioManager.Instance?.PlayUISfx(AudioCue.CardShow);
         Show();
 
         Time.timeScale = 0f;
@@ -121,12 +142,29 @@ public class CardSelectionPanel : PanelBase
         });
     }
 
+    private void HandleThemeTransitionCompleted(int _)
+    {
+        if (pendingCards == null || pendingCards.Count == 0)
+        {
+            return;
+        }
+
+        List<BuffCardConfig> cardsToShow = pendingCards;
+        pendingCards = null;
+        ShowCards(cardsToShow);
+    }
+
     private void OnDestroy()
     {
         PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
         if (levelSystem != null)
         {
             levelSystem.OnLevelUp.RemoveListener(OnPlayerLevelUp);
+        }
+
+        if (MapThemeManager.Instance != null)
+        {
+            MapThemeManager.Instance.OnThemeTransitionCompleted -= HandleThemeTransitionCompleted;
         }
 
         ClearCards();

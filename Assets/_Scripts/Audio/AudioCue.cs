@@ -1,0 +1,26 @@
+public enum AudioCue
+{
+    GameMusic,
+    UiPauseOpen,
+    UiPauseClose,
+    UiButtonHover,
+    UiButtonClick,
+    UiSubmenuOpen,
+    UiBack,
+    UiRestartConfirm,
+    UiLeaderboardOpen,
+    UiLeaderboardClose,
+    ChallengeOpen,
+    ChallengeReady,
+    ChallengeStart,
+    PlayerAttack,
+    PlayerDash,
+    PlayerHit,
+    PlayerDeath,
+    EnemyAttack,
+    EnemyHit,
+    EnemyDeath,
+    LevelUp,
+    CardShow,
+    CardPick
+}

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class LawaChurl_Electro : Enemy
 {
+    private const float WarningVisualLift = 0.05f;
+
     private float bombDropDuration = 2f;
     private float spawnHeight = 15f; 
 
@@ -64,9 +66,11 @@ public class LawaChurl_Electro : Enemy
         OnAttack?.Invoke();
 
         Vector3 targetPos = player.position;
+        Vector3 groundTargetPos = Utils.GetGroundPosition(targetPos, groundMask);
+        Vector3 warningSpawnPos = groundTargetPos + Vector3.up * WarningVisualLift;
 
         // Spawn Warning Circle at Player position
-        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, targetPos, Quaternion.identity);
+        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, warningSpawnPos, Quaternion.identity);
         if (warningObj != null)
         {
             WarningCircle warningCircle = warningObj.GetComponent<WarningCircle>();
@@ -89,7 +93,7 @@ public class LawaChurl_Electro : Enemy
         if (bombScript != null)
         {
             // The bomb script will handle dropping down, exploding, and spawning the 6 small ones
-            bombScript.Initialize(enemyData.projectileDamage, bombDropDuration, targetPos, playerLayer, this.gameObject, true);
+            bombScript.Initialize(enemyData.projectileDamage, bombDropDuration, groundTargetPos, playerLayer, groundMask, this.gameObject, true);
         }
         else 
         {

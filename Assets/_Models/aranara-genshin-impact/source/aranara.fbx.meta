@@ -3,7 +3,12 @@ guid: 0b02117017171f344a44711459fed5b2
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aranara texture
+    second: {fileID: 2100000, guid: 5de11f43737b00c438e7b5a36a4cd5d4, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -60,6 +60,7 @@ public class BuffCardUI : MonoBehaviour
     {
         if (currentCard != null && parentUI != null)
         {
+            AudioManager.Instance?.PlayUISfx(AudioCue.CardPick);
             parentUI.OnCardSelected(currentCard);
         }
     }

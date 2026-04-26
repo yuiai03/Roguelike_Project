@@ -36,6 +36,7 @@ public class ChallengePanel : PanelBase
     public void ShowTutorial()
     {
         GameUI.Instance?.InteractPanel?.Hide();
+        AudioManager.Instance?.PlayUISfx(AudioCue.ChallengeOpen);
 
         PlayerController.Instance.SetInputActive(false);
 
@@ -59,6 +60,7 @@ public class ChallengePanel : PanelBase
             startGameButton.gameObject.SetActive(true);
             cg.alpha = 0f;
             cg.DOFade(1f, 0.4f).SetUpdate(true);
+            AudioManager.Instance?.PlayUISfx(AudioCue.ChallengeReady);
         }
         delayCoroutine = null;
     }
@@ -82,6 +84,8 @@ public class ChallengePanel : PanelBase
 
     public void StartGame()
     {
+        AudioManager.Instance?.PlayUISfx(AudioCue.ChallengeStart);
+
         if (PlayerController.Instance != null)
             PlayerController.Instance.SetInputActive(true);
 

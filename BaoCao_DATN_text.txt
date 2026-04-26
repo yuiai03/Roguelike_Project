@@ -1,0 +1,243 @@
+PHẦN BỔ SUNG
+
+Bản text này được trích và chuẩn hóa từ BaoCao_DATN_revised.docx, là phiên bản đã được rà lệch với mã nguồn hiện tại của dự án Roguelike_Project.
+
+Các điểm hiệu chỉnh quan trọng để nội dung báo cáo khớp với code hiện tại:
+- Không mô tả cơ chế đổi map hoặc Load Map như một tính năng đã hoàn thành; project hiện tiếp tục vòng wave và spawn BuffChest sau mỗi 10 wave.
+- Không mô tả hệ thống AI dựa trên NavMesh hoặc NavMeshAgent; enemy hiện di chuyển và xử lý hành vi bằng CharacterController cùng logic trong lớp Enemy.
+- Luồng kinh nghiệm hiện tại là enemy chết -> ExpDropper cộng EXP trực tiếp vào PlayerLevelSystem.
+- Điểm leaderboard được gửi lên PlayFab dựa trên tổng EXP tích lũy, không dựa trên thời gian sống cộng số lượng tiêu diệt.
+- Display Name PlayFab được thiết lập ở lần đăng nhập đầu tiên, không phải chỉ nhập khi game over.
+- HUD hiện có các thông tin HP, EXP, level, wave và pause menu; ngoài ra còn có card selection, leaderboard, nhập tên và thông báo nhanh.
+- Object Pooling chủ yếu áp dụng cho các đối tượng runtime và combat như enemy, projectile, effect, damage text, spirit, orbiting ball và buff chest; một số UI vẫn tạo hủy trực tiếp.
+- Boss wave đã có mốc kích hoạt và thông báo, nhưng bossPoolType hiện vẫn là cấu hình dự phòng, chưa được dùng như một nhánh summon boss tự động riêng trong WaveSpawner.
+
+PHẦN BÁO CÁO CHÍNH
+
+CHƯƠNG 1 TỔNG QUAN
+
+Tổng quan
+
+Lý do chọn đề tài
+
+Trong những năm gần đây, ngành công nghiệp game thế giới chứng kiến sự trỗi dậy mạnh mẽ của thể loại game sinh tồn kết hợp với yếu tố Roguelike. Sức hút của thể loại này nằm ở giá trị chơi lại (replayability) cực cao, nơi người chơi phải đối mặt với các đợt tấn công liên tục của kẻ thù và liên tục đưa ra quyết định lựa chọn kỹ năng để sinh tồn. Nhận thấy tiềm năng phát triển và mong muốn ứng dụng các kiến thức lập trình, thuật toán đã học vào một sản phẩm thực tế, em quyết định chọn đề tài: "Nghiên cứu và phát triển trò chơi sinh tồn 3D" làm Đồ án Tốt nghiệp. Việc phát triển tựa game này trên nền tảng Unity không chỉ giúp củng cố tư duy lập trình hướng đối tượng mà còn rèn luyện kỹ năng giải quyết bài toán tối ưu hiệu năng và quản lý tài nguyên trong môi trường 3D
+
+Mục tiêu nghiên cứu
+
+Mục tiêu chính của đề tài là xây dựng hoàn chỉnh một tựa game sinh tồn 3D có thể chơi được (playable), tích hợp đầy đủ các cơ chế cốt lõi bao gồm:
+
+Xây dựng hệ thống nhân vật (Player) với các cơ chế điều khiển mượt mà: di chuyển, lướt (dash), và tự động tấn công.
+
+Phát triển hệ thống trí tuệ nhân tạo (AI) đa dạng cho kẻ thù (Enemy), bao gồm quái cận chiến, quái đánh xa, ném bom, và các đợt đánh Boss.
+
+Thiết kế cơ chế sinh tồn Roguelike với hệ thống thẻ bài nâng cấp (Buff) đa dạng xuất hiện mỗi khi lên cấp.
+
+Triển khai hệ thống đợt tấn công (Wave) vô hạn, các mốc boss wave và cơ chế phần thưởng theo mốc wave như rương buff xuất hiện sau mỗi 10 wave.
+
+Xây dựng bảng xếp hạng trực tuyến (Leaderboard) và cơ chế định danh người chơi thông qua PlayFab Display Name để tăng tính cạnh tranh cho người chơi.
+
+Phạm vi nghiên cứu
+
+Phạm vi kiến thức: Ứng dụng ngôn ngữ lập trình C# và Game Engine Unity để xây dựng logic game. Nghiên cứu cách tích hợp dịch vụ backend Playfab để lưu trữ dữ liệu người chơi.
+
+Phạm vi chức năng: Tập trung vào trải nghiệm cốt lõi (Core Gameplay Loop): Tiêu diệt quái -> Nhận kinh nghiệm trực tiếp -> Lên cấp -> Chọn thẻ bài buff -> Tiếp tục sinh tồn qua các boss wave và lưu điểm lên leaderboard. Không đi sâu vào cốt truyện phức tạp hay chế độ chơi nhiều người (Multiplayer) theo thời gian thực.
+
+Nội dung thực hiện
+
+Khảo sát thực trạng
+
+1.2.1. Tổng quan thị trường game sinh tồn (Survivor) và Roguelike hiện nay
+
+Trong những năm gần đây, thị trường game toàn cầu đã chứng kiến sự bùng nổ của thể loại game sinh tồn theo phong cách "Bullet Heaven" (hay còn gọi là Reverse Bullet Hell) kết hợp với yếu tố Roguelike. Sự thành công vang dội của các tựa game tiên phong đã định hình nên một nhánh nhỏ vô cùng hấp dẫn: người chơi chỉ cần tập trung vào việc di chuyển nhân vật, trong khi việc tấn công diễn ra hoàn toàn tự động. Sự kết hợp giữa cơ chế điều khiển tối giản, hệ thống nâng cấp ngẫu nhiên (Roguelike) qua từng đợt quái (Wave) và nhịp độ trận đấu tăng dần đã tạo ra sức hút khổng lồ và giá trị chơi lại (replayability) cực cao cho thể loại này.
+
+1.2.2. Phân tích một số tựa game nổi bật cùng thể loại
+
+Để có cái nhìn khách quan và xây dựng hệ thống tính năng phù hợp cho đồ án, em đã tiến hành khảo sát một số tựa game nổi bật trên thị trường mang phong cách tương đồng:
+
+Vampire Survivors / Magic Survival: Đây là những tựa game đặt nền móng cho cơ chế "Survivor".
+
+Ưu điểm: Lối chơi gây nghiện, hệ thống vũ khí đa dạng và có thể kết hợp để tạo ra sức mạnh đột phá.
+
+Nhược điểm: Đồ họa 2D Pixel hoặc 2D đơn giản, góc nhìn từ trên xuống (Top-down) bị giới hạn, thiếu đi cảm giác không gian và độ sâu của môi trường. Các hành động của nhân vật chỉ dừng lại ở mức di chuyển cơ bản.
+
+Risk of Rain 2: Một tựa game Roguelike 3D cực kỳ thành công.
+
+Ưu điểm: Chuyển đổi xuất sắc cơ chế Roguelike sang môi trường 3D, hệ thống vật phẩm phong phú, nhân vật có nhiều kỹ năng linh hoạt (bắn, lướt, nhảy).
+
+Nhược điểm: Độ phức tạp cao, đòi hỏi người chơi phải thao tác nhiều (vừa di chuyển, vừa ngắm bắn, vừa dùng kỹ năng), hệ thống bản đồ quá rộng lớn đôi khi làm loãng nhịp độ game.
+
+1.2.3. Đánh giá ưu điểm và hạn chế chung của dòng game hiện tại
+
+Từ quá trình khảo sát, có thể đúc kết một số điểm như sau:
+
+Ưu điểm: Cơ chế nâng cấp sức mạnh ngẫu nhiên (chọn thẻ bài buff khi lên cấp) là cốt lõi tạo nên sự hấp dẫn. Khả năng đối đầu với số lượng lượng quái vật khổng lồ trên màn hình mang lại cảm giác thỏa mãn (satisfying) cho người chơi.
+
+Hạn chế: Phần lớn các game "Survivor" thuần túy hiện nay vẫn đang ở định dạng 2D. Các game 3D cùng thể loại lại thường yêu cầu thao tác điều khiển quá phức tạp, làm mất đi tính chất "dễ làm quen, khó thành thạo" của dòng game Survivor nguyên bản. Môi trường trong nhiều game còn đơn điệu, ít có sự thay đổi rõ rệt về bản đồ (Map) qua các màn chơi.
+
+1.2.4. Kết luận khảo sát và hướng đi của đề tài
+
+Dựa trên những phân tích thực trạng nêu trên, đề tài "Nghiên cứu và phát triển trò chơi sinh tồn 3D"  được định hình để kế thừa những ưu điểm và khắc phục một phần các hạn chế của các tựa game đi trước.
+
+Dự án sẽ đưa cơ chế "Survivor" (tự động tấn công, chọn thẻ bài buff khi lên cấp) vào trong môi trường 3D trực quan, sinh động hơn. Đồng thời, game vẫn giữ được sự tối giản trong điều khiển nhưng được bổ sung thêm kỹ năng lướt (Dash) để tăng tính cơ động. Hệ thống quái vật (Enemy) được đa dạng hóa với nhiều loại hình tấn công như cận chiến, đánh xa, kỹ năng ném bom và boss wave; kết hợp với cơ chế wave vô hạn, tăng độ khó theo tiến trình và rương buff theo mốc 10 wave để tạo trải nghiệm có chiều sâu hơn.
+
+Đề xuất phương pháp giải quyết
+
+Dựa trên những phân tích từ quá trình khảo sát thực trạng, để xây dựng thành công tựa game sinh tồn 3D mang phong cách Roguelike, đề tài đề xuất các phương pháp giải quyết cụ thể trên hai phương diện: Thiết kế lối chơi và Giải pháp kỹ thuật.
+
+1.3.1. Giải pháp về công nghệ và nền tảng
+
+Game Engine: Sử dụng Unity 3D kết hợp ngôn ngữ lập trình C#. Unity cung cấp hệ thống vật lý mạnh mẽ, công cụ hỗ trợ thiết kế môi trường 3D trực quan và cộng đồng tài nguyên vô cùng phong phú, rất phù hợp cho một dự án phát triển độc lập trong thời gian ngắn (10 tuần).
+
+Nền tảng mục tiêu (Target Platform): Trò chơi sẽ được tối ưu hóa để xuất ra nền tảng PC (Windows). Việc chọn PC làm nền tảng chính giúp đảm bảo trải nghiệm đồ họa 3D tốt nhất và không bị giới hạn quá khắt khe về cấu hình phần cứng khi xử lý số lượng lớn quái vật trên màn hình.
+
+Cơ sở dữ liệu (Backend): Sử dụng nền tảng điện toán đám mây Playfab của Microsoft. Playfab cung cấp sẵn các API (Giao diện lập trình ứng dụng) để quản lý xác thực người chơi (Authentication) và xây dựng bảng xếp hạng trực tuyến (Leaderboard) một cách nhanh chóng, an toàn mà không cần tự xây dựng hệ thống server riêng.
+
+1.3.2. Giải pháp thiết kế lối chơi (Gameplay Solutions)
+
+Giải quyết bài toán thao tác điều khiển: Để giữ được tinh thần "nhàn rỗi" (casual) nhưng vẫn thử thách của dòng game Survivor, cơ chế tấn công sẽ được tự động hóa hoàn toàn dựa trên tầm nhìn hoặc khoảng cách đến mục tiêu. Người chơi chỉ thao tác phím điều hướng (WASD/Joystick) và phím lướt (Dash) để né tránh.
+
+Giải quyết bài toán chiều sâu chiến thuật: Thay vì chỉ có quái vật lao vào cận chiến, hệ thống kẻ thù sẽ được phân loại rõ ràng: quái cận chiến, quái bắn xa, quái ném bom và quái gây sát thương diện rộng.
+
+Hệ thống Roguelike (Thẻ bài nâng cấp): Khi thanh kinh nghiệm (Exp) đầy, game sẽ tạm dừng (Pause) và hiển thị ngẫu nhiên 3 thẻ bài nâng cấp. Các thẻ bài này được thiết kế đa dạng từ tăng chỉ số sinh tồn (HP, tốc độ) đến thay đổi cơ chế tấn công (bắn đạn 3 tia, triệu hồi đạn xoay, tinh linh hỗ trợ).
+
+1.3.3. Giải pháp kỹ thuật và thuật toán (Technical Solutions)
+
+Thuật toán sinh quái (Wave Spawning Algorithm): Xây dựng một trình quản lý WaveSpawner với các tham số cấu hình linh hoạt trong WaveConfig. Hệ thống tính toán thời gian chuẩn bị, số lượng, loại quái và vị trí spawn dựa trên cấu hình từng wave; khi vượt quá danh sách wave gốc sẽ sinh endless wave bằng cách tái sử dụng mẫu cũ và tăng thêm số lượng quái. Ở các mốc boss wave, hệ thống phát sự kiện thông báo boss; sau khi hoàn thành các mốc 10 wave sẽ sinh BuffChest và tiếp tục chu kỳ vô hạn. Thuộc tính bossPoolType hiện được lưu trong cấu hình wave nhưng logic spawn boss vẫn đang đi theo enemyGroups của từng wave, chưa tách thành một nhánh summon boss riêng biệt.
+
+Quản lý di chuyển và hành vi AI: Project hiện không sử dụng NavMeshAgent. Thay vào đó, các enemy di chuyển bằng CharacterController kết hợp với tính toán vector hướng tới người chơi, khoảng cách tấn công, thời gian hồi chiêu và trạng thái AI trong lớp Enemy. Cách tiếp cận này phù hợp với không gian chiến đấu mở hiện tại và giúp luồng xử lý chiến đấu rõ ràng, dễ kiểm soát.
+
+Giải pháp tối ưu hóa hiệu năng (Object Pooling): Với đặc thù của game Survivor là có nhiều quái vật, đạn và hiệu ứng xuất hiện liên tục, việc tạo mới (Instantiate) và phá hủy (Destroy) đối tượng runtime sẽ dễ gây sụt giảm khung hình. Vì vậy, project áp dụng Object Pooling thông qua lớp ObjectPool, sử dụng Dictionary và Queue để tái sử dụng các đối tượng chiến đấu như enemy, projectile, boss, effect, damage text, spirit, orbiting ball và buff chest. Một số phần tử UI như card selection hoặc leaderboard entry hiện vẫn được tạo và hủy trực tiếp, nên phạm vi tối ưu chủ yếu tập trung vào đối tượng runtime/combat.
+
+Mô tả yêu cầu bài toán
+
+1.4.1. Yêu cầu chức năng
+
+Hệ thống chức năng của trò chơi được chia làm hai phần chính: Các chức năng tương tác của người chơi và các chức năng tự động của hệ thống (Gameplay Systems).
+
+1.4.1.1. Các chức năng đối với Người chơi (Player)
+
+Điều khiển nhân vật cơ bản: Người chơi sử dụng bàn phím (hoặc Joystick) để di chuyển nhân vật trong không gian 3D và sử dụng kỹ năng lướt (Dash) để né tránh sự áp sát của kẻ thù.
+
+Cơ chế chiến đấu tự động: Người chơi không cần thao tác bấm nút tấn công. Hệ thống sẽ tự động quét, khóa mục tiêu (những kẻ thù gần nhất hoặc trong tầm nhìn) và thực hiện các đòn đánh/bắn đạn.
+
+Nhận kinh nghiệm và thăng cấp: Khi enemy bị tiêu diệt, component ExpDropper sẽ cộng EXP trực tiếp vào PlayerLevelSystem. Khi lượng EXP hiện tại đạt ngưỡng, hệ thống tự động thăng cấp, cập nhật thanh EXP và kích hoạt giao diện chọn buff.
+
+Lựa chọn nâng cấp sức mạnh: Tại thời điểm lên cấp, màn hình chơi game sẽ tạm dừng. Người chơi được yêu cầu chọn một trong ba thẻ bài ngẫu nhiên (Buff Cards) để nâng cấp sức mạnh (ví dụ: tăng máu, tăng sát thương, thêm tia đạn, triệu hồi tinh linh).
+
+Thiết lập tên và lưu kỷ lục: Khi đăng nhập PlayFab lần đầu, người chơi nhập Display Name để sử dụng trên bảng xếp hạng. Khi trận đấu kết thúc, hệ thống gửi điểm số dựa trên tổng lượng EXP kiếm được lên PlayFab để lưu thứ hạng.
+
+1.4.1.2. Các chức năng của Hệ thống (System)
+
+Hệ thống sinh quái (Wave System): Tự động sinh ra các đợt quái vật liên tục với độ khó tăng dần theo thời gian. Hệ thống phải quản lý được nhiều loại AI khác nhau (quái cận chiến, quái bắn xa, quái ném bom).
+
+Hệ thống Boss và mốc wave: Ở các mốc Wave 10, Wave 20, Wave 30..., hệ thống đánh dấu boss wave và phát thông báo boss thông qua sự kiện OnBossWaveStart. Sau khi hoàn thành các mốc 10 wave, game sinh BuffChest làm phần thưởng và tiếp tục wave kế tiếp. Project hiện chưa triển khai cơ chế tự động chuyển map hoặc đổi scene sau khi hạ boss.
+
+Hệ thống phân phối thẻ bài (Card Pool System): Quản lý xác suất xuất hiện của các thẻ bài nâng cấp. Đảm bảo việc quay ngẫu nhiên 3 thẻ bài không bị trùng lặp trong cùng một lần chọn và các chỉ số sức mạnh được cộng dồn chính xác vào nhân vật.
+
+Hệ thống Bảng xếp hạng (Leaderboard): Tích hợp PlayFab API để đăng nhập người chơi bằng Custom ID, thiết lập Display Name, gửi điểm tổng EXP và truy xuất danh sách xếp hạng hoặc vị trí của người chơi hiện tại để hiển thị trên giao diện leaderboard.
+
+1.4.2. Yêu cầu phi chức năng
+
+Bên cạnh các tính năng cốt lõi, trò chơi cần đảm bảo các tiêu chuẩn kỹ thuật sau để mang lại trải nghiệm tốt nhất:
+
+Hiệu năng (Performance): Trò chơi phải duy trì được tốc độ khung hình ổn định (mục tiêu $\ge 60$ FPS) trên các máy tính cấu hình phổ thông. Thuật toán Object Pooling phải được áp dụng triệt để để tránh tình trạng giật lag, rò rỉ bộ nhớ khi có hàng trăm kẻ thù và hàng ngàn viên đạn xuất hiện cùng lúc trên màn hình.
+
+Đồ họa và Không gian 3D: Môi trường, nhân vật và hiệu ứng kỹ năng (VFX) được thiết kế đồng bộ theo một phong cách nghệ thuật thống nhất. Không gian bản đồ phải có giới hạn (bức tường vô hình hoặc chướng ngại vật) để tránh người chơi đi ra ngoài khu vực lập trình sẵn.
+
+Giao diện người dùng (UI/UX): Giao diện trong trận đấu (HUD) cần hiển thị trực quan các thông số đang có trong project gồm: Thanh máu (HP), Thanh kinh nghiệm (EXP), Level hiện tại, Wave hiện tại và Pause Menu. Ngoài ra còn có panel chọn buff, leaderboard, nhập tên và thông báo nhanh.
+
+Độ ổn định và xử lý lỗi: Trò chơi cần hoạt động ổn định trong các trạng thái pause, level up, restart scene và gửi dữ liệu PlayFab. Hệ thống kết nối PlayFab cần có cơ chế ghi log hoặc thông báo khi đăng nhập, cập nhật Display Name hoặc gửi điểm thất bại để người chơi biết tình trạng kết nối.
+
+Xây dựng mô hình bài toán
+
+Mô hình bài toán tổng quát
+
+Bài toán xây dựng trò chơi sinh tồn 3D được mô hình hóa quanh các thành phần chính gồm: Player, Enemy, Projectile, Level/Buff System, Wave System, Object Pool, UI System và Leaderboard. Trong đó, Player là trung tâm của hệ thống, nhận điều khiển từ người chơi để di chuyển, dash và tự động tấn công enemy gần nhất trong phạm vi dựa trên attack cooldown hiện tại. Khi tiêu diệt enemy, Player nhận EXP thông qua ExpDropper và PlayerLevelSystem để lên cấp và chọn buff nhằm tăng chỉ số hoặc mở, nâng cấp kỹ năng. Đồng thời, Wave System quản lý các đợt quái vô hạn, tăng độ khó theo wave và phối hợp với Object Pool để tái sử dụng đối tượng. Kết quả cuối cùng của trận đấu được lưu trên Leaderboard thông qua PlayFab.
+
+Hình 1.1. Sơ đồ mô hình bài toán tổng quát của hệ thống
+
+1.5.2. Mô tả hoạt động của hệ thống
+
+Khi trò chơi bắt đầu, người chơi tương tác với ChallengePostNPC để mở ChallengePanel và nhấn StartGame. Sau đó, hệ thống khởi tạo player vào trạng thái chiến đấu, hiển thị HUD và bắt đầu wave đầu tiên. Enemy được sinh ra theo từng nhóm trong WaveConfig; vị trí xuất hiện trong mỗi vùng spawn được chọn ngẫu nhiên trong bán kính cấu hình.
+
+Mỗi khi enemy bị tiêu diệt, ExpDropper cộng EXP trực tiếp cho PlayerLevelSystem. Khi đủ EXP để lên cấp, hệ thống hiển thị 3 thẻ buff để người chơi chọn 1, đồng thời tạm dừng game trong lúc chọn. Buff có thể tăng HP, damage, move speed, attack speed hoặc mở, nâng cấp các kỹ năng như multishot, orbiting ball, spirit và AoE explosion. Sau mỗi wave, độ khó tiếp tục tăng thông qua cấu hình endless wave và cơ chế auto scale của quái. Ở các mốc boss wave, hệ thống phát thông báo boss; sau khi hoàn thành mốc 10 wave sẽ spawn BuffChest làm phần thưởng. Khi Player hết máu, trận đấu kết thúc và điểm số dựa trên tổng EXP tích lũy được gửi lên Leaderboard.
+
+Bảng mô tả các thành phần chính
+
+CHƯƠNG 2
+
+MỘT SỐ KIẾN THỨC CƠ BẢN THỰC HIỆN ĐỀ TÀI
+
+2.1. Ngôn ngữ lập trình
+
+2.1.1. Tổng quan về ngôn ngữ C#
+
+C# là ngôn ngữ lập trình hướng đối tượng hiện đại do Microsoft phát triển trên nền tảng .NET. Đây là một trong những ngôn ngữ phổ biến hiện nay trong lĩnh vực phát triển phần mềm, đặc biệt phù hợp với việc xây dựng ứng dụng desktop, web, mobile và game. Với cú pháp rõ ràng, khả năng tổ chức mã nguồn tốt và hỗ trợ mạnh về thư viện, C# là lựa chọn phù hợp cho các dự án yêu cầu tính mô đun và khả năng bảo trì lâu dài.
+
+Trong lĩnh vực phát triển game, C# được sử dụng rộng rãi nhờ sự tích hợp trực tiếp với Unity Engine. Unity cho phép lập trình viên viết mã điều khiển gameplay, AI, vật lý, giao diện và tương tác thông qua các script C#. Điều này giúp quá trình phát triển trở nên trực quan, linh hoạt và hiệu quả hơn.
+
+2.1.2. Ứng dụng C# trong đề tài
+
+Trong đề tài này, C# được sử dụng để hiện thực hầu hết các chức năng chính của trò chơi. Các thành phần như điều khiển nhân vật, cơ chế dash, hệ thống bắn tự động, trí tuệ nhân tạo của enemy, quản lý wave, lên cấp, chọn buff, object pool và xử lý UI đều được xây dựng bằng các script C#.
+
+Mỗi chức năng được đóng gói thành các lớp riêng biệt để dễ quản lý và tái sử dụng. Ví dụ, lớp PlayerController phụ trách di chuyển và dash, PlayerAttack xử lý cơ chế tự động bắn, WaveSpawner quản lý tiến trình wave, BuffCardManager điều phối việc chọn và áp dụng buff, còn PlayFabLeaderboardManager đảm nhiệm phần đăng nhập và bảng xếp hạng. Cách tổ chức này giúp hệ thống rõ ràng hơn, giảm sự phụ thuộc chéo giữa các thành phần và hỗ trợ tốt cho quá trình kiểm thử, sửa lỗi.
+
+Nhờ sử dụng C#, lập trình viên cũng dễ dàng liên kết logic game với các thành phần có sẵn trong Unity như Animator, CharacterController, Collider, ScriptableObject, Canvas hoặc các UnityEvent. Điều này giúp việc hiện thực các cơ chế gameplay trở nên thuận tiện và tiết kiệm thời gian phát triển.
+
+2.1.3. Lập trình hướng đối tượng trong dự án
+
+Một trong những ưu điểm quan trọng của C# là hỗ trợ rất tốt mô hình lập trình hướng đối tượng. Trong dự án game sinh tồn 3D, tư duy hướng đối tượng được áp dụng để phân chia hệ thống thành nhiều đối tượng có vai trò riêng như PlayerController, Enemy, Projectile, PlayerLevelSystem, BuffCardManager, WaveSpawner, ObjectPool, GameUI hay PlayFabLeaderboardManager.
+
+Thông qua tính đóng gói, mỗi lớp chỉ quản lý dữ liệu và hành vi liên quan đến chính nó. Ví dụ, PlayerData và PlayerHealth quản lý các chỉ số sinh tồn của người chơi; PlayerController và PlayerAttack xử lý di chuyển, dash và tấn công; Enemy và EnemyData quản lý máu, sát thương, cách di chuyển và hành vi tấn công của quái. Điều này giúp mã nguồn dễ đọc, dễ sửa và hạn chế lỗi phát sinh từ việc truy cập dữ liệu không kiểm soát.
+
+Thông qua tính kế thừa, nhiều loại enemy khác nhau kế thừa từ lớp cơ sở Enemy để tái sử dụng các thuộc tính và hành vi chung, trong khi các boss kế thừa tiếp từ BossEnemy để mở rộng logic riêng. Bên cạnh đó, giao diện IDamageable giúp hệ thống xử lý player và enemy theo một cách nhất quán khi nhận sát thương, từ đó tăng tính linh hoạt khi mở rộng game.
+
+2.1.4. Coroutine, Event và xử lý thời gian thực
+
+Game là loại phần mềm hoạt động theo thời gian thực, vì vậy việc xử lý luồng sự kiện và các tác vụ theo thời gian đóng vai trò rất quan trọng. Trong Unity, C# hỗ trợ Coroutine, cho phép thực hiện các tác vụ theo từng khoảng thời gian mà không làm treo toàn bộ chương trình. Đây là công cụ rất hữu ích trong các tình huống đang có trong project như sinh quái theo đợt, chờ preparation time giữa các wave, despawn đối tượng sau một khoảng thời gian hoặc chạy hiệu ứng cảnh báo trước khi quái xuất hiện.
+
+Ngoài Coroutine, cơ chế Event cũng được sử dụng để liên kết các thành phần trong hệ thống. Chẳng hạn, khi enemy bị tiêu diệt, sự kiện OnDeath được phát ra để vừa cộng EXP, vừa cập nhật wave. Khi người chơi lên cấp, PlayerLevelSystem phát OnLevelUp để CardSelectionPanel hiển thị buff. Cách tổ chức theo sự kiện giúp các thành phần giao tiếp với nhau linh hoạt hơn và giảm sự phụ thuộc trực tiếp giữa các lớp.
+
+Nhờ các đặc điểm này, C# đáp ứng tốt yêu cầu xây dựng một trò chơi có nhịp độ nhanh, nhiều thực thể hoạt động đồng thời và liên tục phát sinh tương tác.
+
+2.1.5. Cấu trúc dữ liệu và tối ưu hiệu năng
+
+Trong trò chơi sinh tồn, số lượng enemy và projectile xuất hiện cùng lúc có thể rất lớn. Nếu không tổ chức dữ liệu hợp lý, game dễ gặp tình trạng sụt giảm hiệu năng hoặc khó bảo trì mã nguồn. C# cung cấp nhiều cấu trúc dữ liệu hữu ích như List, Dictionary và Queue để lập trình viên lựa chọn phù hợp cho từng bài toán cụ thể.
+
+Ví dụ, danh sách enemy đang tồn tại trong màn chơi được WaveSpawner quản lý bằng List để dễ duyệt và cập nhật trạng thái. Đối với hệ thống Object Pooling, lớp ObjectPool sử dụng Dictionary<PoolType, Queue<GameObject>> để lấy và trả object nhanh hơn, hạn chế việc tạo mới và hủy liên tục. Điều này đặc biệt quan trọng trong game có nhịp độ cao và số lượng đối tượng chiến đấu lớn như đề tài đang thực hiện.
+
+Bên cạnh đó, C# kết hợp với Unity còn hỗ trợ tốt quá trình debug, theo dõi biến, kiểm tra lỗi logic và tối ưu thuật toán. Đây là nền tảng quan trọng giúp đảm bảo game hoạt động ổn định trong quá trình phát triển và thử nghiệm.
+
+2.2. Tool hỗ trợ lập trình
+
+2.2.1. Unity Engine
+
+Unity là công cụ phát triển trung tâm của đề tài. Đây là một game engine đa nền tảng, hỗ trợ mạnh cho cả phát triển game 2D lẫn 3D. Trong project hiện tại, Unity 6 được sử dụng cùng Universal Render Pipeline, Input System và hệ thống scene/component để xây dựng gameplay, giao diện và hiệu ứng trong môi trường 3D.
+
+Đối với đề tài này, Unity được sử dụng để xây dựng toàn bộ môi trường game 3D, thiết lập player, enemy, wave, hệ thống buff, giao diện và tích hợp PlayFab. Công cụ này cũng hỗ trợ trực tiếp việc tích hợp asset từ bên ngoài như model 3D, animation, texture, VFX và các ScriptableObject cấu hình dữ liệu cho player, enemy, buff card và wave.
+
+Một ưu điểm quan trọng khác của Unity là mô hình Component-based. Mỗi GameObject trong scene có thể được gắn nhiều component như Transform, CharacterController, Collider, Animator hay các script do người phát triển tự viết. Cách tiếp cận này giúp hệ thống linh hoạt, dễ chia nhỏ chức năng và thuận tiện cho việc mở rộng sau này.
+
+2.2.2. Visual Studio
+
+Visual Studio là môi trường phát triển tích hợp được sử dụng để viết và gỡ lỗi mã nguồn C#. Đây là công cụ hỗ trợ rất tốt cho Unity nhờ khả năng tự động nhận diện class, gợi ý cú pháp, phát hiện lỗi biên dịch và hỗ trợ debug trực tiếp trong quá trình chạy game.
+
+Trong quá trình thực hiện đề tài, Visual Studio giúp tăng năng suất lập trình thông qua các tính năng như IntelliSense, định dạng mã nguồn, tìm kiếm nhanh biến và hàm, theo dõi giá trị trong lúc debug. Khi kết hợp với Unity, lập trình viên có thể nhanh chóng xác định lỗi logic trong các hệ thống như điều khiển player, AI enemy hoặc quản lý wave.
+
+Sự kết hợp giữa Unity và Visual Studio tạo thành một quy trình phát triển hoàn chỉnh: Unity đảm nhận phần thiết kế trực quan và vận hành scene, còn Visual Studio hỗ trợ xây dựng và kiểm tra logic chương trình. Đây là bộ công cụ phù hợp với yêu cầu của đề tài cả về tính thực tiễn lẫn hiệu quả triển khai.
+
+2.2.3. PlayFab SDK và công cụ quản trị dịch vụ
+
+Để tích hợp bảng xếp hạng trực tuyến, đề tài sử dụng PlayFab SDK trong Unity. Bộ SDK này cho phép trò chơi kết nối với hệ thống PlayFab thông qua các API có sẵn để thực hiện các thao tác như đăng nhập bằng Custom ID, lấy hồ sơ người chơi, cập nhật Display Name, gửi điểm số và truy xuất danh sách xếp hạng.
+
+Việc sử dụng PlayFab SDK giúp rút ngắn rất nhiều thời gian phát triển so với phương án tự xây dựng backend. Lập trình viên chỉ cần cấu hình thông tin dự án, gọi đúng API và xử lý phản hồi trả về là có thể triển khai được các chức năng online cơ bản. Trong project này, PlayFab được dùng cho luồng đăng nhập ban đầu, xác định tên hiển thị người chơi và lưu điểm dựa trên tổng EXP tích lũy.
+
+Đối với một đồ án tốt nghiệp, việc lựa chọn công cụ này là hợp lý vì vừa đáp ứng được yêu cầu thực tế của đề tài, vừa giúp người thực hiện tiếp cận với mô hình phát triển game hiện đại có kết hợp dịch vụ đám mây.
+
+2.2.4. Công cụ quản lý tài nguyên và phiên bản
+
+Ngoài các công cụ lập trình trực tiếp, dự án game còn cần các công cụ hỗ trợ quản lý tài nguyên và mã nguồn. Trong một trò chơi 3D, số lượng tệp sử dụng thường rất lớn, bao gồm model, texture, animation, âm thanh, prefab và script. Nếu không quản lý tốt, dự án dễ bị trùng lặp dữ liệu, mất đồng bộ hoặc khó khôi phục khi phát sinh lỗi.
+
+Vì vậy, việc sử dụng công cụ quản lý phiên bản như Git là cần thiết. Git giúp lưu lại lịch sử thay đổi mã nguồn, hỗ trợ quay lại phiên bản ổn định trước đó và tạo điều kiện làm việc nhóm hiệu quả hơn. Đồng thời, các thư mục tài nguyên trong Unity cũng cần được sắp xếp hợp lý theo từng nhóm chức năng như _Scripts, _Prefabs, _Scenes, _SOData, UI hoặc PlayFabSDK để dễ theo dõi và bảo trì.
+
+Ngoài ra, người phát triển còn có thể sử dụng Unity Package Manager, Asset Store hoặc các công cụ quản lý file khác để bổ sung và kiểm soát tài nguyên trong quá trình xây dựng game. Đây là những yếu tố hỗ trợ quan trọng giúp dự án duy trì được tính tổ chức và ổn định.

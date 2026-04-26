@@ -112,6 +112,7 @@ public class PlayerController : Singleton<PlayerController>
             isDashing = true;
             dashTimer = playerData.dashDuration;
             dashCooldownTimer = playerData.dashCooldown;
+            AudioManager.Instance?.PlayWorldSfx(AudioCue.PlayerDash);
         }
         dashPressed = false;
 

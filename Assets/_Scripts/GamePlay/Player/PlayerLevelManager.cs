@@ -43,6 +43,7 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     private void LevelUp()
     {
         currentLevel++;
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.LevelUp);
 
         expToNextLevel = Mathf.Floor(expToNextLevel * expScalingFactor);
 
