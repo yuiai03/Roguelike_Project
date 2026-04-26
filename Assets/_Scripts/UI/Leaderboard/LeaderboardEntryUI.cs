@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -12,31 +13,78 @@ namespace Roguelike.UI.Leaderboard
         [Header("Background Settings")]
         [SerializeField] private UnityEngine.UI.Image backgroundImage;
 
-        public void Setup(int rank, string displayName, int score, bool isMyEntry = false)
+        private CanvasGroup canvasGroup;
+        private Tween revealTween;
+
+        public void Setup(int rank, string displayName, int score, bool highlightAsMyEntry = false)
         {
-            Debug.Log($"Setup: Rank={rank}, DisplayName={displayName}, Score={score}, IsMyEntry={isMyEntry}");
             if (rankText != null) rankText.text = $"#{rank}";
             if (nameText != null) nameText.text = string.IsNullOrEmpty(displayName) ? "Unknown Player" : displayName;
             if (scoreText != null) scoreText.text = score.ToString();
 
-            if (backgroundImage != null)
+            if (backgroundImage == null || GameUI.Instance == null || GameUI.Instance.LeaderboardPanel == null)
             {
-                if (GameUI.Instance != null && GameUI.Instance.LeaderboardPanel != null)
-                {
-                    if (isMyEntry)
-                    {
-                        backgroundImage.color = GameUI.Instance.LeaderboardPanel.myEntryColor;
-                    }
-                    else if (rank % 2 == 0)
-                    {
-                        backgroundImage.color = GameUI.Instance.LeaderboardPanel.evenRowColor;
-                    }
-                    else
-                    {
-                        backgroundImage.color = GameUI.Instance.LeaderboardPanel.oddRowColor;
-                    }
-                }
+                return;
             }
+
+            if (highlightAsMyEntry)
+            {
+                backgroundImage.color = GameUI.Instance.LeaderboardPanel.myEntryColor;
+            }
+            else if (rank % 2 == 0)
+            {
+                backgroundImage.color = GameUI.Instance.LeaderboardPanel.evenRowColor;
+            }
+            else
+            {
+                backgroundImage.color = GameUI.Instance.LeaderboardPanel.oddRowColor;
+            }
+        }
+
+        public void HideInstant()
+        {
+            CanvasGroup group = EnsureCanvasGroup();
+            revealTween?.Kill();
+            group.alpha = 0f;
+        }
+
+        public void ShowAnimated(float delay = 0f, float duration = 0.25f)
+        {
+            CanvasGroup group = EnsureCanvasGroup();
+            revealTween?.Kill();
+            group.alpha = 0f;
+            revealTween = group
+                .DOFade(1f, duration)
+                .SetDelay(delay)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true);
+        }
+
+        private CanvasGroup EnsureCanvasGroup()
+        {
+            if (canvasGroup == null)
+            {
+                canvasGroup = GetComponent<CanvasGroup>();
+                if (canvasGroup == null)
+                {
+                    canvasGroup = gameObject.AddComponent<CanvasGroup>();
+                }
+
+                canvasGroup.interactable = false;
+                canvasGroup.blocksRaycasts = false;
+            }
+
+            return canvasGroup;
+        }
+
+        private void OnDisable()
+        {
+            revealTween?.Kill();
+        }
+
+        private void OnDestroy()
+        {
+            revealTween?.Kill();
         }
     }
 }

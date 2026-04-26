@@ -46,6 +46,9 @@ public class PauseMenuPanel : PanelBase
     [SerializeField] private TextMeshProUGUI sfxValueText;
     [SerializeField] private Button settingsBackButton;
 
+    [Header("Animation")]
+    [SerializeField] private float viewFadeDuration = 0.18f;
+
     [Header("Visuals")]
     [SerializeField] private Color scrimColor = new Color(0.04f, 0.04f, 0.04f, 0.84f);
     [SerializeField] private Color accentColor = new Color(0.96f, 0.78f, 0.33f, 1f);
@@ -69,7 +72,6 @@ public class PauseMenuPanel : PanelBase
         ApplyStaticVisuals();
         SetHudVisible(true);
         ShowMainViewInternal(null);
-        settingsPanelRoot.SetActive(false);
         currentView = PauseView.Hidden;
 
         leaderboardButton.onClick.AddListener(OpenLeaderboardFromPause);
@@ -207,15 +209,17 @@ public class PauseMenuPanel : PanelBase
 
     private void OpenSettings()
     {
+        if (isBusy || currentView == PauseView.Settings)
+        {
+            return;
+        }
+
         currentView = PauseView.Settings;
         AudioManager.Instance?.PlayUISfx(AudioCue.UiSubmenuOpen);
 
         SetPauseMenuOverlayState(true);
-        pauseCardRoot.SetActive(false);
-        settingsPanelRoot.SetActive(true);
-        settingsView.SetActive(true);
         SyncSlidersFromAudio();
-        SelectObject(musicSlider.gameObject);
+        TransitionMenuCard(pauseCardRoot, settingsPanelRoot, musicSlider != null ? musicSlider.gameObject : null);
     }
 
     private void OpenLeaderboardFromPause()
@@ -247,8 +251,14 @@ public class PauseMenuPanel : PanelBase
 
     private void BackToMainFromSettings()
     {
+        if (isBusy)
+        {
+            return;
+        }
+
+        currentView = PauseView.Main;
         AudioManager.Instance?.PlayUISfx(AudioCue.UiBack);
-        ShowMainViewInternal(settingsButton);
+        TransitionMenuCard(settingsPanelRoot, pauseCardRoot, settingsButton != null ? settingsButton.gameObject : null);
     }
 
     private void HandleLeaderboardClosed()
@@ -316,13 +326,14 @@ public class PauseMenuPanel : PanelBase
 
     private void ShowMainViewInternal(Button selectButton)
     {
+        isBusy = false;
         currentView = PauseView.Main;
         UpdateActionButtonLabel();
 
         SetPauseMenuOverlayState(true);
-        pauseCardRoot.SetActive(true);
+        SetViewRootState(pauseCardRoot, true);
         mainView.SetActive(true);
-        settingsPanelRoot.SetActive(false);
+        SetViewRootState(settingsPanelRoot, false);
         settingsView.SetActive(true);
 
         if (titleText != null)
@@ -336,6 +347,82 @@ public class PauseMenuPanel : PanelBase
         }
 
         SelectObject(selectButton != null ? selectButton.gameObject : null);
+    }
+
+    private void TransitionMenuCard(GameObject fromRoot, GameObject toRoot, GameObject selectTarget)
+    {
+        if (fromRoot == null || toRoot == null)
+        {
+            SetViewRootState(fromRoot, false);
+            SetViewRootState(toRoot, true);
+            SelectObject(selectTarget);
+            return;
+        }
+
+        isBusy = true;
+        PrepareViewRoot(toRoot);
+
+        CanvasGroup fromCanvasGroup = GetOrAddCG(fromRoot);
+        CanvasGroup toCanvasGroup = GetOrAddCG(toRoot);
+        float duration = Mathf.Max(0.01f, viewFadeDuration);
+
+        DOTween.Kill(fromCanvasGroup);
+        DOTween.Kill(toCanvasGroup);
+
+        fromRoot.SetActive(true);
+        fromCanvasGroup.alpha = 1f;
+        fromCanvasGroup.blocksRaycasts = false;
+        fromCanvasGroup.interactable = false;
+
+        toRoot.SetActive(true);
+        toCanvasGroup.alpha = 0f;
+        toCanvasGroup.blocksRaycasts = false;
+        toCanvasGroup.interactable = false;
+
+        Sequence sequence = DOTween.Sequence().SetUpdate(true);
+        sequence.Append(fromCanvasGroup.DOFade(0f, duration));
+        sequence.AppendCallback(() => fromRoot.SetActive(false));
+        sequence.Append(toCanvasGroup.DOFade(1f, duration));
+        sequence.OnComplete(() =>
+        {
+            toCanvasGroup.blocksRaycasts = true;
+            toCanvasGroup.interactable = true;
+            isBusy = false;
+            SelectObject(selectTarget);
+        });
+    }
+
+    private void PrepareViewRoot(GameObject viewRoot)
+    {
+        if (viewRoot == pauseCardRoot)
+        {
+            if (mainView != null)
+            {
+                mainView.SetActive(true);
+            }
+
+            return;
+        }
+
+        if (viewRoot == settingsPanelRoot && settingsView != null)
+        {
+            settingsView.SetActive(true);
+        }
+    }
+
+    private void SetViewRootState(GameObject viewRoot, bool isVisible)
+    {
+        if (viewRoot == null)
+        {
+            return;
+        }
+
+        CanvasGroup canvasGroup = GetOrAddCG(viewRoot);
+        DOTween.Kill(canvasGroup);
+        canvasGroup.alpha = isVisible ? 1f : 0f;
+        canvasGroup.blocksRaycasts = isVisible;
+        canvasGroup.interactable = isVisible;
+        viewRoot.SetActive(isVisible);
     }
 
     private void RefreshHudVisibility()
