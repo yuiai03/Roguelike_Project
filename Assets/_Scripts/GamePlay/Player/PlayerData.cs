@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class PlayerData : MonoBehaviour
@@ -40,13 +39,12 @@ public class PlayerData : MonoBehaviour
     [Header("MultiShot")]
     public int multiShotCount = 1; 
     public float multiShotAngle = 10f; 
-    public float multiShotDamage = 0f; 
+    public float multiShotAtkMultiplier = 1f;
 
     [Header("AoE Explosion")]
     public bool isAoEEnabled = false;
     public float aoeRadius = 3f;
-    public float aoeDamagePercent = 0.5f; 
-    public float aoeDamage = 0f; 
+    public float aoeAtkMultiplier = 1f;
 
     [Header("Frost Shot")]
     public float frostChance = 0f; 
@@ -94,9 +92,9 @@ public class PlayerData : MonoBehaviour
         luckBonus = 0f;
 
         multiShotCount = 1;
-        multiShotDamage = 0f;
+        multiShotAtkMultiplier = 1f;
         isAoEEnabled = false;
-        aoeDamage = 0f;
+        aoeAtkMultiplier = 1f;
         frostChance = 0f;
         expBonusPercent = 0f;
     }
@@ -118,6 +116,11 @@ public class PlayerData : MonoBehaviour
     public float GetTotalDamage()
     {
         return Mathf.Round(attackDamage + damageBonus);
+    }
+
+    public float GetScaledAttackDamage(float multiplier)
+    {
+        return GetTotalDamage() * multiplier;
     }
 
     public float GetAttackCooldown()

@@ -91,8 +91,8 @@ public class PlayerAttack : MonoBehaviour
         GameObject obj = ObjectPool.Instance.Spawn(PoolType.PlayerProjectile, spawnPos, Quaternion.identity);
         if (obj == null) return;
 
-        float finalDamage = (playerData.multiShotCount > 1 && playerData.multiShotDamage > 0f)
-            ? playerData.multiShotDamage
+        float finalDamage = playerData.multiShotCount > 1
+            ? playerData.GetScaledAttackDamage(playerData.multiShotAtkMultiplier)
             : playerData.GetTotalDamage();
 
         PlayerProjectile projectile = obj.GetComponent<PlayerProjectile>();
@@ -110,8 +110,7 @@ public class PlayerAttack : MonoBehaviour
             projectile.InitializeExtra(
                 playerData.isAoEEnabled,
                 playerData.aoeRadius,
-                playerData.aoeDamagePercent,
-                playerData.aoeDamage,
+                playerData.aoeAtkMultiplier,
                 0, 
                 enemyLayer
             );

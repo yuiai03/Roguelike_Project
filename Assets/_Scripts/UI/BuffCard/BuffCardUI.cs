@@ -44,15 +44,9 @@ public class BuffCardUI : MonoBehaviour
         if (iconImage != null && card.icon != null)
             iconImage.sprite = card.icon;
 
-        Color rarityColor = card.GetRarityColor();
-
-        if (cardBackground != null)
-            cardBackground.color = rarityColor;
-
         if (rarityText != null)
         {
             rarityText.text = card.GetRarityName();
-            rarityText.color = rarityColor;
         }
     }
 

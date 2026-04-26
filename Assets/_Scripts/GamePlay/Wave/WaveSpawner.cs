@@ -32,6 +32,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
     private int totalEnemiesSpawned;
     private bool isWaveActive;
     private List<SpawnPoint> pendingSpawns = new List<SpawnPoint>();
+    private Coroutine pendingWaveTransitionRoutine;
 
     private class SpawnPoint
     {
@@ -53,6 +54,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
     {
         if (waveConfig == null) return;
 
+        CancelInvoke(nameof(StartNextWave));
         currentWave++;
 
         SimpleWaveData wave;
@@ -388,12 +390,15 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
         OnWaveComplete?.Invoke(currentWave);
 
-        if (currentWave > 0 && currentWave % 10 == 0)
+        if (ShouldTransitionMapForNextWave())
         {
-            // Spawn Buff Chest in the middle of the map
-            Vector3 chestPos = Vector3.zero; 
-            GameObject chest = ObjectPool.Instance.Spawn(PoolType.BuffChest, chestPos, Quaternion.identity);
-            Debug.Log("Spawned BuffChest!");
+            if (pendingWaveTransitionRoutine != null)
+            {
+                StopCoroutine(pendingWaveTransitionRoutine);
+            }
+
+            pendingWaveTransitionRoutine = StartCoroutine(HandleMapTransitionAndStartNextWave());
+            return;
         }
 
         Invoke(nameof(StartNextWave), 5f);
@@ -402,6 +407,13 @@ public class WaveSpawner : Singleton<WaveSpawner>
     public void ForceNextWave()
     {
         CancelInvoke(nameof(StartNextWave));
+        if (pendingWaveTransitionRoutine != null)
+        {
+            StopCoroutine(pendingWaveTransitionRoutine);
+            pendingWaveTransitionRoutine = null;
+            RestoreGameplayAfterMapTransition();
+        }
+
         KillAllEnemies();
         StartNextWave();
     }
@@ -433,6 +445,52 @@ public class WaveSpawner : Singleton<WaveSpawner>
     public int GetActiveEnemyCount() => activeEnemies.Count;
     public int GetTotalEnemies() => totalEnemiesToSpawn;
     public bool IsWaveActive() => isWaveActive;
+
+    private bool ShouldTransitionMapForNextWave()
+    {
+        if (currentWave <= 0 || currentWave % 10 != 0)
+        {
+            return false;
+        }
+
+        MapThemeManager mapThemeManager = MapThemeManager.Instance;
+        return mapThemeManager != null && mapThemeManager.WillThemeChangeForWave(currentWave + 1);
+    }
+
+    private IEnumerator HandleMapTransitionAndStartNextWave()
+    {
+        int upcomingWave = currentWave + 1;
+        bool transitionCompleted = false;
+
+        LockGameplayForMapTransition();
+        MapThemeManager.Instance?.TransitionToWaveTheme(upcomingWave, () => transitionCompleted = true);
+
+        while (!transitionCompleted)
+        {
+            yield return null;
+        }
+
+        RestoreGameplayAfterMapTransition();
+        pendingWaveTransitionRoutine = null;
+        StartNextWave();
+    }
+
+    private void LockGameplayForMapTransition()
+    {
+        Time.timeScale = 0f;
+        GameUI.Instance?.InteractPanel?.Hide();
+        PlayerController.Instance?.SetInputActive(false);
+    }
+
+    private void RestoreGameplayAfterMapTransition()
+    {
+        Time.timeScale = 1f;
+
+        if (PlayerController.Instance != null && (PlayerHealth.Instance == null || !PlayerHealth.Instance.IsDead()))
+        {
+            PlayerController.Instance.SetInputActive(true);
+        }
+    }
 
     void OnDrawGizmosSelected()
     {

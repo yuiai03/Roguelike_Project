@@ -1,29 +1,28 @@
 using UnityEngine;
-using System.Collections;
 
 public class PlayerProjectile : Projectile
 {
 
     private bool isAoEEnabled;
     private float aoeRadius;
-    private float aoeDamagePercent;
-    private float aoeDamageFlat; 
+    private float aoeAtkMultiplier;
 
     private int pierceCount;
 
     private LayerMask enemyLayer;
+    private PlayerData ownerData;
 
     public void InitializeExtra(
-        bool aoeEnabled, float aoeRad, float aoeDmgPct, float aoeDmgFlat,
+        bool aoeEnabled, float aoeRad, float aoeAtkMult,
         int pierce,
         LayerMask enemyMask)
     {
         isAoEEnabled     = aoeEnabled;
         aoeRadius        = aoeRad;
-        aoeDamagePercent = aoeDmgPct;
-        aoeDamageFlat    = aoeDmgFlat;
+        aoeAtkMultiplier = aoeAtkMult;
         pierceCount      = pierce;
         enemyLayer       = enemyMask;
+        ownerData        = owner != null ? owner.GetComponent<PlayerData>() : null;
     }
 
     protected override void OnHit(Collider other)
@@ -53,7 +52,9 @@ public class PlayerProjectile : Projectile
 
         ObjectPool.Instance.Spawn(PoolType.AoEExplosionVFX, center, Quaternion.identity);
 
-        float aoeDmg = (aoeDamageFlat > 0f) ? aoeDamageFlat : damage * aoeDamagePercent;
+        float aoeDmg = ownerData != null
+            ? ownerData.GetScaledAttackDamage(aoeAtkMultiplier)
+            : damage * aoeAtkMultiplier;
         Collider[] hits = Physics.OverlapSphere(center, aoeRadius, enemyLayer);
         foreach (Collider col in hits)
         {

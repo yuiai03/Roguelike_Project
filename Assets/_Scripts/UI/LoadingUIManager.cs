@@ -17,19 +17,17 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
     public bool IsBlocking => loadingPanel != null && loadingPanel.activeSelf;
 
     private Coroutine activeTransitionRoutine;
+    private Coroutine startupFadeRoutine;
+    private bool startupOverlayHidden;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        InitializeOverlayVisible();
+    }
 
     private void Start()
     {
-        if (loadingPanel != null)
-        {
-            loadingPanel.SetActive(true);
-            if (loadingCanvasGroup != null)
-            {
-                loadingCanvasGroup.alpha = 1f;
-                loadingCanvasGroup.blocksRaycasts = true;
-            }
-        }
-
         if (PlayFabLeaderboardManager.Instance != null)
         {
             PlayFabLeaderboardManager.Instance.OnProfileLoadedEvent += HideLoading;
@@ -50,7 +48,20 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
 
     public void HideLoading()
     {
-        StartCoroutine(FadeOutLoading());
+        if (startupOverlayHidden)
+        {
+            return;
+        }
+
+        if (activeTransitionRoutine != null)
+        {
+            return;
+        }
+
+        if (startupFadeRoutine == null)
+        {
+            startupFadeRoutine = StartCoroutine(FadeOutLoading());
+        }
     }
 
     private IEnumerator FadeOutLoading()
@@ -60,17 +71,14 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
             float elapsedTime = 0f;
             while (elapsedTime < fadeDuration)
             {
-                elapsedTime += Time.deltaTime;
+                elapsedTime += Time.unscaledDeltaTime;
                 loadingCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
                 yield return null;
             }
-            loadingCanvasGroup.blocksRaycasts = false;
         }
-        
-        if (loadingPanel != null)
-        {
-            loadingPanel.SetActive(false);
-        }
+
+        SetOverlayHidden();
+        startupFadeRoutine = null;
     }
 
     public void ShowLoadingAndRestart()
@@ -90,6 +98,12 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
         float hold = 0.2f,
         float fadeOut = 0.4f)
     {
+        if (startupFadeRoutine != null)
+        {
+            StopCoroutine(startupFadeRoutine);
+            startupFadeRoutine = null;
+        }
+
         if (activeTransitionRoutine != null)
         {
             StopCoroutine(activeTransitionRoutine);
@@ -130,18 +144,13 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
         if (loadingCanvasGroup != null)
         {
             yield return FadeCanvasGroup(loadingCanvasGroup.alpha, 0f, fadeOut);
-            loadingCanvasGroup.blocksRaycasts = false;
         }
         else if (fadeOut > 0f)
         {
             yield return new WaitForSecondsRealtime(fadeOut);
         }
 
-        if (loadingPanel != null)
-        {
-            loadingPanel.SetActive(false);
-        }
-
+        SetOverlayHidden();
         activeTransitionRoutine = null;
         onComplete?.Invoke();
     }
@@ -175,5 +184,37 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void InitializeOverlayVisible()
+    {
+        startupOverlayHidden = false;
+
+        if (loadingPanel != null)
+        {
+            loadingPanel.SetActive(true);
+        }
+
+        if (loadingCanvasGroup != null)
+        {
+            loadingCanvasGroup.alpha = 1f;
+            loadingCanvasGroup.blocksRaycasts = true;
+        }
+    }
+
+    private void SetOverlayHidden()
+    {
+        startupOverlayHidden = true;
+
+        if (loadingCanvasGroup != null)
+        {
+            loadingCanvasGroup.alpha = 0f;
+            loadingCanvasGroup.blocksRaycasts = false;
+        }
+
+        if (loadingPanel != null)
+        {
+            loadingPanel.SetActive(false);
+        }
     }
 }

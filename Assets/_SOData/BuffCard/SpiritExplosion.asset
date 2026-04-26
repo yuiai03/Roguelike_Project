@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: SpiritExplosion
   m_EditorClassIdentifier: 
   cardName: "Tinh linh \u0111\u1EA1n n\u1ED5"
-  description: "Tri\u1EC7u h\u1ED3i tinh linh b\u1EAFn \u0111\u1EA1n n\u1ED5 g\xE2y
-    s\xE1t th\u01B0\u01A1ng di\u1EC7n r\u1ED9ng"
+  description: "Tri\u1EC7u h\u1ED3i tinh linh b\u1EAFn \u0111\u1EA1n n\u1ED5, m\u1ED7i
+    ph\xE1t g\xE2y {value}"
   icon: {fileID: -1898439418, guid: 4f2b9253f393a5e499d5a338acdfadf7, type: 3}
   buffType: 11
   value: 10
+  attackDamageMultiplier: 1
   rarity: 1
   maxLevel: 1
   shotCount: 1

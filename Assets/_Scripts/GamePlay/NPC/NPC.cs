@@ -54,6 +54,11 @@ public abstract class NPC : MonoBehaviour
     {
         if (canRotate) transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
 
+        if (LoadingUIManager.Instance != null && LoadingUIManager.Instance.IsBlocking)
+        {
+            return;
+        }
+
         if (playerInRange && !IsPanelOpen() && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
         {
             Interact();

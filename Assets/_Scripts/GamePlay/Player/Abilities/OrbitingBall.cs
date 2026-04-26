@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class OrbitingBall : MonoBehaviour
 {
     [Header("Damage")]
+    [Tooltip("Damage fallback khi không có owner PlayerData")]
     [SerializeField] private float damage = 20f;
     [SerializeField] private float damageCooldown = 0.5f;
 
@@ -17,6 +18,8 @@ public class OrbitingBall : MonoBehaviour
     private Color originalColor;
 
     private readonly Dictionary<Collider, float> hitTimers = new Dictionary<Collider, float>();
+    private PlayerData ownerData;
+    private float attackDamageMultiplier = 1f;
 
     private void Awake()
     {
@@ -64,7 +67,7 @@ public class OrbitingBall : MonoBehaviour
 
         Vector3 dir = (other.transform.position - transform.position).normalized;
 
-        target.TakeDamage(damage, transform.position, Vector3.zero);
+        target.TakeDamage(ResolveDamage(), transform.position, dir);
 
         hitTimers[other] = damageCooldown;
 
@@ -80,9 +83,21 @@ public class OrbitingBall : MonoBehaviour
         instanceMaterial.color = originalColor;
     }
 
-    public void Initialize(float dmg)
+    public void Initialize(PlayerData damageOwner, float atkMultiplier)
     {
-        damage = dmg;
+        ownerData = damageOwner;
+        attackDamageMultiplier = atkMultiplier;
+        hitTimers.Clear();
+    }
+
+    private float ResolveDamage()
+    {
+        if (ownerData != null)
+        {
+            return ownerData.GetScaledAttackDamage(attackDamageMultiplier);
+        }
+
+        return damage * attackDamageMultiplier;
     }
 
     private void OnDestroy()

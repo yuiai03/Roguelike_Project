@@ -29,7 +29,8 @@ public class MapThemeManager : MonoBehaviour
     public event Action<int> OnThemeTransitionCompleted;
 
     private int pendingThemeIndex = -1;
-    private PlayerLevelSystem levelSystem;
+    private Action activeTransitionCallback;
+    private Action queuedTransitionCallback;
 
     private void Awake()
     {
@@ -44,59 +45,55 @@ public class MapThemeManager : MonoBehaviour
         CleanupRendererList();
     }
 
-    private void OnEnable()
-    {
-        TryBindLevelSystem();
-    }
-
     private void Start()
     {
-        TryBindLevelSystem();
-        ApplyThemeImmediate(ResolveThemeIndex(GetCurrentLevel()));
+        ApplyThemeImmediate(ResolveThemeIndexForWave(1));
     }
 
     private void OnDisable()
     {
-        UnbindLevelSystem();
-
         if (Instance == this)
         {
             Instance = null;
         }
     }
 
-    public bool WillThemeChangeForLevel(int level)
+    public bool WillThemeChangeForWave(int upcomingWave)
     {
-        int targetIndex = ResolveThemeIndex(level);
+        int targetIndex = ResolveThemeIndexForWave(upcomingWave);
         return targetIndex >= 0 && targetIndex != CurrentThemeIndex;
     }
 
-    private void HandleLevelUp(int newLevel)
+    public void TransitionToWaveTheme(int upcomingWave, Action onComplete = null)
     {
-        int targetIndex = ResolveThemeIndex(newLevel);
+        int targetIndex = ResolveThemeIndexForWave(upcomingWave);
         if (targetIndex < 0 || targetIndex == CurrentThemeIndex)
         {
+            onComplete?.Invoke();
             return;
         }
 
-        StartThemeTransition(targetIndex);
+        StartThemeTransition(targetIndex, onComplete);
     }
 
-    private void StartThemeTransition(int targetIndex)
+    private void StartThemeTransition(int targetIndex, Action onComplete = null)
     {
         if (!IsValidThemeIndex(targetIndex))
         {
+            onComplete?.Invoke();
             return;
         }
 
         if (IsTransitioning)
         {
             pendingThemeIndex = targetIndex;
+            queuedTransitionCallback = onComplete;
             return;
         }
 
         IsTransitioning = true;
         pendingThemeIndex = -1;
+        activeTransitionCallback = onComplete;
 
         LoadingUIManager loadingUI = LoadingUIManager.Instance;
         if (loadingUI == null)
@@ -118,13 +115,25 @@ public class MapThemeManager : MonoBehaviour
     {
         CurrentThemeIndex = themeIndex;
         IsTransitioning = false;
+
+        Action completedCallback = activeTransitionCallback;
+        activeTransitionCallback = null;
+
         OnThemeTransitionCompleted?.Invoke(themeIndex);
+        completedCallback?.Invoke();
 
         if (pendingThemeIndex >= 0 && pendingThemeIndex != CurrentThemeIndex)
         {
             int nextThemeIndex = pendingThemeIndex;
+            Action nextCallback = queuedTransitionCallback;
             pendingThemeIndex = -1;
-            StartThemeTransition(nextThemeIndex);
+            queuedTransitionCallback = null;
+            StartThemeTransition(nextThemeIndex, nextCallback);
+        }
+        else
+        {
+            pendingThemeIndex = -1;
+            queuedTransitionCallback = null;
         }
     }
 
@@ -168,50 +177,20 @@ public class MapThemeManager : MonoBehaviour
         CurrentThemeIndex = themeIndex;
     }
 
-    private int ResolveThemeIndex(int level)
+    private int ResolveThemeIndexForWave(int waveNumber)
     {
         if (themes == null || themes.Length == 0)
         {
             return -1;
         }
 
-        int normalizedLevel = Mathf.Max(level, 1);
-        return ((normalizedLevel - 1) / 10) % themes.Length;
-    }
-
-    private int GetCurrentLevel()
-    {
-        return PlayerLevelSystem.Instance != null ? PlayerLevelSystem.Instance.GetCurrentLevel() : 0;
+        int normalizedWave = Mathf.Max(waveNumber, 1);
+        return ((normalizedWave - 1) / 10) % themes.Length;
     }
 
     private bool IsValidThemeIndex(int themeIndex)
     {
         return themes != null && themeIndex >= 0 && themeIndex < themes.Length;
-    }
-
-    private void TryBindLevelSystem()
-    {
-        if (levelSystem != null)
-        {
-            return;
-        }
-
-        levelSystem = PlayerLevelSystem.Instance;
-        if (levelSystem != null)
-        {
-            levelSystem.OnLevelUp.AddListener(HandleLevelUp);
-        }
-    }
-
-    private void UnbindLevelSystem()
-    {
-        if (levelSystem == null)
-        {
-            return;
-        }
-
-        levelSystem.OnLevelUp.RemoveListener(HandleLevelUp);
-        levelSystem = null;
     }
 
     private void CleanupRendererList()

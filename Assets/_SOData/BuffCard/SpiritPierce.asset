@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: SpiritPierce
   m_EditorClassIdentifier: 
   cardName: "Tinh linh xuy\xEAn th\u1EA5u"
-  description: "Tri\u1EC7u h\u1ED3i tinh linh b\u1EAFn \u0111\u1EA1n xuy\xEAn th\u1EA5u
-    k\u1EBB \u0111\u1ECBch"
+  description: "Tri\u1EC7u h\u1ED3i tinh linh b\u1EAFn \u0111\u1EA1n xuy\xEAn th\u1EA5u,
+    m\u1ED7i ph\xE1t g\xE2y {value}"
   icon: {fileID: 406828231, guid: c65c14c31ae4270429207f553f0ad6f1, type: 3}
   buffType: 10
   value: 10
+  attackDamageMultiplier: 1
   rarity: 1
   maxLevel: 1
   shotCount: 1

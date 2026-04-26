@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 
 public enum BuffType
 {
@@ -45,6 +44,8 @@ public class BuffCardConfig : ScriptableObject
     [Header("Buff Settings")]
     public BuffType buffType;
     public float value; 
+    [Tooltip("Hệ số sát thương theo ATK hiện tại (1 = 100% ATK, 0.5 = 50% ATK)")]
+    public float attackDamageMultiplier = 1f;
     public RarityType rarity = RarityType.Common;
     [Tooltip("Giới hạn tối đa (0 = không giới hạn)")]
     public int maxLevel = 0;
@@ -63,6 +64,22 @@ public class BuffCardConfig : ScriptableObject
 
     public Color GetRarityColor()  => Utils.GetRarityColor(rarity);
     public string GetRarityName()  => Utils.GetRarityName(rarity);
+
+    public bool UsesAttackDamageMultiplier()
+    {
+        switch (buffType)
+        {
+            case BuffType.MultiShot:
+            case BuffType.AoEExplosion:
+            case BuffType.OrbitingBall:
+            case BuffType.SpiritPierce:
+            case BuffType.SpiritExplosion:
+                return true;
+
+            default:
+                return false;
+        }
+    }
 
     public void ApplyBuff(PlayerData playerData, PlayerHealth playerHealth)
     {
@@ -87,17 +104,16 @@ public class BuffCardConfig : ScriptableObject
                 break;
 
             case BuffType.MultiShot:
-
-                playerData.multiShotDamage = value;
+                playerData.multiShotAtkMultiplier = attackDamageMultiplier;
                 playerData.multiShotCount += Mathf.Max(1, shotCount);
-                Debug.Log($"[Buff] MultiShot +{shotCount} đạn (damage={value}) → total {playerData.multiShotCount} đạn");
+                Debug.Log($"[Buff] MultiShot +{shotCount} đạn ({FormatAttackDamageMultiplier()}) → total {playerData.multiShotCount} đạn");
                 break;
 
             case BuffType.AoEExplosion:
                 playerData.isAoEEnabled = true;
                 if (aoeRadius > 0f) playerData.aoeRadius = aoeRadius;
-                if (value > 0f) playerData.aoeDamage += value;
-                Debug.Log($"[Buff] AoEExplosion ON, radius={playerData.aoeRadius}, damage={playerData.aoeDamage}");
+                playerData.aoeAtkMultiplier = attackDamageMultiplier;
+                Debug.Log($"[Buff] AoEExplosion ON, radius={playerData.aoeRadius}, damage={FormatAttackDamageMultiplier()}");
                 break;
 
             case BuffType.IncreaseMaxHealth:
@@ -128,8 +144,8 @@ public class BuffCardConfig : ScriptableObject
 
                 int count = Mathf.Max(1, ballCount);
                 for (int i = 0; i < count; i++)
-                    ballManager.AddBall(value);
-                Debug.Log($"[Buff] OrbitingBall +{count} bóng (damage={value}) → tổng {ballManager.GetBallCount()}");
+                    ballManager.AddBall(attackDamageMultiplier);
+                Debug.Log($"[Buff] OrbitingBall +{count} bóng ({FormatAttackDamageMultiplier()}) → tổng {ballManager.GetBallCount()}");
                 break;
             }
 
@@ -141,8 +157,8 @@ public class BuffCardConfig : ScriptableObject
                     spiritManager = playerData.gameObject.AddComponent<SpiritManager>();
 
                 SpiritType sType = buffType == BuffType.SpiritPierce ? SpiritType.Pierce : SpiritType.Explosion;
-                spiritManager.AddSpirit(sType);
-                Debug.Log($"[Buff] Spirit {sType} added");
+                spiritManager.AddSpirit(sType, attackDamageMultiplier);
+                Debug.Log($"[Buff] Spirit {sType} updated ({FormatAttackDamageMultiplier()})");
                 break;
             }
 
@@ -156,12 +172,27 @@ public class BuffCardConfig : ScriptableObject
     public string GetFormattedDescription(int currentLevel)
     {
         string finalDesc = description;
-        
+
         if (currentLevel > 0 && buffType == BuffType.AoEExplosion)
         {
             finalDesc = "Tăng thêm sát thương đạn nổ: +{value}";
         }
 
-        return finalDesc.Replace("{value}", value.ToString());
+        return finalDesc.Replace("{value}", GetDisplayValueText());
+    }
+
+    private string GetDisplayValueText()
+    {
+        if (UsesAttackDamageMultiplier())
+        {
+            return FormatAttackDamageMultiplier();
+        }
+
+        return value.ToString();
+    }
+
+    private string FormatAttackDamageMultiplier()
+    {
+        return $"{attackDamageMultiplier * 100f:0.#}% ATK";
     }
 }

@@ -57,6 +57,8 @@ public class PauseMenuPanel : PanelBase
 
     protected override void Awake()
     {
+        ResolveSceneReferences();
+
         if (!ValidateReferences())
         {
             enabled = false;
@@ -73,7 +75,10 @@ public class PauseMenuPanel : PanelBase
         leaderboardButton.onClick.AddListener(OpenLeaderboardFromPause);
         settingsButton.onClick.AddListener(OpenSettings);
         actionButton.onClick.AddListener(HandleActionButton);
-        settingsBackButton.onClick.AddListener(BackToMainFromSettings);
+        if (settingsBackButton != null)
+        {
+            settingsBackButton.onClick.AddListener(BackToMainFromSettings);
+        }
         musicSlider.onValueChanged.AddListener(HandleMusicVolumeChanged);
         sfxSlider.onValueChanged.AddListener(HandleSfxVolumeChanged);
     }
@@ -128,8 +133,7 @@ public class PauseMenuPanel : PanelBase
         CanvasGroup canvasGroup = GetOrAddCG(menu);
         DOTween.Kill(canvasGroup);
         canvasGroup.alpha = 0f;
-        canvasGroup.blocksRaycasts = true;
-        canvasGroup.interactable = true;
+        SetPauseMenuOverlayState(true);
         canvasGroup.DOFade(1f, showDuration).SetUpdate(true).OnComplete(() => onComplete?.Invoke());
     }
 
@@ -206,6 +210,7 @@ public class PauseMenuPanel : PanelBase
         currentView = PauseView.Settings;
         AudioManager.Instance?.PlayUISfx(AudioCue.UiSubmenuOpen);
 
+        SetPauseMenuOverlayState(true);
         pauseCardRoot.SetActive(false);
         settingsPanelRoot.SetActive(true);
         settingsView.SetActive(true);
@@ -222,6 +227,7 @@ public class PauseMenuPanel : PanelBase
         }
 
         currentView = PauseView.Leaderboard;
+        SetPauseMenuOverlayState(false);
         pauseCardRoot.SetActive(false);
         settingsPanelRoot.SetActive(false);
         leaderboardPanel.Show(takeInputOwnership: false);
@@ -313,6 +319,7 @@ public class PauseMenuPanel : PanelBase
         currentView = PauseView.Main;
         UpdateActionButtonLabel();
 
+        SetPauseMenuOverlayState(true);
         pauseCardRoot.SetActive(true);
         mainView.SetActive(true);
         settingsPanelRoot.SetActive(false);
@@ -404,6 +411,24 @@ public class PauseMenuPanel : PanelBase
         }
     }
 
+    private void SetPauseMenuOverlayState(bool isVisible)
+    {
+        if (scrimImage != null)
+        {
+            scrimImage.enabled = isVisible;
+            scrimImage.raycastTarget = isVisible;
+        }
+
+        if (menu == null)
+        {
+            return;
+        }
+
+        CanvasGroup canvasGroup = GetOrAddCG(menu);
+        canvasGroup.blocksRaycasts = isVisible;
+        canvasGroup.interactable = isVisible;
+    }
+
     private void SelectObject(GameObject target)
     {
         if (EventSystem.current == null || target == null || !target.activeInHierarchy)
@@ -413,6 +438,37 @@ public class PauseMenuPanel : PanelBase
 
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(target);
+    }
+
+    private void ResolveSceneReferences()
+    {
+        if (settingsBackButton == null)
+        {
+            settingsBackButton = FindChildComponentByName<Button>(settingsPanelRoot != null ? settingsPanelRoot.transform : null, "BackButton");
+            if (settingsBackButton != null)
+            {
+                Debug.LogWarning("[PauseMenuPanel] Auto-resolved missing settingsBackButton reference. Re-save the scene to persist this fix.", this);
+            }
+        }
+    }
+
+    private static T FindChildComponentByName<T>(Transform root, string childName) where T : Component
+    {
+        if (root == null || string.IsNullOrWhiteSpace(childName))
+        {
+            return null;
+        }
+
+        T[] components = root.GetComponentsInChildren<T>(true);
+        for (int i = 0; i < components.Length; i++)
+        {
+            if (components[i] != null && string.Equals(components[i].name, childName, StringComparison.Ordinal))
+            {
+                return components[i];
+            }
+        }
+
+        return null;
     }
 
     private bool ValidateReferences()
@@ -433,7 +489,6 @@ public class PauseMenuPanel : PanelBase
         if (actionButtonLabel == null) missing.Add(nameof(actionButtonLabel));
         if (musicSlider == null) missing.Add(nameof(musicSlider));
         if (sfxSlider == null) missing.Add(nameof(sfxSlider));
-        if (settingsBackButton == null) missing.Add(nameof(settingsBackButton));
 
         if (missing.Count == 0)
         {
@@ -466,18 +521,6 @@ public class PauseMenuPanel : PanelBase
         {
             settingsFooterText.text = "ESC TO BACK";
             settingsFooterText.color = accentColor;
-        }
-
-        if (hudPromptRoot != null)
-        {
-            RectTransform hudRect = hudPromptRoot.GetComponent<RectTransform>();
-            if (hudRect != null)
-            {
-                hudRect.anchorMin = new Vector2(0f, 1f);
-                hudRect.anchorMax = new Vector2(0f, 1f);
-                hudRect.pivot = new Vector2(0f, 1f);
-                hudRect.anchoredPosition = new Vector2(48f, -48f);
-            }
         }
 
         ConfigureButtonColors(leaderboardButton);

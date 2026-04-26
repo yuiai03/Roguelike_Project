@@ -32,6 +32,7 @@ public class Spirit : MonoBehaviour
     [Header("Attack")]
     public float attackInterval = 4f;
     public float attackRange = 15f;
+    [Tooltip("Damage fallback khi không có owner PlayerData")]
     public float damage = 30f;
     public float projectileSpeed = 18f;
     public LayerMask enemyLayer;
@@ -44,16 +45,27 @@ public class Spirit : MonoBehaviour
     private float attackTimer;
     private Vector3 currentVelocity;
     private bool isShooting;
+    private PlayerData ownerData;
+    private float attackDamageMultiplier = 1f;
 
-    public void Initialize(Transform playerTransform, float startAngle, LayerMask layer)
+    public float AttackDamageMultiplier => attackDamageMultiplier;
+
+    public void Initialize(Transform playerTransform, float startAngle, LayerMask layer, PlayerData damageOwner, float atkMultiplier)
     {
         player = playerTransform;
         idOffset = startAngle;
         enemyLayer = layer;
+        SetDamageSource(damageOwner, atkMultiplier);
         attackTimer = Random.Range(0f, attackInterval);
 
         Collider col = GetComponent<Collider>();
         if (col != null) col.isTrigger = true;
+    }
+
+    public void SetDamageSource(PlayerData damageOwner, float atkMultiplier)
+    {
+        ownerData = damageOwner;
+        attackDamageMultiplier = atkMultiplier;
     }
 
     void Update()
@@ -124,15 +136,26 @@ public class Spirit : MonoBehaviour
         if (projObj == null) return;
 
         bool isPierce = spiritType == SpiritType.Pierce;
+        float shotDamage = ResolveDamage();
         SpiritProjectileScript proj = projObj.GetComponent<SpiritProjectileScript>();
         if (proj != null)
-            proj.Initialize(damage, projectileSpeed, 10f, dir, enemyLayer, gameObject,
+            proj.Initialize(shotDamage, projectileSpeed, 10f, dir, enemyLayer, gameObject,
                             aoe: !isPierce, aoeRad: aoeRadius, pierce: isPierce);
         else
         {
             Projectile p = projObj.GetComponent<Projectile>();
-            p?.Initialize(damage, projectileSpeed, 10f, dir, enemyLayer, gameObject);
+            p?.Initialize(shotDamage, projectileSpeed, 10f, dir, enemyLayer, gameObject);
         }
+    }
+
+    private float ResolveDamage()
+    {
+        if (ownerData != null)
+        {
+            return ownerData.GetScaledAttackDamage(attackDamageMultiplier);
+        }
+
+        return damage * attackDamageMultiplier;
     }
 
     private System.Collections.IEnumerator ShootAnimationCrt(Vector3 targetDirection)

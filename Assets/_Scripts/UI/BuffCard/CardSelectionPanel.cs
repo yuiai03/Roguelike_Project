@@ -53,7 +53,7 @@ public class CardSelectionPanel : PanelBase
         }
 
         MapThemeManager mapThemeManager = MapThemeManager.Instance;
-        if (mapThemeManager != null && (mapThemeManager.IsTransitioning || mapThemeManager.WillThemeChangeForLevel(newLevel)))
+        if (mapThemeManager != null && mapThemeManager.IsTransitioning)
         {
             pendingCards = new List<BuffCardConfig>(cards);
             return;

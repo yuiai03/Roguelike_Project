@@ -9,28 +9,34 @@ public class OrbitingBallManager : MonoBehaviour
 
     [Header("Orbit Settings")]
     [SerializeField] private float orbitRadius = 2.5f;
-    [SerializeField] private float orbitSpeed = 120f;   
-    [SerializeField] private float heightOffset = 1f;   
-
-    [Header("Ball Stats")]
-    [SerializeField] private float damage = 20f;
+    [SerializeField] private float baseOrbitSpeed = 120f;
+    [SerializeField] private float speedPenaltyPerAdditionalBall = 15f;
+    [SerializeField] private float minOrbitSpeed = 15f;
+    [SerializeField] private float heightOffset = 1f;
 
     private readonly List<GameObject> balls = new List<GameObject>();
     private float masterAngle = 0f;   
+    private PlayerData playerData;
+
+    private void Awake()
+    {
+        playerData = GetComponent<PlayerData>();
+    }
 
     private void Update()
     {
-        if (balls.Count == 0) return;
+        CleanupInactiveBalls();
 
-        masterAngle -= orbitSpeed * Time.deltaTime;
+        int activeBallCount = balls.Count;
+        if (activeBallCount == 0) return;
+
+        masterAngle -= GetEffectiveOrbitSpeed(activeBallCount) * Time.deltaTime;
         if (masterAngle < 0f) masterAngle += 360f;
 
-        float step = 360f / balls.Count;
+        float step = 360f / activeBallCount;
 
-        for (int i = 0; i < balls.Count; i++)
+        for (int i = 0; i < activeBallCount; i++)
         {
-            if (balls[i] == null) continue;
-
             float angleDeg = masterAngle + i * step;
             float angleRad = angleDeg * Mathf.Deg2Rad;
 
@@ -44,7 +50,7 @@ public class OrbitingBallManager : MonoBehaviour
         }
     }
 
-    public void AddBall(float damageOverride = -1f)
+    public void AddBall(float atkMultiplier = 1f)
     {
         GameObject ball = ObjectPool.Instance.Spawn(PoolType.OrbitingBall, transform.position);
         if (ball == null)
@@ -56,8 +62,12 @@ public class OrbitingBallManager : MonoBehaviour
         OrbitingBall script = ball.GetComponent<OrbitingBall>();
         if (script != null)
         {
-            float dmg = damageOverride > 0f ? damageOverride : damage;
-            script.Initialize(dmg);
+            if (playerData == null)
+            {
+                playerData = GetComponent<PlayerData>();
+            }
+
+            script.Initialize(playerData, atkMultiplier);
         }
 
         balls.Add(ball);
@@ -65,6 +75,7 @@ public class OrbitingBallManager : MonoBehaviour
 
     public void RemoveBall()
     {
+        CleanupInactiveBalls();
         if (balls.Count == 0) return;
         int last = balls.Count - 1;
         if (balls[last] != null)
@@ -74,13 +85,19 @@ public class OrbitingBallManager : MonoBehaviour
 
     public void RemoveAll()
     {
+        CleanupInactiveBalls();
+
         foreach (GameObject b in balls)
             if (b != null)
                 ObjectPool.Instance.Despawn(b, PoolType.OrbitingBall);
         balls.Clear();
     }
 
-    public int GetBallCount() => balls.Count;
+    public int GetBallCount()
+    {
+        CleanupInactiveBalls();
+        return balls.Count;
+    }
 
     private GameObject CreateBall()
     {
@@ -108,6 +125,17 @@ public class OrbitingBallManager : MonoBehaviour
         go.AddComponent<OrbitingBall>();
 
         return go;
+    }
+
+    private void CleanupInactiveBalls()
+    {
+        balls.RemoveAll(ball => ball == null || !ball.activeInHierarchy);
+    }
+
+    private float GetEffectiveOrbitSpeed(int activeBallCount)
+    {
+        float speedReduction = Mathf.Max(0, activeBallCount - 1) * speedPenaltyPerAdditionalBall;
+        return Mathf.Max(minOrbitSpeed, baseOrbitSpeed - speedReduction);
     }
 
 #if UNITY_EDITOR

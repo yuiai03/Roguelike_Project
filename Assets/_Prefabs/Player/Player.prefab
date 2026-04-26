@@ -507,7 +507,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ballPrefab: {fileID: 1318373225361957517, guid: 28f4e1cb396d8af40ac63a395d58853a, type: 3}
   orbitRadius: 8
-  orbitSpeed: 120
+  baseOrbitSpeed: 120
+  speedPenaltyPerAdditionalBall: 15
+  minOrbitSpeed: 15
   heightOffset: 1
   damage: 20
 --- !u!114 &2389685742033928977
