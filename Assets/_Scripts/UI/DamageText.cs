@@ -37,7 +37,7 @@ public class DamageText : MonoBehaviour
             return;
         }
 
-        textMesh.text = Mathf.RoundToInt(amount).ToString();
+        textMesh.text = Utils.FormatWholeNumber(amount);
 
         if (isHeal)
             textMesh.color = healColor;

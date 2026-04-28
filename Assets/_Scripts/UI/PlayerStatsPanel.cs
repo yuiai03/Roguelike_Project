@@ -62,10 +62,7 @@ public class PlayerStatsPanel : PanelBase
             return;
         }
 
-        int currentWave = waveSpawner.GetCurrentWave();
-        int totalWaves = waveSpawner.GetTotalWaves();
-
-        waveText.text = $"Wave: {currentWave}/{totalWaves}";
+        waveText.text = WaveSpawner.FormatWaveLabel(waveSpawner.GetCurrentWave(), waveSpawner.GetTotalWaves());
     }
 
     private void UpdateLevel(int currentLevel, int maxLevel)
@@ -85,7 +82,7 @@ public class PlayerStatsPanel : PanelBase
 
         if (expText != null)
         {
-            expText.text = $"{Mathf.Floor(currentExp)}/{Mathf.Floor(maxExp)}";
+            expText.text = $"{Utils.FormatWholeNumber(currentExp)}/{Utils.FormatWholeNumber(maxExp)}";
         }
     }
 
@@ -98,7 +95,7 @@ public class PlayerStatsPanel : PanelBase
 
         if (healthText != null)
         {
-            healthText.text = $"{Mathf.Floor(currentHealth)}/{Mathf.Floor(maxHealth)}";
+            healthText.text = $"{Utils.FormatWholeNumber(currentHealth)}/{Utils.FormatWholeNumber(maxHealth)}";
         }
     }
 
@@ -106,8 +103,7 @@ public class PlayerStatsPanel : PanelBase
     {
         if (waveText != null && waveSpawner != null)
         {
-            int totalWaves = waveSpawner.GetTotalWaves();
-            waveText.text = $"Wave: {waveNumber}/{totalWaves}";
+            waveText.text = WaveSpawner.FormatWaveLabel(waveNumber, waveSpawner.GetTotalWaves());
         }
     }
 

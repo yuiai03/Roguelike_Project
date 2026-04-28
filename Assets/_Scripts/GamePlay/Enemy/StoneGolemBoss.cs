@@ -4,7 +4,7 @@ using System.Collections;
 public class StoneGolemBoss : BossEnemy
 {
     [Header("Stone Golem")]
-    [SerializeField] private PoolType minionPoolType = PoolType.MeleeEnemy;
+    [SerializeField] private PoolType minionPoolType = PoolType.Enemy_Melee;
     [SerializeField] private float slamRadius   = 5f;
     [SerializeField] private float slamDamage   = 60f;
     [SerializeField] private float slamCooldown = 5f;

@@ -2,6 +2,16 @@ using UnityEngine;
 
 public static class Utils
 {
+    public static int RoundToDisplayInt(float value)
+    {
+        return Mathf.RoundToInt(value);
+    }
+
+    public static string FormatWholeNumber(float value)
+    {
+        return RoundToDisplayInt(value).ToString();
+    }
+
     public static Vector3 GetGroundPosition(
         Vector3 worldPosition,
         LayerMask groundMask,

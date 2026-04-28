@@ -70,7 +70,7 @@ public class LawaChurl_Pyro : Enemy
         Vector3 warningSpawnPos = groundTargetPos + Vector3.up * WarningVisualLift;
 
         // Spawn Warning Circle
-        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, warningSpawnPos, Quaternion.identity);
+        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.Boss_WarningCircle, warningSpawnPos, Quaternion.identity);
         if (warningObj != null)
         {
             WarningCircle warningCircle = warningObj.GetComponent<WarningCircle>();
@@ -91,7 +91,7 @@ public class LawaChurl_Pyro : Enemy
 
     private void SpawnPyroEffect(Vector3 position)
     {
-        GameObject effectObj = ObjectPool.Instance.Spawn(PoolType.LawaChurlPyroEffect, position, Quaternion.identity);
+        GameObject effectObj = ObjectPool.Instance.Spawn(PoolType.Boss_PyroEffect, position, Quaternion.identity);
 
         // Cần gắn script gây damage lên effectObj: projectile hoặc một collider tự nổ
         // Tái sử dụng logic Projectile hoặc viết script AOEDamage riêng trên prefab
@@ -103,6 +103,6 @@ public class LawaChurl_Pyro : Enemy
         }
 
         // Auto despawn
-        ObjectPool.Instance.DespawnAfterDelay(effectObj, PoolType.LawaChurlPyroEffect, effectLifetime);
+        ObjectPool.Instance.DespawnAfterDelay(effectObj, PoolType.Boss_PyroEffect, effectLifetime);
     }
 }

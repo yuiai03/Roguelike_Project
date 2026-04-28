@@ -5,35 +5,29 @@ public enum PoolType
 {
     None = 0,
     PlayerProjectile = 1,
-    EnemyProjectile = 2,
-    MeleeEnemy = 3,
-    RangedEnemy = 4,
-    CircleSpawnEffect = 5,
+    Enemy_Projectile = 2,
+    Enemy_Melee = 3,
+    Enemy_Ranged = 4,
+    Enemy_SpawnCircle = 5,
     OrbitingBall = 6,
     AoEExplosionVFX = 7,
     SpiritPierce = 8,
     SpiritExplosion = 9,
     DamageText = 10,
     SpiritProjectile = 11,
-    StoneGolemBoss = 12,
-    ShadowStalkerBoss = 13,
-    VoidTitanBoss = 14,
-    FlyEnemy = 15,
+    Enemy_Fly = 15,
 
     // LawaChurl Bosses
-    LawaChurl_Geo = 16,
-    LawaChurl_Pyro = 17,
-    LawaChurl_Electro = 18,
+    Boss_Geo = 16,
+    Boss_Pyro = 17,
+    Boss_Electro = 18,
 
     // Boss Attacks & Effects
-    WarningCircle = 19,
-    ElectroBomb_Big = 20,
-    ElectroBomb_Small = 21,
-    LawaChurlGeoRock = 22,
-    LawaChurlPyroEffect = 23,
-
-    // Interactables
-    BuffChest = 24,
+    Boss_WarningCircle = 19,
+    Boss_ElectroBomb_Big = 20,
+    Boss_ElectroBomb_Small = 21,
+    Boss_GeoRock = 22,
+    Boss_PyroEffect = 23,
 
     // Spirits
     SpiritHealing = 25,

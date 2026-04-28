@@ -116,7 +116,7 @@ public abstract class BossEnemy : Enemy
     private void SpawnBossProjectile(Vector3 direction, float damage)
     {
         Vector3 spawnPos = firePoint != null ? firePoint.position + Vector3.up * 2f : transform.position + Vector3.up * 2f;
-        GameObject obj = ObjectPool.Instance.Spawn(PoolType.EnemyProjectile, spawnPos, Quaternion.LookRotation(direction));
+        GameObject obj = ObjectPool.Instance.Spawn(PoolType.Enemy_Projectile, spawnPos, Quaternion.LookRotation(direction));
         if (obj == null) return;
         Projectile proj = obj.GetComponent<Projectile>();
         proj?.Initialize(damage, bossConfig.bossProjectileSpeed, bossConfig.bossProjectileLifetime,

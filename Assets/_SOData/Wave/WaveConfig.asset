@@ -666,7 +666,11 @@ MonoBehaviour:
     bossPoolType: 0
   - enemyGroups: []
     preparationTime: 0
-    isBossWave: 0
-    bossPoolType: 0
+    isBossWave: 1
+    bossSpawnPosition: {x: 0, y: 0.75, z: 0}
+    bossPoolTypes:
+    - 16
+    - 17
+    - 18
   autoScale: 1
   scalePerWave: 1.1

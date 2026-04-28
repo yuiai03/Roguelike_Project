@@ -102,7 +102,7 @@ public class ShadowStalkerBoss : BossEnemy
         for (int i = 0; i < 2; i++)
         {
             Vector3 offset = new Vector3(Random.Range(-4f, 4f), 0f, Random.Range(-4f, 4f));
-            ObjectPool.Instance?.Spawn(PoolType.MeleeEnemy, transform.position + offset, Quaternion.identity);
+            ObjectPool.Instance?.Spawn(PoolType.Enemy_Melee, transform.position + offset, Quaternion.identity);
         }
         Debug.Log("[ShadowStalker] Phase 3: Clone + bắn 4 hướng!");
     }

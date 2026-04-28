@@ -15,7 +15,7 @@ public class ElectroBomb : MonoBehaviour
     private bool isBigBomb;
 
     [SerializeField] private float explosionRadius = 3f;
-    [SerializeField] private PoolType smallBombPoolType = PoolType.ElectroBomb_Small;
+    [SerializeField] private PoolType smallBombPoolType = PoolType.Boss_ElectroBomb_Small;
     [SerializeField] private int smallBombCount = 6;
     [SerializeField] private float smallBombSpreadRadius = 5f;
 
@@ -88,7 +88,7 @@ public class ElectroBomb : MonoBehaviour
         }
 
         // Despawn this bomb
-        PoolType poolType = isBigBomb ? PoolType.ElectroBomb_Big : PoolType.ElectroBomb_Small;
+        PoolType poolType = isBigBomb ? PoolType.Boss_ElectroBomb_Big : PoolType.Boss_ElectroBomb_Small;
         ObjectPool.Instance.Despawn(gameObject, poolType);
     }
 
@@ -103,7 +103,7 @@ public class ElectroBomb : MonoBehaviour
             Vector3 warningSpawnPos = spawnTarget + Vector3.up * WarningVisualLift;
 
             // Spawn Warning Circle for small bomb
-            GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, warningSpawnPos, Quaternion.identity);
+            GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.Boss_WarningCircle, warningSpawnPos, Quaternion.identity);
             if (warningObj != null)
             {
                 WarningCircle wc = warningObj.GetComponent<WarningCircle>();

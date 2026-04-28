@@ -7,7 +7,7 @@ public class ChestBuffBox : NPC
     protected override void Awake()
     {
         base.Awake();
-        poolType = GetComponent<PoolTypeConfig>()?.poolType ?? PoolType.BuffChest;
+        poolType = GetComponent<PoolTypeConfig>()?.poolType ?? PoolType.None;
     }
 
     protected override bool CanShowPrompt()
@@ -29,7 +29,14 @@ public class ChestBuffBox : NPC
             // Re-subscribe or handle panel close if needed to unpause, but relying on CardSelectionPanel to handle its own time freeze
             
             // Chest is consumed
-            ObjectPool.Instance.Despawn(gameObject, poolType);
+            if (poolType != PoolType.None && ObjectPool.Instance != null)
+            {
+                ObjectPool.Instance.Despawn(gameObject, poolType);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

@@ -76,6 +76,21 @@ public class MapThemeManager : MonoBehaviour
         StartThemeTransition(targetIndex, onComplete);
     }
 
+    public void ApplyThemeForWaveImmediate(int waveNumber)
+    {
+        int targetIndex = ResolveThemeIndexForWave(waveNumber);
+        if (targetIndex < 0)
+        {
+            return;
+        }
+
+        pendingThemeIndex = -1;
+        activeTransitionCallback = null;
+        queuedTransitionCallback = null;
+        IsTransitioning = false;
+        ApplyThemeImmediate(targetIndex);
+    }
+
     private void StartThemeTransition(int targetIndex, Action onComplete = null)
     {
         if (!IsValidThemeIndex(targetIndex))

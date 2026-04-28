@@ -273,7 +273,7 @@ public class Enemy : MonoBehaviour, IDamageable
         Vector3 rawDir = targetPosition - spawnPosition;
         rawDir.y = 0f;
         Vector3 direction = rawDir.normalized;
-        GameObject projectile = ObjectPool.Instance.Spawn(PoolType.EnemyProjectile, spawnPosition, Quaternion.LookRotation(direction));
+        GameObject projectile = ObjectPool.Instance.Spawn(PoolType.Enemy_Projectile, spawnPosition, Quaternion.LookRotation(direction));
 
         Projectile proj = projectile.GetComponent<Projectile>();
         if (proj != null)

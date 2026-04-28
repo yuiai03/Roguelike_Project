@@ -71,7 +71,7 @@ public class WarningCircle : MonoBehaviour
         innerCircle.localScale = innerTarget;
         OnWarningComplete?.Invoke();
         
-        PoolType poolType = GetComponent<PoolTypeConfig>()?.poolType ?? PoolType.WarningCircle;
+        PoolType poolType = GetComponent<PoolTypeConfig>()?.poolType ?? PoolType.Boss_WarningCircle;
         ObjectPool.Instance.Despawn(gameObject, poolType);
     }
 }

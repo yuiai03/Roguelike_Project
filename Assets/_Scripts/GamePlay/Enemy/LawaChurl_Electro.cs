@@ -70,7 +70,7 @@ public class LawaChurl_Electro : Enemy
         Vector3 warningSpawnPos = groundTargetPos + Vector3.up * WarningVisualLift;
 
         // Spawn Warning Circle at Player position
-        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.WarningCircle, warningSpawnPos, Quaternion.identity);
+        GameObject warningObj = ObjectPool.Instance.Spawn(PoolType.Boss_WarningCircle, warningSpawnPos, Quaternion.identity);
         if (warningObj != null)
         {
             WarningCircle warningCircle = warningObj.GetComponent<WarningCircle>();
@@ -87,7 +87,7 @@ public class LawaChurl_Electro : Enemy
 
         // Spawn Big Bomb from fire point instead of high up
         Vector3 bombSpawnPos = firePoint != null ? firePoint.position : transform.position + Vector3.up * 2f;
-        GameObject bombObj = ObjectPool.Instance.Spawn(PoolType.ElectroBomb_Big, bombSpawnPos, Quaternion.identity);
+        GameObject bombObj = ObjectPool.Instance.Spawn(PoolType.Boss_ElectroBomb_Big, bombSpawnPos, Quaternion.identity);
         
         ElectroBomb bombScript = bombObj.GetComponent<ElectroBomb>();
         if (bombScript != null)

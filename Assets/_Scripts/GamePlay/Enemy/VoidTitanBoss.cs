@@ -4,7 +4,7 @@ using System.Collections;
 public class VoidTitanBoss : BossEnemy
 {
     [Header("Void Titan")]
-    [SerializeField] private PoolType exploderPoolType = PoolType.MeleeEnemy; 
+    [SerializeField] private PoolType exploderPoolType = PoolType.Enemy_Melee; 
     [SerializeField] private float laserDamage    = 40f;
     [SerializeField] private float laserRange     = 20f;
     [SerializeField] private float laserCooldown  = 4f;

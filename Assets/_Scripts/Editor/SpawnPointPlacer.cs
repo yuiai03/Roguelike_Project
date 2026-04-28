@@ -23,7 +23,7 @@ public class SpawnPointPlacer : EditorWindow
     private float lineSpacing = 3f;
 
     // Enemy settings
-    private PoolType enemyType = PoolType.MeleeEnemy;
+    private PoolType enemyType = PoolType.Enemy_Melee;
     private int enemyCount = 5;
     private float spreadRadius = 3f;
     private float spawnDelay = 0f;
@@ -280,9 +280,9 @@ public class SpawnPointPlacer : EditorWindow
         // Hotkeys: 1=Melee, 2=Ranged, 3=Fly
         if (!randomizeMode && e.type == EventType.KeyDown)
         {
-            if (e.keyCode == KeyCode.Alpha1 || e.keyCode == KeyCode.Keypad1) { enemyType = PoolType.MeleeEnemy;  e.Use(); Repaint(); }
-            if (e.keyCode == KeyCode.Alpha2 || e.keyCode == KeyCode.Keypad2) { enemyType = PoolType.RangedEnemy; e.Use(); Repaint(); }
-            if (e.keyCode == KeyCode.Alpha3 || e.keyCode == KeyCode.Keypad3) { enemyType = PoolType.FlyEnemy;    e.Use(); Repaint(); }
+            if (e.keyCode == KeyCode.Alpha1 || e.keyCode == KeyCode.Keypad1) { enemyType = PoolType.Enemy_Melee;  e.Use(); Repaint(); }
+            if (e.keyCode == KeyCode.Alpha2 || e.keyCode == KeyCode.Keypad2) { enemyType = PoolType.Enemy_Ranged; e.Use(); Repaint(); }
+            if (e.keyCode == KeyCode.Alpha3 || e.keyCode == KeyCode.Keypad3) { enemyType = PoolType.Enemy_Fly;    e.Use(); Repaint(); }
         }
 
         // ESC to cancel
@@ -302,7 +302,7 @@ public class SpawnPointPlacer : EditorWindow
 
         // Preview
         List<Vector3> previewPoints = GetPatternPositions(center);
-        PoolType displayType = randomizeMode ? PoolType.MeleeEnemy : enemyType;
+        PoolType displayType = randomizeMode ? PoolType.Enemy_Melee : enemyType;
 
         Handles.color = new Color(0, 1, 0, 0.6f);
         foreach (var p in previewPoints)
@@ -400,11 +400,11 @@ public class SpawnPointPlacer : EditorWindow
     private PoolType GetRandomAllowedType()
     {
         var allowed = new List<PoolType>();
-        if (allowMelee)  allowed.Add(PoolType.MeleeEnemy);
-        if (allowRanged) allowed.Add(PoolType.RangedEnemy);
-        if (allowFly)    allowed.Add(PoolType.FlyEnemy);
+        if (allowMelee)  allowed.Add(PoolType.Enemy_Melee);
+        if (allowRanged) allowed.Add(PoolType.Enemy_Ranged);
+        if (allowFly)    allowed.Add(PoolType.Enemy_Fly);
 
-        if (allowed.Count == 0) return PoolType.MeleeEnemy;
+        if (allowed.Count == 0) return PoolType.Enemy_Melee;
         return allowed[Random.Range(0, allowed.Count)];
     }
 

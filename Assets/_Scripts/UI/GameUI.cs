@@ -15,6 +15,7 @@ public class GameUI : Singleton<GameUI>
     [SerializeField] private PlayerStatsPanel playerStatsPanel;
     [SerializeField] private NotiPanel notiPanel;
     [SerializeField] private PauseMenuPanel pauseMenuPanel;
+    [SerializeField] private WaveJumpTestPanel waveJumpTestPanel;
 
     protected override void Awake()
     {
@@ -30,6 +31,7 @@ public class GameUI : Singleton<GameUI>
     public PlayerStatsPanel PlayerStatsPanel => playerStatsPanel;
     public NotiPanel NotiPanel => notiPanel;
     public PauseMenuPanel PauseMenuPanel => pauseMenuPanel;
+    public WaveJumpTestPanel WaveJumpTestPanel => waveJumpTestPanel;
 
     private void ResolveMissingReferences()
     {
@@ -41,5 +43,6 @@ public class GameUI : Singleton<GameUI>
         if (playerStatsPanel == null) playerStatsPanel = GetComponentInChildren<PlayerStatsPanel>(true);
         if (notiPanel == null) notiPanel = GetComponentInChildren<NotiPanel>(true);
         if (pauseMenuPanel == null) pauseMenuPanel = GetComponentInChildren<PauseMenuPanel>(true);
+        if (waveJumpTestPanel == null) waveJumpTestPanel = GetComponentInChildren<WaveJumpTestPanel>(true);
     }
 }

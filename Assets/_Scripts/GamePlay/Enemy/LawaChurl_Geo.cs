@@ -66,7 +66,7 @@ public class LawaChurl_Geo : Enemy
         Vector3 direction = rawDir.normalized;
 
         // Use custom pool type for Geo Rock
-        GameObject projectile = ObjectPool.Instance.Spawn(PoolType.LawaChurlGeoRock, spawnPosition, Quaternion.LookRotation(direction));
+        GameObject projectile = ObjectPool.Instance.Spawn(PoolType.Boss_GeoRock, spawnPosition, Quaternion.LookRotation(direction));
 
         Projectile proj = projectile.GetComponent<Projectile>();
         if (proj != null)

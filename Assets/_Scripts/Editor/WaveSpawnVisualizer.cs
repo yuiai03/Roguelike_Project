@@ -282,7 +282,8 @@ public class WaveSpawnVisualizer : EditorWindow
         {
             preparationTime = source.preparationTime,
             isBossWave      = source.isBossWave,
-            bossPoolType    = source.bossPoolType,
+            bossSpawnPosition = source.bossSpawnPosition,
+            bossPoolTypes   = new List<PoolType>(source.bossPoolTypes),
             enemyGroups     = new List<EnemyGroup>()
         };
 
