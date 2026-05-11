@@ -155,8 +155,9 @@ public class ExplodeEnemy : Enemy
         HideChargeIndicator();
     }
 
-    void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
         if (explodeConfig == null) return;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, explodeConfig.detectionRange);

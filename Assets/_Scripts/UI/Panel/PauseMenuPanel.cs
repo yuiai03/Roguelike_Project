@@ -306,7 +306,8 @@ public class PauseMenuPanel : PanelBase
         Time.timeScale = 1f;
 
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+        System.Type editorApplicationType = System.Type.GetType("UnityEditor.EditorApplication, UnityEditor");
+        editorApplicationType?.GetProperty("isPlaying")?.SetValue(null, false);
 #else
         Application.Quit();
 #endif

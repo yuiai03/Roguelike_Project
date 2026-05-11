@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns='http://www.w3.org/2000/svg' width='2200' height='1650' viewBox='0 0 2200 1650'>
+<rect width='100%' height='100%' fill='white'/>
+<text x='1100' y='77.0' text-anchor='middle' font-family='Times New Roman' font-size='42' font-weight='bold' font-style='normal'>
+<tspan x='1100' dy='0'>Hình 3.4. Component Diagram của hệ thống</tspan>
+</text>
+<rect x='90' y='220' width='360' height='120' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='270' y='281.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='bold' font-style='normal'>
+<tspan x='270' dy='0'>Input</tspan>
+<tspan x='270' dy='31'>InputSystem_Actions</tspan>
+</text>
+<rect x='520' y='120' width='500' height='220' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='770' y='190.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='bold' font-style='normal'>
+<tspan x='770' dy='0'>Player</tspan>
+<tspan x='770' dy='27'>PlayerController</tspan>
+<tspan x='770' dy='27'>PlayerAttack</tspan>
+<tspan x='770' dy='27'>PlayerHealth</tspan>
+<tspan x='770' dy='27'>PlayerLevelSystem</tspan>
+</text>
+<rect x='1220' y='120' width='560' height='280' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='1500' y='183.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='bold' font-style='normal'>
+<tspan x='1500' dy='0'>UI</tspan>
+<tspan x='1500' dy='26'>GameUI</tspan>
+<tspan x='1500' dy='26'>ChallengePanel</tspan>
+<tspan x='1500' dy='26'>NameInputPanel</tspan>
+<tspan x='1500' dy='26'>PlayerStatsPanel</tspan>
+<tspan x='1500' dy='26'>CardSelectionPanel</tspan>
+<tspan x='1500' dy='26'>PauseMenuPanel</tspan>
+<tspan x='1500' dy='26'>LeaderboardPanel</tspan>
+</text>
+<rect x='520' y='430' width='500' height='220' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='770' y='487.0' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='bold' font-style='normal'>
+<tspan x='770' dy='0'>Enemy</tspan>
+<tspan x='770' dy='27'>Enemy</tspan>
+<tspan x='770' dy='27'>MeleeEnemy</tspan>
+<tspan x='770' dy='27'>RangedEnemy</tspan>
+<tspan x='770' dy='27'>FlyEnemy</tspan>
+<tspan x='770' dy='27'>BossEnemy</tspan>
+</text>
+<rect x='90' y='760' width='500' height='190' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='340' y='841.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='bold' font-style='normal'>
+<tspan x='340' dy='0'>Wave</tspan>
+<tspan x='340' dy='29'>WaveSpawner</tspan>
+<tspan x='340' dy='29'>WaveConfig</tspan>
+</text>
+<rect x='680' y='760' width='500' height='240' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='930' y='840.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='bold' font-style='normal'>
+<tspan x='930' dy='0'>Buff</tspan>
+<tspan x='930' dy='27'>BuffCardManager</tspan>
+<tspan x='930' dy='27'>BuffCardConfig</tspan>
+<tspan x='930' dy='27'>SpiritManager</tspan>
+<tspan x='930' dy='27'>OrbitingBallManager</tspan>
+</text>
+<rect x='1320' y='500' width='460' height='180' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='1550' y='576.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='bold' font-style='normal'>
+<tspan x='1550' dy='0'>Backend</tspan>
+<tspan x='1550' dy='29'>PlayFabLeaderboardManager</tspan>
+<tspan x='1550' dy='29'>PlayFab API</tspan>
+</text>
+<rect x='1320' y='820' width='700' height='320' rx='22' ry='22' fill='#f0f5ff' stroke='black' stroke-width='4'/>
+<text x='1670' y='927.0' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='bold' font-style='normal'>
+<tspan x='1670' dy='0'>Shared Services</tspan>
+<tspan x='1670' dy='27'>ObjectPool</tspan>
+<tspan x='1670' dy='27'>AudioManager</tspan>
+<tspan x='1670' dy='27'>MapThemeManager</tspan>
+<tspan x='1670' dy='27'>LoadingUIManager</tspan>
+<tspan x='1670' dy='27'>Utils</tspan>
+</text>
+<line x1='450' y1='280' x2='520' y2='230' stroke='black' stroke-width='4'/>
+<polygon points='520,230 513.3744838221571,244.56374043222218 504.0746727226516,231.54400489291442' fill='black'/>
+<text x='485' y='233.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='485' dy='0'>Điều khiển</tspan>
+</text>
+<line x1='450' y1='300' x2='1220' y2='260' stroke='black' stroke-width='4'/>
+<polygon points='1220,260 1206.5772770334943,268.70807143772026 1205.7472274337117,252.72961664190538' fill='black'/>
+<text x='835' y='258.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='835' dy='0'>Tương tác UI</tspan>
+</text>
+<line x1='770' y1='340' x2='770' y2='430' stroke='black' stroke-width='4'/>
+<polygon points='770,430 762.0,416.143593539449 778.0,416.143593539449' fill='black'/>
+<text x='770' y='363.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='770' dy='0'>Chiến đấu</tspan>
+</text>
+<line x1='770' y1='650' x2='330' y2='760' stroke='black' stroke-width='4'/>
+<polygon points='330,760 341.50240380637825,748.8781877971701 345.38297380695957,764.4004677994955' fill='black'/>
+<text x='550' y='683.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='550' dy='0'>Sự kiện wave</tspan>
+</text>
+<line x1='340' y1='950' x2='340' y2='1040' stroke='black' stroke-width='4'/>
+<polygon points='340,1040 332.0,1026.143593539449 348.0,1026.143593539449' fill='black'/>
+<text x='340' y='973.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='340' dy='0'>Wave mới</tspan>
+</text>
+<line x1='340' y1='1040' x2='770' y2='1040' stroke='black' stroke-width='4'/>
+<polygon points='770,1040 756.143593539449,1048.0 756.143593539449,1032.0' fill='black'/>
+<text x='555' y='1036.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='555' dy='0'>OnLevelUp / buff</tspan>
+</text>
+<line x1='1220' y1='520' x2='1110' y2='520' stroke='black' stroke-width='4'/>
+<polygon points='1110,520 1123.856406460551,512.0 1123.856406460551,528.0' fill='black'/>
+<text x='1165' y='498.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1165' dy='0'>HUD / panel</tspan>
+</text>
+<line x1='1780' y1='400' x2='1780' y2='500' stroke='black' stroke-width='4'/>
+<polygon points='1780,500 1772.0,486.143593539449 1788.0,486.143593539449' fill='black'/>
+<text x='1780' y='428.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1780' dy='0'>Display Name</tspan>
+</text>
+<line x1='1550' y1='680' x2='1670' y2='820' stroke='black' stroke-width='4'/>
+<polygon points='1670,820 1654.9083173894514,814.6857628974172 1667.0564230272962,804.2731009221218' fill='black'/>
+<text x='1610' y='728.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1610' dy='0'>Dịch vụ dùng chung</tspan>
+</text>
+<line x1='1180' y1='900' x2='1320' y2='900' stroke='black' stroke-width='4'/>
+<polygon points='1320,900 1306.143593539449,908.0 1306.143593539449,892.0' fill='black'/>
+<text x='1250' y='878.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1250' dy='0'>Spirit / pool</tspan>
+</text>
+<line x1='590' y1='860' x2='1320' y2='980' stroke='black' stroke-width='4'/>
+<polygon points='1320,980 1305.029443643014,985.646453963534 1307.6247492477873,969.8583448678306' fill='black'/>
+<text x='955' y='898.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='955' dy='0'>Spawn / transition</tspan>
+</text>
+<line x1='1020' y1='540' x2='1320' y2='560' stroke='black' stroke-width='4'/>
+<polygon points='1320,560 1305.6421312082437,567.0605668156818 1306.7064353766239,551.096004289976' fill='black'/>
+<text x='1170' y='528.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1170' dy='0'>Boss / leaderboard</tspan>
+</text>
+</svg>

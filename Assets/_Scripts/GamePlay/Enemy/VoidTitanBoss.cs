@@ -10,7 +10,6 @@ public class VoidTitanBoss : BossEnemy
     [SerializeField] private float laserCooldown  = 4f;
     [SerializeField] private float slowZoneDuration = 5f;
     [SerializeField] private float slowZoneRadius = 6f;
-    [SerializeField] private LayerMask playerLayer;
 
     private float laserTimer;
     private bool exploderSpawned;
@@ -106,8 +105,9 @@ public class VoidTitanBoss : BossEnemy
         Debug.Log("[VoidTitan] Phase 3: 3 Exploder + 12 đạn vòng tròn!");
     }
 
-    void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
         Gizmos.color = new Color(0.5f, 0f, 1f, 0.3f);
         Gizmos.DrawWireSphere(transform.position, slowZoneRadius);
         Gizmos.color = Color.white;

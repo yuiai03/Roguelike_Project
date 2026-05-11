@@ -13,8 +13,6 @@ public class TankEnemy : Enemy
     private float shieldTimer;
     private Material shieldMaterial;
 
-    [SerializeField] private LayerMask playerLayer;
-
     protected override void Awake()
     {
         base.Awake();

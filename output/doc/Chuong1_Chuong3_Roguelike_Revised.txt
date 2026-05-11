@@ -1,0 +1,217 @@
+PHẦN NỘI DUNG THAY THẾ CHƯƠNG 1 VÀ CHƯƠNG 3
+
+CHƯƠNG 1. TỔNG QUAN
+
+1.1. Tổng quan
+
+Đề tài tập trung xây dựng một trò chơi sinh tồn 3D trên nền tảng Unity, trong đó người chơi điều khiển một nhân vật trong không gian ba chiều, thực hiện di chuyển, né tránh, sử dụng kỹ năng lướt và tự động tấn công kẻ địch trong phạm vi. Trò chơi được thiết kế theo hướng dễ tiếp cận ở thao tác điều khiển nhưng vẫn có chiều sâu về chiến thuật nhờ hệ thống wave tăng dần, boss wave, lên cấp chọn buff và bảng xếp hạng trực tuyến. Bên cạnh việc tạo ra một sản phẩm có thể chơi được, đề tài còn hướng tới tổ chức mã nguồn thành các module rõ ràng, tách dữ liệu cấu hình khỏi logic xử lý và áp dụng các giải pháp tối ưu phù hợp với game có nhiều đối tượng runtime hoạt động đồng thời.
+
+1.1.1. Lý do chọn đề tài
+
+Các trò chơi sinh tồn mang yếu tố Roguelike hiện nay thu hút người chơi nhờ vòng lặp gameplay nhanh, giá trị chơi lại cao và khả năng tạo nhiều tổ hợp phát triển sức mạnh khác nhau qua mỗi lần chơi. Tuy nhiên, phần lớn các sản phẩm phổ biến vẫn nghiêng về 2D, trong khi các trò chơi 3D cùng thể loại phải giải quyết đồng thời nhiều bài toán hơn về camera, chuyển động trong không gian, số lượng enemy lớn, projectile dày đặc và ổn định hiệu năng. Việc lựa chọn đề tài phát triển trò chơi sinh tồn 3D vì vậy vừa có ý nghĩa thực tiễn, vừa tạo điều kiện áp dụng kiến thức về lập trình hướng đối tượng, tổ chức dữ liệu, xử lý va chạm, thiết kế giao diện và tích hợp dịch vụ trực tuyến trong cùng một sản phẩm hoàn chỉnh.
+
+1.1.2. Mục tiêu nghiên cứu
+
+Mục tiêu của đề tài là xây dựng một trò chơi sinh tồn 3D có thể vận hành ổn định trên PC, trong đó người chơi được điều khiển nhân vật với các cơ chế cốt lõi gồm di chuyển, dash và tự động tấn công. Hệ thống gameplay phải hỗ trợ nhiều loại enemy như cận chiến, đánh xa, bay và boss nguyên tố; đồng thời cho phép người chơi tăng tiến sức mạnh thông qua kinh nghiệm, lên cấp và lựa chọn buff ngẫu nhiên. Ngoài ra, hệ thống wave phải có khả năng mở rộng theo hướng vô hạn, tăng độ khó theo tiến trình, hỗ trợ boss wave và chuyển đổi theme bản đồ theo chu kỳ. Cuối cùng, đề tài cần tích hợp PlayFab để quản lý tên hiển thị và lưu điểm số trực tuyến, từ đó hoàn thiện yếu tố cạnh tranh của sản phẩm.
+
+1.1.3. Phạm vi nghiên cứu
+
+Đề tài được triển khai trên nền tảng PC, ưu tiên môi trường Windows, sử dụng Unity 6 kết hợp ngôn ngữ C# để xây dựng toàn bộ logic gameplay, giao diện và luồng điều khiển tổng thể. Dịch vụ trực tuyến được sử dụng là PlayFab, với phạm vi tập trung vào đăng nhập bằng Custom ID, lưu Display Name và quản lý leaderboard. Đề tài không bao gồm việc xây dựng máy chủ riêng, không triển khai multiplayer thời gian thực và không phát triển hệ quản trị cơ sở dữ liệu độc lập. Về phạm vi chức năng, sản phẩm tập trung vào vòng lặp gameplay chính gồm bắt đầu trận đấu, spawn enemy, chiến đấu, cộng EXP, lên cấp chọn buff, tiếp tục wave, đối đầu boss, đổi theme map và gửi điểm số khi người chơi thất bại.
+
+1.2. Khảo sát thực trạng
+
+Qua khảo sát các trò chơi sinh tồn mang phong cách Roguelike trên thị trường, có thể thấy hướng tiếp cận phổ biến là giảm số lượng thao tác điều khiển trực tiếp để người chơi tập trung vào di chuyển, giữ vị trí và lựa chọn phương án nâng cấp. Các trò chơi thành công thường có nhịp độ trận đấu tăng nhanh, hệ thống sức mạnh phát triển rõ ràng và nhiều tổ hợp kỹ năng tạo ra giá trị chơi lại. Tuy nhiên, nhiều sản phẩm chỉ dừng ở không gian 2D hoặc 2.5D, trong khi các trò chơi 3D cùng thể loại phải đối mặt với yêu cầu cao hơn về tổ chức camera, ổn định điều khiển và tối ưu hiệu năng khi số lượng enemy, projectile và hiệu ứng xuất hiện lớn.
+
+1.2.4. Kết luận khảo sát và hướng đi của đề tài
+
+Từ kết quả khảo sát, hướng đi phù hợp của đề tài là xây dựng một trò chơi sinh tồn 3D giữ được sự đơn giản trong điều khiển của dòng Survivor, đồng thời tận dụng không gian ba chiều để tăng tính trực quan và mức độ hoàn chỉnh của sản phẩm. Dự án lựa chọn cách tiếp cận trong đó người chơi chủ yếu di chuyển, dash, né tránh và chọn buff, còn thao tác tấn công được tự động hóa nhằm duy trì nhịp độ nhanh. Hệ thống được định hình quanh các khối chính gồm Player, Enemy, Wave, Buff, UI, PlayFab, ObjectPool và MapThemeManager, bám sát những gì đã được triển khai trong project hiện tại.
+
+1.3. Đề xuất phương pháp giải quyết
+
+Về công nghệ, đề tài sử dụng Unity 6 với Universal Render Pipeline để xây dựng môi trường 3D, sử dụng C# để hiện thực gameplay và Unity Input System để tách riêng lớp xử lý input khỏi phần logic phía sau. Các dữ liệu quan trọng như cấu hình player, enemy, buff card và wave được tách thành ScriptableObject để thuận tiện cho việc cân bằng và mở rộng. Nhân vật người chơi và enemy được điều khiển bằng CharacterController, kết hợp với xử lý theo trạng thái chiến đấu và sự kiện gameplay. Logic AI của enemy được xây dựng trực tiếp trong các lớp gameplay, không phụ thuộc NavMeshAgent. Về hiệu năng, project áp dụng Object Pooling cho projectile, enemy, effect, damage text và một số đối tượng runtime khác. Về dịch vụ trực tuyến, PlayFab được dùng để đăng nhập, quản lý tên hiển thị và đồng bộ leaderboard mà không cần xây dựng backend riêng.
+
+1.4. Mô tả yêu cầu và mô hình bài toán
+
+1.4.1. Yêu cầu chức năng
+
+1.4.1.1. Chức năng định danh người chơi
+
+Mục đích của chức năng này là bảo đảm mỗi người chơi có một danh tính hợp lệ trước khi tham gia vào hệ thống xếp hạng trực tuyến. Điều kiện kích hoạt bắt đầu ngay khi trò chơi khởi động. Thành phần chịu trách nhiệm chính là PlayFabLeaderboardManager, phối hợp với NameInputPanel và LoadingUIManager.
+
+Dữ liệu đầu vào của chức năng gồm Custom ID cục bộ được lưu trong PlayerPrefs và dữ liệu hồ sơ người chơi trả về từ PlayFab. Hệ thống trước hết thực hiện đăng nhập bằng LoginWithCustomID, sau đó gọi API tải hồ sơ để kiểm tra Display Name hiện có. Nếu hồ sơ chưa có tên hiển thị, NameInputPanel phải được hiển thị để yêu cầu người chơi nhập tên mới. Tên nhập vào cần được cắt khoảng trắng dư thừa và kiểm tra độ dài hợp lệ trước khi gửi lên PlayFab.
+
+Xử lý chính của hệ thống gồm ba bước: đăng nhập, tải hồ sơ và cập nhật tên khi cần thiết. Nếu tên không hợp lệ hoặc bị từ chối, hệ thống phải hiển thị thông báo lỗi rõ ràng và giữ người chơi ở trạng thái nhập lại. Nếu cập nhật thành công, CurrentDisplayName được đồng bộ về client, panel nhập tên đóng lại và trò chơi chuyển sang trạng thái sẵn sàng.
+
+Kết quả đầu ra của chức năng là người chơi có một Display Name hợp lệ, có thể được dùng để hiển thị trong leaderboard và trong các thông báo chào mừng. Ràng buộc triển khai là toàn bộ luồng này phải hoàn thành trước khi người chơi bước vào vòng gameplay chính, đồng thời cần tránh khóa cứng giao diện nếu API trả lỗi hoặc mạng chậm.
+
+1.4.1.2. Chức năng bắt đầu trận đấu
+
+Mục đích của chức năng này là cho phép người chơi chủ động chuyển từ trạng thái chờ sang trạng thái chiến đấu. Điều kiện kích hoạt là người chơi di chuyển đến vùng tương tác của ChallengePostNPC và nhấn phím tương tác. Các thành phần chính tham gia gồm NPC, InteractPanel, ChallengePanel, PlayerController, WaveSpawner và PlayerStatsPanel.
+
+Dữ liệu đầu vào của chức năng là trạng thái vị trí của player trong vùng trigger, input tương tác và sự tồn tại của ChallengePanel trong scene. Khi người chơi vào phạm vi hợp lệ, hệ thống hiển thị InteractPanel để gợi ý thao tác. Khi người chơi xác nhận tương tác, ChallengePanel xuất hiện, khóa input di chuyển và chờ người chơi nhấn StartGame.
+
+Xử lý chính gồm mở panel thử thách, phát tín hiệu onGameStart, gọi StartNextWave của WaveSpawner và hiển thị HUD thống kê trận đấu. Sau khi StartGame được kích hoạt, ChallengePostNPC bị vô hiệu hóa để không tiếp tục can thiệp vào vòng chơi hiện tại.
+
+Kết quả đầu ra là trận đấu chính thức bắt đầu, wave đầu tiên được chuẩn bị hoặc spawn, HUD bắt đầu cập nhật máu, EXP, level và wave. Ràng buộc là quá trình chuyển trạng thái phải đồng bộ giữa giao diện, thời gian trò chơi và input người chơi để không tạo ra tình trạng nhân vật vẫn di chuyển khi panel đang mở.
+
+1.4.1.3. Chức năng điều khiển nhân vật
+
+Mục đích của chức năng này là cung cấp khả năng điều khiển cơ bản cho nhân vật trong môi trường 3D. Điều kiện kích hoạt là người chơi đã vào trận và input được mở. Thành phần chịu trách nhiệm chính là PlayerController kết hợp InputSystem_Actions, CharacterController và CameraFollow.
+
+Dữ liệu đầu vào của chức năng gồm vector di chuyển từ Input System, trạng thái mặt đất, hướng camera hiện tại, thông số dash và trạng thái khóa input. Hệ thống phải quy đổi input từ mặt phẳng camera sang hướng di chuyển thực tế trong thế giới 3D, đồng thời xoay model nhân vật theo hướng chuyển động để tạo cảm giác điều khiển trực quan.
+
+Xử lý chính gồm di chuyển thường, áp dụng gravity, kiểm tra grounded và thực thi dash khi người chơi nhấn lệnh trong lúc dash cooldown đã hết. Khi dash đang diễn ra, tốc độ di chuyển được thay bằng dashSpeed, thời gian dash được đếm lùi và sau đó khôi phục trạng thái di chuyển bình thường. Hệ thống cũng phải hỗ trợ khóa hoặc mở input khi người chơi đang pause, nhập tên, chọn buff hoặc trong thời gian chuyển theme.
+
+Kết quả đầu ra là nhân vật có thể di chuyển mượt, đổi hướng hợp lý và thực hiện dash đúng nhịp. Ràng buộc triển khai là không được để input tồn đọng khi khóa điều khiển, tránh trường hợp người chơi thả phím nhưng nhân vật vẫn di chuyển sau khi mở lại input.
+
+1.4.1.4. Chức năng chiến đấu của người chơi
+
+Mục đích của chức năng này là tự động hóa thao tác tấn công nhưng vẫn duy trì tính chiến thuật thông qua việc chọn mục tiêu, chu kỳ bắn và các buff tăng cường. Điều kiện kích hoạt là player còn sống, có PlayerData hợp lệ và attack cooldown đã về 0. Thành phần chính gồm PlayerAttack, PlayerProjectile, ObjectPool và PlayerData.
+
+Dữ liệu đầu vào của chức năng gồm attack range, attack cooldown, projectile speed, projectile lifetime, chỉ số damage hiện tại, trạng thái multishot, AoE và các hiệu ứng hỗ trợ từ spirit hoặc orbiting ball. Hệ thống phải quét vùng xung quanh player để tìm enemy gần nhất còn sống, sau đó tính hướng bắn từ attackPoint tới mục tiêu đó.
+
+Xử lý chính của hệ thống là gọi TryAttack theo chu kỳ, xác định target, sinh projectile từ ObjectPool và khởi tạo projectile bằng các thông số tấn công hiện tại. Nếu người chơi có multishot, hệ thống phải tạo nhiều hướng bắn theo góc lệch xác định; nếu có AoE, projectile phải truyền thông tin bán kính và hệ số sát thương nổ; nếu có các buff spirit hoặc orbiting ball, những đối tượng phụ trợ này tiếp tục hoạt động độc lập quanh player nhưng vẫn lấy damage source từ PlayerData.
+
+Kết quả đầu ra là các projectile hợp lệ được sinh ra, bay đúng hướng, gây sát thương lên enemy trong phạm vi va chạm và phản ánh đúng sức mạnh hiện tại của player. Ràng buộc triển khai là không được instantiate projectile liên tục ngoài pool trong vòng lặp chiến đấu bình thường, trừ trường hợp dự phòng khi pool trống và hệ thống có cơ chế tạo bổ sung.
+
+1.4.1.5. Chức năng quản lý enemy
+
+Mục đích của chức năng này là tạo ra các đối tượng đối kháng đa dạng và duy trì áp lực chiến đấu cho người chơi. Điều kiện kích hoạt là WaveSpawner phát lệnh spawn từ cấu hình wave hoặc boss wave. Thành phần chính gồm Enemy, EnemyData, các lớp kế thừa như MeleeEnemy, RangedEnemy, FlyEnemy, BossEnemy và projectile của enemy.
+
+Dữ liệu đầu vào của chức năng gồm loại pool cần spawn, cấu hình chỉ số enemy từ EnemyConfig, vị trí spawn, loại enemy, attack range, damage, cooldown và random variation của chỉ số. Sau khi được spawn từ ObjectPool, mỗi enemy phải lấy dữ liệu từ EnemyData, tìm Player theo tag và bắt đầu vòng update AI riêng.
+
+Xử lý chính là phân nhánh hành vi theo EnemyType. Enemy cận chiến di chuyển áp sát và gây sát thương tiếp xúc; enemy đánh xa giữ khoảng cách và bắn projectile về phía player; enemy bay có biến thể nhịp bắn hoặc chuyển động riêng; boss kế thừa từ BossEnemy để hỗ trợ phase, kỹ năng đặc biệt và logic tử vong riêng. Toàn bộ chuyển động của enemy trong project hiện tại được thực hiện bằng CharacterController và logic trạng thái trong lớp Enemy, không sử dụng NavMeshAgent.
+
+Kết quả đầu ra là các enemy có thể truy đuổi, tấn công, nhận sát thương, chết và phát sự kiện OnDeath phục vụ cho hệ thống wave và kinh nghiệm. Ràng buộc triển khai là enemy sau khi bị hạ gục phải được dọn trạng thái đúng cách trước khi quay về pool, tránh mang theo dữ liệu máu hoặc listener cũ sang lần spawn tiếp theo.
+
+1.4.1.6. Chức năng quản lý wave và độ khó
+
+Mục đích của chức năng này là điều phối nhịp độ trận đấu theo từng đợt enemy, kiểm soát boss wave và tăng độ khó theo thời gian. Điều kiện kích hoạt là người chơi đã bắt đầu trận thông qua ChallengePanel. Thành phần điều phối trung tâm là WaveSpawner, sử dụng dữ liệu từ WaveConfig và danh sách active enemy trong runtime.
+
+Dữ liệu đầu vào gồm danh sách wave cấu hình sẵn, các EnemyGroup trong từng wave, preparation time, spawn position, spread radius, bossPoolTypes, autoScale và scalePerWave. Khi bắt đầu mỗi wave, hệ thống phải chọn dữ liệu wave phù hợp theo currentWave. Nếu currentWave vượt ra ngoài số wave cấu hình, hệ thống cần sinh endless wave bằng cách tái sử dụng mẫu cũ và tăng số lượng enemy cùng bán kính spawn theo vòng lặp.
+
+Xử lý chính của hệ thống là tăng currentWave, chuẩn bị wave, bắt đầu spawn enemy theo nhóm hoặc theo hiệu ứng circle spawn, theo dõi activeEnemies, cập nhật số lượng enemy đã spawn và số lượng còn lại. Với boss wave, hệ thống phải chọn ngẫu nhiên một boss hợp lệ từ bossPoolTypes, phát sự kiện OnBossWaveStart và spawn boss ở vị trí quy định. Trong suốt tiến trình chơi, nếu autoScale được bật, WaveSpawner phải tăng chỉ số máu, sát thương tiếp xúc và sát thương projectile của enemy theo hệ số scalePerWave.
+
+Kết quả đầu ra là nhịp độ wave được duy trì liên tục, độ khó tăng dần và boss wave xuất hiện theo đúng cấu hình. Ràng buộc triển khai là phải tách rõ trạng thái giữa wave hiện tại và session mới, tránh trường hợp coroutine cũ tiếp tục spawn khi người chơi đã nhảy wave hoặc chuyển trạng thái map.
+
+1.4.1.7. Chức năng đổi theme bản đồ
+
+Mục đích của chức năng này là thay đổi hình thức trình bày của môi trường chơi theo tiến trình wave mà không phá vỡ vòng lặp gameplay. Điều kiện kích hoạt là khi WaveSpawner hoàn thành một wave và phát hiện wave tiếp theo thuộc theme khác. Thành phần chính gồm WaveSpawner, MapThemeManager và LoadingUIManager.
+
+Dữ liệu đầu vào của chức năng gồm currentWave, upcomingWave, danh sách theme trong scene và các vật liệu hoặc effectRoot tương ứng với từng theme. Hệ thống phải xác định theme mục tiêu bằng ResolveThemeIndexForWave, kiểm tra xem việc chuyển theme có thực sự cần thiết hay không, rồi mới tiến hành transition.
+
+Xử lý chính bao gồm khóa gameplay tạm thời bằng cách dừng timeScale, ẩn các giao diện tương tác không cần thiết, vô hiệu hóa input của player và yêu cầu MapThemeManager thực hiện chuyển theme. Sau khi loading transition hoàn tất, theme mới được áp dụng lên ground, wall và các hiệu ứng môi trường, sau đó gameplay được mở lại và wave tiếp theo bắt đầu.
+
+Kết quả đầu ra là bản đồ được thay theme đúng mốc wave, người chơi quay lại vòng chiến đấu với trạng thái điều khiển ổn định. Ràng buộc là quá trình chuyển theme không được làm mất dữ liệu wave hiện tại, không được để người chơi thao tác trong lúc scene đang bị che bởi loading transition.
+
+1.4.1.8. Chức năng kinh nghiệm và lên cấp
+
+Mục đích của chức năng này là tạo cơ chế tăng tiến sức mạnh và điều chỉnh nhịp lựa chọn chiến thuật của người chơi. Điều kiện kích hoạt bắt đầu khi một enemy bị tiêu diệt. Thành phần chính gồm Enemy, ExpDropper, PlayerLevelSystem và PlayerStatsPanel.
+
+Dữ liệu đầu vào là expValue từ EnemyData, currentExp, expToNextLevel, currentLevel và expScalingFactor. Khi enemy chết, ExpDropper phải nhận sự kiện OnDeath và cộng lượng EXP tương ứng vào PlayerLevelSystem. Sau mỗi lần cộng EXP, hệ thống phải cập nhật progress hiện tại và kiểm tra xem người chơi đã vượt ngưỡng lên cấp hay chưa.
+
+Xử lý chính bao gồm cộng currentExp, cộng tổng totalExpGained, phát sự kiện cập nhật HUD và lặp kiểm tra điều kiện lên cấp nếu lượng EXP nhận được vượt qua nhiều mốc cùng lúc. Khi lên cấp, currentLevel tăng thêm một đơn vị, expToNextLevel được scale lên cho mốc tiếp theo, hệ thống phát OnLevelUp và tạm dừng trò chơi để chờ chọn buff.
+
+Kết quả đầu ra là cấp độ của người chơi tăng theo tiến trình chiến đấu, thanh EXP và level trên HUD luôn được cập nhật đúng. Ràng buộc triển khai là thời gian trò chơi phải dừng đúng lúc hiển thị lựa chọn buff, nhưng không được làm mất trạng thái wave hoặc khiến sự kiện gameplay quan trọng bị bỏ qua.
+
+1.4.1.9. Chức năng chọn buff và tăng sức mạnh
+
+Mục đích của chức năng này là cho phép người chơi cá nhân hóa hướng phát triển sức mạnh ngay trong trận đấu. Điều kiện kích hoạt là PlayerLevelSystem phát sự kiện OnLevelUp hoặc một luồng gameplay khác chủ động gọi mở chọn buff. Thành phần chính gồm BuffCardManager, BuffCardConfig, CardSelectionPanel, PlayerData, PlayerHealth, SpiritManager và OrbitingBallManager.
+
+Dữ liệu đầu vào là toàn bộ danh sách buff card, rarity, maxLevel, loại buff, chỉ số hiện tại của player và lịch sử card đã chọn. Trước khi hiển thị, BuffCardManager phải lọc các thẻ đã đạt maxLevel, tính trọng số ngẫu nhiên theo rarity và luckBonus, sau đó rút ra đúng số lượng card cho mỗi lần hiển thị. CardSelectionPanel chịu trách nhiệm sinh UI cho từng thẻ, hiển thị mô tả và level hiện tại để người chơi lựa chọn.
+
+Xử lý chính sau khi chọn card là áp dụng buff vào hệ thống phù hợp. Các buff cơ bản sẽ tăng damage, move speed, attack speed, max health hoặc EXP bonus trực tiếp trên PlayerData và PlayerHealth. Các buff dạng tính năng như multishot, AoE, spirit hoặc orbiting ball sẽ cập nhật tham số chiến đấu hoặc thêm thực thể hỗ trợ vào player thông qua SpiritManager và OrbitingBallManager.
+
+Kết quả đầu ra là player có bộ chỉ số hoặc kỹ năng mới ngay trong runtime, đồng thời panel lựa chọn đóng lại và trò chơi tiếp tục. Ràng buộc triển khai là chỉ được tiếp tục khi người chơi đã chọn xong một card, và buff áp dụng phải đồng bộ với hệ thống chiến đấu hiện thời thay vì chỉ thay đổi dữ liệu lưu trữ.
+
+1.4.1.10. Chức năng giao diện trong trận
+
+Mục đích của chức năng này là cung cấp phản hồi trực quan liên tục về trạng thái trận đấu và trạng thái hệ thống. Điều kiện kích hoạt là game đang trong scene chính và các panel liên quan đã được khởi tạo trong GameUI. Thành phần chính gồm PlayerStatsPanel, InteractPanel, CardSelectionPanel, NotiPanel, LeaderboardPanel, PauseMenuPanel, NameInputPanel và các UI entry thành phần.
+
+Dữ liệu đầu vào của chức năng gồm các sự kiện từ PlayerHealth, PlayerLevelSystem, WaveSpawner và PlayFabLeaderboardManager. PlayerStatsPanel phải cập nhật máu, thanh EXP, level và wave theo thời gian thực. InteractPanel hiển thị hướng dẫn tương tác khi người chơi đứng gần NPC. NotiPanel hoặc các panel thông báo khác dùng để phản hồi một số trạng thái quan trọng như chào mừng người chơi hoặc lỗi nhập tên.
+
+Xử lý chính là đăng ký listener vào các event phù hợp, hiển thị hoặc ẩn panel đúng trạng thái game và ngăn chồng chéo giữa các màn hình như nhập tên, leaderboard, pause, chọn buff. Khi người chơi xem leaderboard, hệ thống phải tải top xếp hạng và vị trí hiện tại của người chơi rồi hiển thị vào LeaderboardPanel. Khi chọn buff hoặc pause, UI phải đồng bộ với trạng thái dừng thời gian và khóa input.
+
+Kết quả đầu ra là người chơi luôn nhận được thông tin cần thiết để tiếp tục trận đấu mà không phải suy đoán trạng thái hệ thống. Ràng buộc là UI không được che lấp nhau sai logic, đồng thời mỗi panel cần quản lý rõ quyền sở hữu input và trạng thái đóng mở của chính nó.
+
+1.4.1.11. Chức năng tạm dừng và kết thúc trận
+
+Mục đích của chức năng này là cho phép người chơi dừng tạm thời trận đấu, điều chỉnh một số cài đặt giao diện và chủ động kết thúc lượt chơi. Điều kiện kích hoạt là người chơi nhấn phím ESC trong lúc các panel chặn input khác không chiếm quyền điều khiển. Thành phần chính là PauseMenuPanel, kết hợp với LeaderboardPanel, PlayerController và PlayerHealth.
+
+Dữ liệu đầu vào của chức năng là trạng thái mở của các panel hiện tại, currentView của PauseMenuPanel và trạng thái sống/chết của player. Khi được kích hoạt, hệ thống phải dừng timeScale, khóa input người chơi, mở lớp phủ pause và đưa người chơi vào menu chính của màn hình pause. Từ đây, người chơi có thể quay lại trận, mở phần cài đặt, mở leaderboard hoặc chọn kết thúc game.
+
+Nếu người chơi chọn Resume, hệ thống phải khôi phục timeScale và mở lại input. Nếu người chơi mở leaderboard từ pause, LeaderboardPanel phải xuất hiện mà không cướp trạng thái pause tổng thể. Nếu người chơi chọn kết thúc trận, hệ thống cần đưa player về trạng thái chết logic, từ đó tái sử dụng luôn luồng game over và gửi điểm số hiện tại lên PlayFab.
+
+Kết quả đầu ra là người chơi có thể kiểm soát phiên chơi tốt hơn, tạm dừng và kết thúc đúng cách. Ràng buộc là pause không được hoạt động khi các panel như NameInputPanel hoặc CardSelectionPanel đang giữ quyền thao tác độc lập, tránh xung đột trạng thái.
+
+1.4.1.12. Chức năng bảng xếp hạng
+
+Mục đích của chức năng này là lưu trữ và hiển thị điểm số trực tuyến của người chơi. Điều kiện kích hoạt chính là khi PlayerHealth xử lý cái chết của người chơi hoặc khi LeaderboardPanel cần tải dữ liệu hiển thị. Thành phần cốt lõi gồm PlayerHealth, PlayerLevelSystem, PlayFabLeaderboardManager và LeaderboardPanel.
+
+Dữ liệu đầu vào của chức năng là tổng lượng EXP người chơi đã tích lũy trong suốt trận đấu, được lưu tại totalExpGained của PlayerLevelSystem. Khi người chơi chết, PlayerHealth phải lấy giá trị này, chuyển sang số nguyên điểm cuối cùng và gửi đến PlayFabLeaderboardManager để cập nhật statistic tương ứng trên PlayFab. Ngoài top leaderboard, hệ thống còn cần tải vị trí hiện tại của người chơi để làm nổi bật dòng dữ liệu của chính họ.
+
+Xử lý chính bao gồm SubmitScore, GetLeaderboardData và GetPlayerLeaderboardData. Sau khi dữ liệu được trả về, LeaderboardPanel phải sinh danh sách entry, hiển thị tên người chơi, hạng và điểm số. Những dòng tương ứng với tài khoản hiện tại cần được đánh dấu khác biệt để tăng khả năng nhận biết.
+
+Kết quả đầu ra là dữ liệu xếp hạng được đồng bộ lên dịch vụ trực tuyến và hiển thị lại trong giao diện của game. Ràng buộc triển khai là điểm số phải bám đúng totalExpGained, không thay bằng thời gian sống, số quái tiêu diệt hoặc các chỉ số ngoài phạm vi hệ thống hiện tại.
+
+1.4.2. Yêu cầu phi chức năng
+
+Về hiệu năng, hệ thống phải duy trì khả năng hoạt động ổn định khi trên màn hình đồng thời xuất hiện nhiều enemy, projectile, effect và damage text. Điều này đòi hỏi phải sử dụng ObjectPool cho các đối tượng runtime có tần suất tạo hủy cao, đồng thời hạn chế instantiate và destroy trực tiếp trong vòng lặp gameplay thông thường.
+
+Về tổ chức mã nguồn, project cần được chia theo các module rõ ràng như Player, Enemy, Wave, UI, Buff, Backend và Utils. Việc phân tách này giúp giảm phụ thuộc chéo, hỗ trợ kiểm thử cục bộ và thuận lợi khi bổ sung tính năng mới mà không phá vỡ các thành phần đang ổn định.
+
+Về khả năng mở rộng, hệ thống phải cho phép thêm enemy mới, buff mới hoặc wave mới chủ yếu thông qua prefab và ScriptableObject, thay vì buộc phải sửa sâu vào logic lõi. Điều này đặc biệt quan trọng với đồ án game, nơi yêu cầu cân bằng hoặc điều chỉnh nội dung thường thay đổi trong giai đoạn hoàn thiện.
+
+Về tính ổn định luồng chơi, các trạng thái đặc biệt như pause, chọn buff, chuyển theme map và nhập tên không được làm sai lệch wave hiện tại, không được để player giữ input cũ và không được phá vỡ sự đồng bộ giữa gameplay với UI. Về khả năng sử dụng, các panel và HUD phải đủ rõ để người chơi biết trạng thái máu, EXP, level, wave và leaderboard. Về dữ liệu online, các thao tác đăng nhập, cập nhật tên, gửi điểm và tải xếp hạng cần có phản hồi rõ ràng để người chơi nhận biết tình trạng kết nối và kết quả xử lý.
+
+1.4.3. Mô hình bài toán tổng quát
+
+Mô hình bài toán của hệ thống được tổ chức quanh tám khối chính là Player, Enemy, Wave, BuffCard, UI, ObjectPool, PlayFab và MapTheme. Trong đó Player là khối trung tâm tiếp nhận input, điều khiển di chuyển, dash, tấn công và nhận sát thương. Enemy là khối tiêu thụ đầu ra chiến đấu từ Player và tạo áp lực ngược lại thông qua va chạm hoặc projectile. Wave đóng vai trò điều phối tiến trình trận đấu, sinh enemy, theo dõi wave hiện tại và xác định khi nào xuất hiện boss hoặc cần chuyển theme.
+
+BuffCard là khối thay đổi trạng thái chiến đấu của Player bằng cách áp dụng các hiệu ứng tăng chỉ số hoặc mở rộng kỹ năng. UI là khối trình bày, lấy dữ liệu từ Player, Wave và Backend để phản ánh đúng trạng thái của toàn hệ thống. ObjectPool là khối hạ tầng dùng chung, chịu trách nhiệm cấp phát và thu hồi lại các đối tượng runtime như projectile, enemy, effect hoặc spirit. PlayFab là khối dịch vụ trực tuyến, tiêu thụ thông tin định danh và điểm số từ game client rồi cung cấp lại dữ liệu xếp hạng. MapTheme là khối hỗ trợ trình bày môi trường, được Wave điều phối để đổi vật liệu và hiệu ứng theo mốc tiến trình trận đấu.
+
+1.4.4. Mô tả hoạt động của hệ thống
+
+Khi trò chơi khởi động, PlayFabLeaderboardManager thực hiện đăng nhập bằng Custom ID cục bộ và gọi API lấy hồ sơ người chơi. Nếu hồ sơ chưa có Display Name, NameInputPanel được mở để người chơi nhập tên hợp lệ. Sau khi định danh thành công, game chuyển sang trạng thái chờ trong scene chính. Người chơi tiếp cận ChallengePostNPC, hệ thống hiện InteractPanel để gợi ý thao tác, sau đó ChallengePanel mở ra và cho phép nhấn StartGame để bắt đầu trận đấu.
+
+Ngay khi trận đấu bắt đầu, WaveSpawner tăng currentWave, lấy dữ liệu từ WaveConfig, chuẩn bị wave và bắt đầu sinh enemy theo từng nhóm hoặc theo cơ chế circle spawn tùy cấu hình. Trong suốt quá trình chơi, PlayerController tiếp nhận input di chuyển và dash, còn PlayerAttack tự động tìm enemy gần nhất trong tầm rồi sinh projectile từ ObjectPool để gây sát thương. Enemy được điều khiển bằng CharacterController và logic AI trong lớp Enemy hoặc các lớp dẫn xuất, sau đó phản công lại người chơi bằng tiếp xúc hoặc projectile.
+
+Khi một enemy bị hạ gục, sự kiện OnDeath của nó kích hoạt ExpDropper cộng EXP trực tiếp vào PlayerLevelSystem. Nếu đạt ngưỡng lên cấp, PlayerLevelSystem tăng cấp, tính lại mốc EXP mới, phát OnLevelUp và tạm dừng Time.timeScale. CardSelectionPanel lắng nghe sự kiện này, yêu cầu BuffCardManager chọn ngẫu nhiên ba buff hợp lệ rồi hiển thị để người chơi chọn. Sau khi buff được áp dụng lên PlayerData, PlayerHealth hoặc các manager kỹ năng phụ trợ, game tiếp tục vận hành.
+
+Khi wave hiện tại kết thúc, WaveSpawner kiểm tra xem có cần chuyển theme map cho wave tiếp theo hay không. Nếu cần, MapThemeManager phối hợp LoadingUIManager tạm khóa gameplay, đổi vật liệu và hiệu ứng môi trường rồi mở lại input để bắt đầu wave tiếp theo. Ở các mốc boss wave, WaveSpawner chọn ngẫu nhiên boss từ danh sách bossPoolTypes và phát sự kiện thông báo tương ứng.
+
+Khi máu người chơi giảm về 0, PlayerHealth xử lý trạng thái chết, lấy totalExpGained từ PlayerLevelSystem làm điểm cuối cùng và gọi PlayFabLeaderboardManager.SubmitScore để gửi dữ liệu lên PlayFab. Sau khi cập nhật thành công, hệ thống có thể tải leaderboard tổng và leaderboard quanh người chơi hiện tại để hiển thị trong LeaderboardPanel. Toàn bộ vòng lặp này tạo thành một chu trình khép kín từ định danh người chơi đến gameplay, tăng tiến sức mạnh và đồng bộ kết quả trực tuyến.
+
+CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+
+3.1. Use Case Diagram
+
+Use Case Diagram của hệ thống được xây dựng dựa trực tiếp trên nhóm yêu cầu chức năng ở mục 1.4.1. Hai tác nhân chính của hệ thống là Người chơi và PlayFab. Người chơi tương tác với trò chơi thông qua các hành vi định danh, bắt đầu trận đấu, điều khiển nhân vật, chiến đấu, lên cấp, chọn buff, tạm dừng và xem bảng xếp hạng. PlayFab đóng vai trò là tác nhân ngoài hệ thống, chịu trách nhiệm xử lý đăng nhập, cập nhật Display Name, nhận điểm số và trả về dữ liệu leaderboard. Việc tách hai actor như vậy giúp làm rõ ranh giới giữa gameplay nội bộ và các thao tác phụ thuộc dịch vụ trực tuyến.
+
+Gợi ý vẽ sơ đồ: đặt actor Người chơi ở bên trái và PlayFab ở bên phải. Bên trong khung hệ thống cần có các use case: Đăng nhập PlayFab, Nhập tên hiển thị, Bắt đầu trận đấu, Di chuyển và Dash, Tấn công tự động, Nhận sát thương, Nhận EXP, Lên cấp và chọn buff, Tạm dừng trò chơi, Xem leaderboard, Gửi điểm số, Đổi theme theo wave.
+
+3.2. Sequence Diagram
+
+Sequence Diagram của hệ thống nên thể hiện ít nhất ba luồng xử lý trọng tâm. Luồng thứ nhất mô tả quá trình đăng nhập PlayFab và nhập tên hiển thị, bắt đầu từ PlayFabLeaderboardManager, đi qua PlayFab và kết thúc ở NameInputPanel khi người chơi chưa có Display Name. Luồng thứ hai mô tả chuỗi chiến đấu chính gồm PlayerAttack tấn công Enemy, Enemy chết, ExpDropper cộng EXP, PlayerLevelSystem kiểm tra ngưỡng lên cấp rồi CardSelectionPanel phối hợp với BuffCardManager hiển thị và áp dụng buff. Luồng thứ ba mô tả game over và leaderboard, trong đó PlayerHealth lấy totalExpGained từ PlayerLevelSystem rồi gửi điểm thông qua PlayFabLeaderboardManager trước khi tải lại dữ liệu xếp hạng.
+
+Gợi ý vẽ sơ đồ: dùng một hình sequence lớn và chia thành ba cụm dọc. Cụm 1 gồm các lifeline PlayFabLeaderboardManager, PlayFab, NameInputPanel, Người chơi. Cụm 2 gồm PlayerAttack, Enemy, ExpDropper, PlayerLevelSystem, CardSelectionPanel, BuffCardManager. Cụm 3 gồm Enemy hoặc Projectile, PlayerHealth, PlayerLevelSystem, PlayFabLeaderboardManager, PlayFab, LeaderboardPanel.
+
+3.3. Activity Diagram
+
+Activity Diagram của hệ thống cần mô tả vòng lặp gameplay chính từ lúc vào game tới khi kết thúc trận đấu. Luồng bắt đầu từ đăng nhập PlayFab, kiểm tra Display Name và nhập tên nếu cần. Sau đó người chơi tương tác với NPC để bắt đầu trận đấu, hệ thống spawn wave, chuyển sang chiến đấu, xử lý việc enemy chết, cộng EXP, kiểm tra lên cấp và mở màn hình chọn buff. Sau khi wave hoàn thành, hệ thống lặp lại quá trình với wave tiếp theo, có thể chèn boss wave hoặc chuyển theme map ở các mốc phù hợp. Luồng chỉ dừng khi người chơi chết, lúc này game gửi điểm lên PlayFab rồi chuyển sang trạng thái hiển thị leaderboard.
+
+Gợi ý vẽ sơ đồ: dùng một activity flow theo trục từ trên xuống với các nút quyết định Đã có Display Name?, Enemy chết?, Đủ EXP lên cấp?, Hoàn thành wave? và Người chơi chết?. Các activity trung tâm là Khởi động game và đăng nhập PlayFab, Hiển thị NameInputPanel, Tương tác ChallengePostNPC và StartGame, WaveSpawner bắt đầu wave, Chiến đấu, ExpDropper cộng EXP, CardSelectionPanel chọn buff, Boss wave hoặc đổi theme map, Gửi điểm và tải leaderboard.
+
+3.4. Component Diagram
+
+Component Diagram cần phản ánh cách project được chia module trong triển khai hiện tại. Các component chính gồm Input, Player, Enemy, Wave, Buff, UI, Backend và Shared Services. Input tiếp nhận dữ liệu điều khiển và chuyển cho các hệ thống gameplay hoặc UI. Player bao gồm điều khiển, tấn công, máu, dữ liệu và cấp độ. Enemy quản lý đối tượng đối kháng và logic AI. Wave chịu trách nhiệm điều phối tiến trình spawn và nhịp độ trận đấu. Buff quản lý việc chọn và áp dụng thẻ tăng sức mạnh. UI cung cấp tất cả panel và HUD. Backend là lớp trung gian làm việc với PlayFab. Shared Services cung cấp các dịch vụ dùng chung như ObjectPool, AudioManager, MapThemeManager và LoadingUIManager.
+
+Gợi ý vẽ sơ đồ: đặt 8 component thành 8 khối riêng. Input nối với Player và UI. Player tương tác hai chiều với Enemy. Wave điều phối Enemy và kích hoạt MapThemeManager khi cần. Buff nối với Player và CardSelectionPanel trong UI. Backend nối với PlayFabLeaderboardManager, NameInputPanel và LeaderboardPanel. Shared Services phục vụ Player, Enemy, Wave, Buff và UI.
+
+3.5. Class Diagram
+
+Class Diagram của hệ thống phải phản ánh rõ mô hình hướng đối tượng đang có trong project. Ở tầng nền, Singleton<T> là lớp cơ sở của các manager chính như PlayerController, PlayerLevelSystem, WaveSpawner, BuffCardManager, GameUI và PlayFabLeaderboardManager. Giao diện IDamageable được dùng để thống nhất xử lý sát thương cho PlayerHealth và Enemy. Trong nhóm gameplay, Enemy là lớp cha của MeleeEnemy, RangedEnemy, FlyEnemy và BossEnemy; riêng BossEnemy tiếp tục được mở rộng thành các boss nguyên tố. Projectile là lớp cha của PlayerProjectile, EnemyProjectile và SpiritProjectileScript. Về tương tác môi trường, NPC là lớp cha của ChallengePostNPC và ChestBuffBox. Về giao diện, PanelBase là lớp cơ sở của ChallengePanel, NameInputPanel, LeaderboardPanel, CardSelectionPanel và PauseMenuPanel.
+
+Ngoài cấu trúc kế thừa, sơ đồ cũng phải thể hiện mối liên hệ giữa các lớp dữ liệu và lớp xử lý. PlayerData đọc thông số từ PlayerConfig, EnemyData đọc từ EnemyConfig, WaveSpawner phụ thuộc vào WaveConfig và BuffCardManager sử dụng BuffCardConfig để sinh và áp dụng buff. Cách tổ chức này cho thấy gameplay được triển khai theo hướng kết hợp giữa component-based của Unity và tư duy hướng đối tượng trong lập trình C#.
+
+Gợi ý vẽ sơ đồ: đặt Singleton<T> ở trên cùng, các manager kế thừa nằm phía dưới. Đặt IDamageable ở một nhánh riêng và nối nét đứt tới PlayerHealth và Enemy. Vẽ cụm Enemy với các lớp con và cụm BossEnemy với các boss nguyên tố. Vẽ cụm Projectile với ba lớp dẫn xuất. Vẽ cụm UI quanh PanelBase và cụm dữ liệu quanh PlayerData, EnemyData, WaveConfig, BuffCardConfig cùng các quan hệ cấu hình tương ứng.

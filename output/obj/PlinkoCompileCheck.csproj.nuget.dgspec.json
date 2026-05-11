@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\Github\\Roguelike_Project\\output\\PlinkoCompileCheck.csproj": {}
+  },
+  "projects": {
+    "E:\\Github\\Roguelike_Project\\output\\PlinkoCompileCheck.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\Github\\Roguelike_Project\\output\\PlinkoCompileCheck.csproj",
+        "projectName": "PlinkoCompileCheck",
+        "projectPath": "E:\\Github\\Roguelike_Project\\output\\PlinkoCompileCheck.csproj",
+        "packagesPath": "C:\\Users\\haov8\\.nuget\\packages\\",
+        "outputPath": "E:\\Github\\Roguelike_Project\\output\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\haov8\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

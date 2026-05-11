@@ -1,0 +1,307 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns='http://www.w3.org/2000/svg' width='2500' height='1800' viewBox='0 0 2500 1800'>
+<rect width='100%' height='100%' fill='white'/>
+<text x='1250' y='77.0' text-anchor='middle' font-family='Times New Roman' font-size='42' font-weight='bold' font-style='normal'>
+<tspan x='1250' dy='0'>Hình 3.5. Class Diagram của các lớp chính</tspan>
+</text>
+<rect x='1030' y='120' width='320' height='90' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='1190' y='184.0' text-anchor='middle' font-family='Times New Roman' font-size='34' font-weight='bold' font-style='normal'>
+<tspan x='1190' dy='0'>Singleton&lt;T&gt;</tspan>
+</text>
+<rect x='300' y='300' width='320' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='460' y='360.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='460' dy='0'>PlayerController</tspan>
+</text>
+<line x1='460' y1='300' x2='1190' y2='210' stroke='black' stroke-width='4'/>
+<polygon points='1190,210 1177.226605636519,219.63537214823555 1175.2688257629704,203.7556020627863' fill='black'/>
+<text x='825' y='249.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='825' dy='0'>kế thừa</tspan>
+</text>
+<rect x='700' y='300' width='320' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='860' y='360.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='860' dy='0'>PlayerLevelSystem</tspan>
+</text>
+<line x1='860' y1='300' x2='1190' y2='210' stroke='black' stroke-width='4'/>
+<polygon points='1190,210 1178.7367796008325,221.36397229140306 1174.5269011081587,205.92775115159935' fill='black'/>
+<text x='1025' y='249.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1025' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1100' y='300' width='320' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1260' y='360.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1260' dy='0'>WaveSpawner</tspan>
+</text>
+<line x1='1260' y1='300' x2='1190' y2='210' stroke='black' stroke-width='4'/>
+<polygon points='1190,210 1204.8218284225134,216.02606025638423 1192.1921929444923,225.84911007262298' fill='black'/>
+<text x='1225' y='249.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1225' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1500' y='300' width='320' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1660' y='360.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1660' dy='0'>BuffCardManager</tspan>
+</text>
+<line x1='1660' y1='300' x2='1190' y2='210' stroke='black' stroke-width='4'/>
+<polygon points='1190,210 1205.1137197125008,204.7487642928582 1202.1045633798951,220.46324736313255' fill='black'/>
+<text x='1425' y='249.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1425' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1900' y='300' width='320' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='2060' y='360.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='2060' dy='0'>GameUI</tspan>
+</text>
+<line x1='2060' y1='300' x2='1190' y2='210' stroke='black' stroke-width='4'/>
+<polygon points='1190,210 1204.6060470069194,203.468278111274 1202.9596605895513,219.38334681249881' fill='black'/>
+<text x='1625' y='249.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1625' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1030' y='470' width='320' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1190' y='530.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1190' dy='0'>PlayFabLeaderboardManager</tspan>
+</text>
+<line x1='1190' y1='470' x2='1190' y2='210' stroke='black' stroke-width='4'/>
+<polygon points='1190,210 1198.0,223.85640646055103 1182.0,223.85640646055103' fill='black'/>
+<text x='1190' y='334.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1190' dy='0'>kế thừa</tspan>
+</text>
+<rect x='170' y='700' width='260' height='90' fill='#eef9ff' stroke='black' stroke-width='4'/>
+<text x='300' y='746.0' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='bold' font-style='normal'>
+<tspan x='300' dy='0'>&lt;&lt;interface&gt;&gt;</tspan>
+<tspan x='300' dy='27'>IDamageable</tspan>
+</text>
+<rect x='560' y='700' width='280' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='700' y='761.5' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='700' dy='0'>PlayerHealth</tspan>
+</text>
+<rect x='950' y='700' width='280' height='90' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1090' y='762.0' text-anchor='middle' font-family='Times New Roman' font-size='30' font-weight='normal' font-style='normal'>
+<tspan x='1090' dy='0'>Enemy</tspan>
+</text>
+<line x1='700' y1='700' x2='300' y2='790' stroke='black' stroke-width='4' stroke-dasharray='14 10'/>
+<polygon points='300,790 311.76234776639126,779.1534717525619 315.27454288834247,794.7632278501229' fill='black'/>
+<text x='480' y='737.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='480' dy='0'>triển khai</tspan>
+</text>
+<line x1='1090' y1='700' x2='300' y2='790' stroke='black' stroke-width='4' stroke-dasharray='14 10'/>
+<polygon points='300,790 312.86181835581687,780.482982159207 314.67288839630487,796.380152514602' fill='black'/>
+<text x='715' y='737.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='715' dy='0'>triển khai</tspan>
+</text>
+<rect x='760' y='900' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='870' y='954.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='870' dy='0'>MeleeEnemy</tspan>
+</text>
+<line x1='870' y1='900' x2='1090' y2='790' stroke='black' stroke-width='4'/>
+<polygon points='1090,790 1081.1841620561358,803.3521908819312 1074.0287445281367,789.0413558259326' fill='black'/>
+<text x='980' y='839.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='980' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1040' y='900' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1150' y='954.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1150' dy='0'>RangedEnemy</tspan>
+</text>
+<line x1='1150' y1='900' x2='1090' y2='790' stroke='black' stroke-width='4'/>
+<polygon points='1090,790 1103.658334340526,798.3336608427754 1089.6120051738958,805.9952949336646' fill='black'/>
+<text x='1120' y='839.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1120' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1320' y='900' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1430' y='954.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1430' dy='0'>FlyEnemy</tspan>
+</text>
+<line x1='1430' y1='900' x2='1090' y2='790' stroke='black' stroke-width='4'/>
+<polygon points='1090,790 1105.6461642570705,786.6537268430731 1100.7210396904359,801.8768391399436' fill='black'/>
+<text x='1260' y='839.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1260' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1600' y='900' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1710' y='954.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1710' dy='0'>BossEnemy</tspan>
+</text>
+<line x1='1710' y1='900' x2='1090' y2='790' stroke='black' stroke-width='4'/>
+<polygon points='1090,790 1105.040869981827,784.5436064850693 1102.245810387888,800.2975787418155' fill='black'/>
+<text x='1400' y='839.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1400' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1480' y='1085' width='210' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1585' y='1139.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='1585' dy='0'>LawaChurl_Geo</tspan>
+</text>
+<line x1='1585' y1='1085' x2='1710' y2='980' stroke='black' stroke-width='4'/>
+<polygon points='1710,980 1704.5356188560402,995.0379699000076 1694.2445454732676,982.7866920633738' fill='black'/>
+<text x='1647' y='1028.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1647' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1700' y='1085' width='210' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1805' y='1139.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='1805' dy='0'>LawaChurl_Pyro</tspan>
+</text>
+<line x1='1805' y1='1085' x2='1710' y2='980' stroke='black' stroke-width='4'/>
+<polygon points='1710,980 1725.2287339497057,984.9077145688274 1713.3641614837254,995.6423277523334' fill='black'/>
+<text x='1757' y='1028.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1757' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1920' y='1085' width='210' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='2025' y='1139.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='2025' dy='0'>LawaChurl_Electro</tspan>
+</text>
+<line x1='2025' y1='1085' x2='1710' y2='980' stroke='black' stroke-width='4'/>
+<polygon points='1710,980 1725.6751635082587,976.7923140756373 1720.6155192519893,991.9712468444454' fill='black'/>
+<text x='1867' y='1028.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1867' dy='0'>kế thừa</tspan>
+</text>
+<rect x='240' y='1100' width='260' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='370' y='1156.5' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='370' dy='0'>Projectile</tspan>
+</text>
+<rect x='80' y='1280' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='190' y='1333.0' text-anchor='middle' font-family='Times New Roman' font-size='21' font-weight='normal' font-style='normal'>
+<tspan x='190' dy='0'>PlayerProjectile</tspan>
+</text>
+<line x1='190' y1='1280' x2='370' y2='1180' stroke='black' stroke-width='4'/>
+<polygon points='370,1180 361.7724649210409,1193.722524058077 354.00217802218276,1179.7360076401321' fill='black'/>
+<text x='280' y='1226.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='280' dy='0'>kế thừa</tspan>
+</text>
+<rect x='320' y='1280' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='430' y='1333.0' text-anchor='middle' font-family='Times New Roman' font-size='21' font-weight='normal' font-style='normal'>
+<tspan x='430' dy='0'>EnemyProjectile</tspan>
+</text>
+<line x1='430' y1='1280' x2='370' y2='1180' stroke='black' stroke-width='4'/>
+<polygon points='370,1180 383.9890057151324,1187.7658044722998 370.2691189037317,1195.9977365591403' fill='black'/>
+<text x='400' y='1226.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='400' dy='0'>kế thừa</tspan>
+</text>
+<rect x='560' y='1280' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='670' y='1333.0' text-anchor='middle' font-family='Times New Roman' font-size='21' font-weight='normal' font-style='normal'>
+<tspan x='670' dy='0'>SpiritProjectileScript</tspan>
+</text>
+<line x1='670' y1='1280' x2='370' y2='1180' stroke='black' stroke-width='4'/>
+<polygon points='370,1180 385.6751635082587,1176.7923140756373 380.61551925198927,1191.9712468444454' fill='black'/>
+<text x='520' y='1226.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='520' dy='0'>kế thừa</tspan>
+</text>
+<rect x='980' y='1280' width='240' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1100' y='1336.5' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='1100' dy='0'>NPC</tspan>
+</text>
+<rect x='860' y='1460' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='970' y='1514.0' text-anchor='middle' font-family='Times New Roman' font-size='23' font-weight='normal' font-style='normal'>
+<tspan x='970' dy='0'>ChallengePostNPC</tspan>
+</text>
+<line x1='970' y1='1460' x2='1100' y2='1360' stroke='black' stroke-width='4'/>
+<polygon points='1100,1360 1093.8947659233809,1374.789392038542 1084.1393937497858,1362.1074082128684' fill='black'/>
+<text x='1035' y='1406.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1035' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1120' y='1460' width='220' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1230' y='1514.0' text-anchor='middle' font-family='Times New Roman' font-size='23' font-weight='normal' font-style='normal'>
+<tspan x='1230' dy='0'>ChestBuffBox</tspan>
+</text>
+<line x1='1230' y1='1460' x2='1100' y2='1360' stroke='black' stroke-width='4'/>
+<polygon points='1100,1360 1115.8606062502142,1362.1074082128684 1106.1052340766191,1374.789392038542' fill='black'/>
+<text x='1165' y='1406.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1165' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1500' y='1280' width='260' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1630' y='1336.5' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='1630' dy='0'>PanelBase</tspan>
+</text>
+<rect x='1360' y='1460' width='210' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1465' y='1512.5' text-anchor='middle' font-family='Times New Roman' font-size='20' font-weight='normal' font-style='normal'>
+<tspan x='1465' dy='0'>ChallengePanel</tspan>
+</text>
+<line x1='1465' y1='1460' x2='1630' y2='1360' stroke='black' stroke-width='4'/>
+<polygon points='1630,1360 1622.2964449705523,1374.0233818998227 1614.003617513059,1360.3402165949583' fill='black'/>
+<text x='1547' y='1408.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1547' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1590' y='1460' width='210' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1695' y='1512.5' text-anchor='middle' font-family='Times New Roman' font-size='20' font-weight='normal' font-style='normal'>
+<tspan x='1695' dy='0'>NameInputPanel</tspan>
+</text>
+<line x1='1695' y1='1460' x2='1630' y2='1360' stroke='black' stroke-width='4'/>
+<polygon points='1630,1360 1644.2591290325204,1367.2579087369527 1630.8440311717102,1375.9777223464791' fill='black'/>
+<text x='1662' y='1408.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1662' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1820' y='1460' width='210' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1925' y='1512.5' text-anchor='middle' font-family='Times New Roman' font-size='20' font-weight='normal' font-style='normal'>
+<tspan x='1925' dy='0'>LeaderboardPanel</tspan>
+</text>
+<line x1='1925' y1='1460' x2='1630' y2='1360' stroke='black' stroke-width='4'/>
+<polygon points='1630,1360 1645.6912440193678,1356.8719237342007 1640.5546155208413,1372.0249778048533' fill='black'/>
+<text x='1777' y='1408.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1777' dy='0'>kế thừa</tspan>
+</text>
+<rect x='2050' y='1460' width='210' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='2155' y='1512.5' text-anchor='middle' font-family='Times New Roman' font-size='20' font-weight='normal' font-style='normal'>
+<tspan x='2155' dy='0'>CardSelectionPanel</tspan>
+</text>
+<line x1='2155' y1='1460' x2='1630' y2='1360' stroke='black' stroke-width='4'/>
+<polygon points='1630,1360 1645.1085793213447,1354.7339928892345 1642.1147855951049,1370.451409951994' fill='black'/>
+<text x='1892' y='1408.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1892' dy='0'>kế thừa</tspan>
+</text>
+<rect x='1990' y='1280' width='230' height='80' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='2105' y='1334.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='2105' dy='0'>PauseMenuPanel</tspan>
+</text>
+<line x1='2105' y1='1280' x2='1630' y2='1360' stroke='black' stroke-width='4'/>
+<polygon points='1630,1360 1642.3353118144837,1349.8098045926756 1644.9926239995125,1365.587595691283' fill='black'/>
+<text x='1867' y='1318.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1867' dy='0'>kế thừa</tspan>
+</text>
+<rect x='370' y='1550' width='220' height='70' fill='#fffdf2' stroke='black' stroke-width='4'/>
+<text x='480' y='1599.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='480' dy='0'>PlayerData</tspan>
+</text>
+<rect x='370' y='1660' width='220' height='70' fill='#fffdf2' stroke='black' stroke-width='4'/>
+<text x='480' y='1709.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='480' dy='0'>PlayerConfig</tspan>
+</text>
+<rect x='700' y='1550' width='220' height='70' fill='#fffdf2' stroke='black' stroke-width='4'/>
+<text x='810' y='1599.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='810' dy='0'>EnemyData</tspan>
+</text>
+<rect x='700' y='1660' width='220' height='70' fill='#fffdf2' stroke='black' stroke-width='4'/>
+<text x='810' y='1709.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='810' dy='0'>EnemyConfig</tspan>
+</text>
+<rect x='1030' y='1660' width='220' height='70' fill='#fffdf2' stroke='black' stroke-width='4'/>
+<text x='1140' y='1709.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='1140' dy='0'>WaveConfig</tspan>
+</text>
+<rect x='1360' y='1660' width='220' height='70' fill='#fffdf2' stroke='black' stroke-width='4'/>
+<text x='1470' y='1709.0' text-anchor='middle' font-family='Times New Roman' font-size='22' font-weight='normal' font-style='normal'>
+<tspan x='1470' dy='0'>BuffCardConfig</tspan>
+</text>
+<line x1='480' y1='1550' x2='700' y2='790' stroke='black' stroke-width='4'/>
+<polygon points='700,790 703.8316283871246,805.5344334915368 688.4626001564916,801.0855042668799' fill='black'/>
+<text x='650' y='1152.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='650' dy='0'>sở hữu dữ liệu</tspan>
+</text>
+<line x1='480' y1='1620' x2='480' y2='1660' stroke='black' stroke-width='4'/>
+<polygon points='480,1660 472.0,1646.143593539449 488.0,1646.143593539449' fill='black'/>
+<text x='546' y='1636.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='546' dy='0'>đọc cấu hình</tspan>
+</text>
+<line x1='810' y1='1550' x2='1090' y2='790' stroke='black' stroke-width='4'/>
+<polygon points='1090,790 1092.7165109670343,805.7677064966971 1077.7030210979606,800.2364207554593' fill='black'/>
+<text x='990' y='1160.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='990' dy='0'>sở hữu dữ liệu</tspan>
+</text>
+<line x1='810' y1='1620' x2='810' y2='1660' stroke='black' stroke-width='4'/>
+<polygon points='810,1660 802.0,1646.143593539449 818.0,1646.143593539449' fill='black'/>
+<text x='876' y='1636.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='876' dy='0'>đọc cấu hình</tspan>
+</text>
+<line x1='1140' y1='1660' x2='1260' y2='560' stroke='black' stroke-width='4'/>
+<polygon points='1260,560 1266.4501246322386,574.6422639038021 1250.5444898065107,572.9071037409955' fill='black'/>
+<text x='1280' y='1100.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1280' dy='0'>dùng để spawn</tspan>
+</text>
+<line x1='1470' y1='1660' x2='1660' y2='560' stroke='black' stroke-width='4'/>
+<polygon points='1660,560 1665.5248108443197,575.0158737719283 1649.7582772756496,572.292563428249' fill='black'/>
+<text x='1645' y='1100.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1645' dy='0'>dùng để chọn buff</tspan>
+</text>
+</svg>

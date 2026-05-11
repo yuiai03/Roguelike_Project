@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns='http://www.w3.org/2000/svg' width='2200' height='1600' viewBox='0 0 2200 1600'>
+<rect width='100%' height='100%' fill='white'/>
+<text x='1100' y='77.0' text-anchor='middle' font-family='Times New Roman' font-size='42' font-weight='bold' font-style='normal'>
+<tspan x='1100' dy='0'>Hình 3.1. Use Case Diagram của hệ thống</tspan>
+</text>
+<circle cx='140' cy='215' r='25' fill='white' stroke='black' stroke-width='4'/>
+<line x1='140' y1='240' x2='140' y2='312' stroke='black' stroke-width='4'/>
+<line x1='102' y1='266' x2='178' y2='266' stroke='black' stroke-width='4'/>
+<line x1='140' y1='312' x2='108' y2='356' stroke='black' stroke-width='4'/>
+<line x1='140' y1='312' x2='172' y2='356' stroke='black' stroke-width='4'/>
+<text x='140' y='406.5' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='bold' font-style='normal'>
+<tspan x='140' dy='0'>Người chơi</tspan>
+</text>
+<circle cx='1990' cy='215' r='25' fill='white' stroke='black' stroke-width='4'/>
+<line x1='1990' y1='240' x2='1990' y2='312' stroke='black' stroke-width='4'/>
+<line x1='1952' y1='266' x2='2028' y2='266' stroke='black' stroke-width='4'/>
+<line x1='1990' y1='312' x2='1958' y2='356' stroke='black' stroke-width='4'/>
+<line x1='1990' y1='312' x2='2022' y2='356' stroke='black' stroke-width='4'/>
+<text x='1990' y='406.5' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='bold' font-style='normal'>
+<tspan x='1990' dy='0'>PlayFab</tspan>
+</text>
+<rect x='350' y='140' width='1500' height='1290' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1100' y='802.0' text-anchor='middle' font-family='Times New Roman' font-size='30' font-weight='bold' font-style='normal'>
+<tspan x='1100' dy='0'></tspan>
+</text>
+<text x='430' y='175.5' text-anchor='start' font-family='Times New Roman' font-size='24' font-weight='bold' font-style='normal'>
+<tspan x='430' dy='0'>Biên hệ thống</tspan>
+</text>
+<ellipse cx='620.0' cy='305.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='620' y='320.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='620' dy='0'>Đăng nhập PlayFab</tspan>
+</text>
+<ellipse cx='620.0' cy='485.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='620' y='500.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='620' dy='0'>Nhập tên hiển thị</tspan>
+</text>
+<ellipse cx='620.0' cy='665.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='620' y='680.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='620' dy='0'>Bắt đầu trận đấu</tspan>
+</text>
+<ellipse cx='620.0' cy='845.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='620' y='860.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='620' dy='0'>Di chuyển và Dash</tspan>
+</text>
+<ellipse cx='1040.0' cy='305.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1040' y='320.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1040' dy='0'>Tấn công tự động</tspan>
+</text>
+<ellipse cx='1040.0' cy='485.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1040' y='500.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1040' dy='0'>Nhận sát thương</tspan>
+</text>
+<ellipse cx='1040.0' cy='665.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1040' y='680.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1040' dy='0'>Nhận EXP</tspan>
+</text>
+<ellipse cx='1040.0' cy='845.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1040' y='860.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1040' dy='0'>Lên cấp và chọn buff</tspan>
+</text>
+<ellipse cx='1460.0' cy='305.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1460' y='320.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1460' dy='0'>Tạm dừng trò chơi</tspan>
+</text>
+<ellipse cx='1460.0' cy='485.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1460' y='500.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1460' dy='0'>Xem leaderboard</tspan>
+</text>
+<ellipse cx='1460.0' cy='665.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1460' y='680.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1460' dy='0'>Gửi điểm số</tspan>
+</text>
+<ellipse cx='1460.0' cy='845.0' rx='140.0' ry='55.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1460' y='860.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1460' dy='0'>Đổi theme theo wave</tspan>
+</text>
+<line x1='190' y1='345' x2='480' y2='665' stroke='black' stroke-width='4'/>
+<line x1='190' y1='345' x2='480' y2='845' stroke='black' stroke-width='4'/>
+<line x1='190' y1='345' x2='900' y2='305' stroke='black' stroke-width='4'/>
+<line x1='190' y1='345' x2='900' y2='485' stroke='black' stroke-width='4'/>
+<line x1='190' y1='345' x2='900' y2='665' stroke='black' stroke-width='4'/>
+<line x1='190' y1='345' x2='900' y2='845' stroke='black' stroke-width='4'/>
+<line x1='190' y1='345' x2='1320' y2='305' stroke='black' stroke-width='4'/>
+<line x1='190' y1='345' x2='1320' y2='485' stroke='black' stroke-width='4'/>
+<line x1='760' y1='305' x2='1940' y2='345' stroke='black' stroke-width='4'/>
+<line x1='760' y1='485' x2='1940' y2='345' stroke='black' stroke-width='4'/>
+<line x1='1600' y1='485' x2='1940' y2='345' stroke='black' stroke-width='4'/>
+<line x1='1600' y1='665' x2='1940' y2='345' stroke='black' stroke-width='4'/>
+<line x1='620' y1='305' x2='620' y2='430' stroke='black' stroke-width='4' stroke-dasharray='14 10'/>
+<polygon points='620,430 612.0,416.143593539449 628.0,416.143593539449' fill='black'/>
+<text x='740' y='332.0' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='740' dy='0'>Nếu chưa có</tspan>
+<tspan x='740' dy='27'>Display Name</tspan>
+</text>
+<line x1='1040' y1='665' x2='1040' y2='790' stroke='black' stroke-width='4' stroke-dasharray='14 10'/>
+<polygon points='1040,790 1032.0,776.143593539449 1048.0,776.143593539449' fill='black'/>
+<text x='1040' y='705.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1040' dy='0'>Khi đủ EXP</tspan>
+</text>
+<line x1='1460' y1='665' x2='1460' y2='790' stroke='black' stroke-width='4' stroke-dasharray='14 10'/>
+<polygon points='1460,790 1452.0,776.143593539449 1468.0,776.143593539449' fill='black'/>
+<text x='1460' y='705.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1460' dy='0'>Theo tiến trình wave</tspan>
+</text>
+</svg>

@@ -71,8 +71,9 @@ public class StoneGolemBoss : BossEnemy
         }
     }
 
-    void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
         Gizmos.color = new Color(0.5f, 0.3f, 0f, 0.5f);
         Gizmos.DrawWireSphere(transform.position, slamRadius);
     }

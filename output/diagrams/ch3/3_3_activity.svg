@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns='http://www.w3.org/2000/svg' width='1700' height='2600' viewBox='0 0 1700 2600'>
+<rect width='100%' height='100%' fill='white'/>
+<text x='850' y='77.0' text-anchor='middle' font-family='Times New Roman' font-size='42' font-weight='bold' font-style='normal'>
+<tspan x='850' dy='0'>Hình 3.3. Activity Diagram của vòng lặp gameplay</tspan>
+</text>
+<ellipse cx='850.0' cy='155.0' rx='140.0' ry='45.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='850' y='170.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Bắt đầu</tspan>
+</text>
+<rect x='620' y='250' width='460' height='100' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='850' y='301.0' text-anchor='middle' font-family='Times New Roman' font-size='30' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Khởi động game và đăng nhập</tspan>
+<tspan x='850' dy='32'>PlayFab</tspan>
+</text>
+<polygon points='850,410 1055,485 850,560 645,485' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='850' y='486.0' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Đã có</tspan>
+<tspan x='850' dy='29'>Display Name?</tspan>
+</text>
+<rect x='190' y='660' width='430' height='110' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='405' y='716.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='405' dy='0'>Hiển thị NameInputPanel và cập</tspan>
+<tspan x='405' dy='31'>nhật tên</tspan>
+</text>
+<rect x='900' y='660' width='430' height='110' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='1115' y='716.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='1115' dy='0'>Vào scene chính và chờ người chơi</tspan>
+<tspan x='1115' dy='31'>tương tác</tspan>
+</text>
+<rect x='620' y='860' width='460' height='110' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='850' y='916.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Tương tác ChallengePostNPC và</tspan>
+<tspan x='850' dy='31'>StartGame</tspan>
+</text>
+<rect x='620' y='1040' width='460' height='110' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='850' y='1096.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>WaveSpawner chuẩn bị và bắt đầu</tspan>
+<tspan x='850' dy='31'>wave</tspan>
+</text>
+<rect x='620' y='1220' width='460' height='110' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='850' y='1276.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Chiến đấu: di chuyển, dash, tự động</tspan>
+<tspan x='850' dy='31'>tấn công</tspan>
+</text>
+<polygon points='850,1395 1055,1470 850,1545 645,1470' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='850' y='1485.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Enemy chết?</tspan>
+</text>
+<rect x='620' y='1615' width='460' height='110' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='850' y='1671.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>ExpDropper cộng EXP vào</tspan>
+<tspan x='850' dy='31'>PlayerLevelSystem</tspan>
+</text>
+<polygon points='850,1790 1055,1865 850,1940 645,1865' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='850' y='1866.0' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Đủ EXP</tspan>
+<tspan x='850' dy='29'>lên cấp?</tspan>
+</text>
+<rect x='620' y='2010' width='460' height='110' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='850' y='2066.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Hiển thị CardSelectionPanel và áp</tspan>
+<tspan x='850' dy='31'>dụng buff</tspan>
+</text>
+<polygon points='850,2185 1055,2260 850,2335 645,2260' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='850' y='2275.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Hoàn thành wave?</tspan>
+</text>
+<rect x='140' y='2380' width='420' height='120' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='350' y='2441.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='350' dy='0'>Boss wave hoặc đổi theme map rồi</tspan>
+<tspan x='350' dy='31'>tiếp tục</tspan>
+</text>
+<rect x='620' y='2380' width='460' height='120' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='850' y='2456.5' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='850' dy='0'>Quay lại vòng chiến đấu wave mới</tspan>
+</text>
+<rect x='1140' y='2380' width='420' height='120' rx='22' ry='22' fill='#f6f6f6' stroke='black' stroke-width='4'/>
+<text x='1350' y='2441.0' text-anchor='middle' font-family='Times New Roman' font-size='28' font-weight='normal' font-style='normal'>
+<tspan x='1350' dy='0'>Người chơi chết, gửi điểm và tải</tspan>
+<tspan x='1350' dy='31'>leaderboard</tspan>
+</text>
+<line x1='850' y1='200' x2='850' y2='250' stroke='black' stroke-width='4'/>
+<polygon points='850,250 842.0,236.14359353944897 858.0,236.14359353944897' fill='black'/>
+<line x1='850' y1='350' x2='850' y2='410' stroke='black' stroke-width='4'/>
+<polygon points='850,410 842.0,396.143593539449 858.0,396.143593539449' fill='black'/>
+<line x1='645' y1='485' x2='405' y2='660' stroke='black' stroke-width='4'/>
+<polygon points='405,660 411.4827035022686,645.3721308694097 420.9094580214596,658.3002513528718' fill='black'/>
+<text x='525' y='550.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='525' dy='0'>Không</tspan>
+</text>
+<line x1='1055' y1='485' x2='1115' y2='660' stroke='black' stroke-width='4'/>
+<polygon points='1115,660 1102.938462769551,649.4871830778571 1118.0735979046863,644.297993888668' fill='black'/>
+<text x='1121' y='550.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1121' dy='0'>Có</tspan>
+</text>
+<line x1='405' y1='770' x2='850' y2='860' stroke='black' stroke-width='4'/>
+<polygon points='850,860 834.8327080616913,865.0944337524513 838.0044449833259,849.4119567510354' fill='black'/>
+<line x1='1115' y1='770' x2='850' y2='860' stroke='black' stroke-width='4'/>
+<polygon points='850,860 860.5477167524598,847.9689704800512 865.6930355741861,863.1190758995784' fill='black'/>
+<line x1='850' y1='970' x2='850' y2='1040' stroke='black' stroke-width='4'/>
+<polygon points='850,1040 842.0,1026.143593539449 858.0,1026.143593539449' fill='black'/>
+<line x1='850' y1='1150' x2='850' y2='1220' stroke='black' stroke-width='4'/>
+<polygon points='850,1220 842.0,1206.143593539449 858.0,1206.143593539449' fill='black'/>
+<line x1='850' y1='1330' x2='850' y2='1395' stroke='black' stroke-width='4'/>
+<polygon points='850,1395 842.0,1381.143593539449 858.0,1381.143593539449' fill='black'/>
+<line x1='645' y1='1470' x2='420' y2='1220' stroke='black' stroke-width='4'/>
+<polygon points='420,1220 435.2158003991114,1224.9476679571694 423.32309405915674,1235.6511036631287' fill='black'/>
+<text x='508' y='1337.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='508' dy='0'>Không</tspan>
+</text>
+<line x1='850' y1='1545' x2='850' y2='1615' stroke='black' stroke-width='4'/>
+<polygon points='850,1615 842.0,1601.143593539449 858.0,1601.143593539449' fill='black'/>
+<text x='892' y='1558.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='892' dy='0'>Có</tspan>
+</text>
+<line x1='850' y1='1725' x2='850' y2='1790' stroke='black' stroke-width='4'/>
+<polygon points='850,1790 842.0,1776.143593539449 858.0,1776.143593539449' fill='black'/>
+<line x1='645' y1='1865' x2='420' y2='1220' stroke='black' stroke-width='4'/>
+<polygon points='420,1220 432.11751592630065,1230.4482442436924 417.01031302316824,1235.718198744785' fill='black'/>
+<text x='508' y='1534.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='508' dy='0'>Không</tspan>
+</text>
+<line x1='850' y1='1940' x2='850' y2='2010' stroke='black' stroke-width='4'/>
+<polygon points='850,2010 842.0,1996.143593539449 858.0,1996.143593539449' fill='black'/>
+<text x='892' y='1953.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='892' dy='0'>Có</tspan>
+</text>
+<line x1='850' y1='2120' x2='850' y2='2185' stroke='black' stroke-width='4'/>
+<polygon points='850,2185 842.0,2171.143593539449 858.0,2171.143593539449' fill='black'/>
+<line x1='645' y1='2260' x2='350' y2='2380' stroke='black' stroke-width='4'/>
+<polygon points='350,2380 359.8207405445527,2367.368568760565 365.84951061178356,2382.189295175841' fill='black'/>
+<text x='479' y='2297.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='479' dy='0'>Có:</tspan>
+<tspan x='479' dy='27'>đến mốc boss</tspan>
+<tspan x='479' dy='27'>hoặc đổi theme</tspan>
+</text>
+<line x1='850' y1='2335' x2='850' y2='2380' stroke='black' stroke-width='4'/>
+<polygon points='850,2380 842.0,2366.143593539449 858.0,2366.143593539449' fill='black'/>
+<text x='932' y='2335.5' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='932' dy='0'>Có: wave mới</tspan>
+</text>
+<line x1='1055' y1='2260' x2='1350' y2='2380' stroke='black' stroke-width='4'/>
+<polygon points='1350,2380 1334.1504893882163,2382.189295175841 1340.1792594554474,2367.368568760565' fill='black'/>
+<text x='1232' y='2311.0' text-anchor='middle' font-family='Times New Roman' font-size='24' font-weight='normal' font-style='normal'>
+<tspan x='1232' dy='0'>Không nhưng</tspan>
+<tspan x='1232' dy='27'>người chơi chết</tspan>
+</text>
+<line x1='350' y1='2500' x2='850' y2='1220' stroke='black' stroke-width='4'/>
+<polygon points='850,1220 852.4099980008928,1235.817455852181 837.5066804092188,1229.9958474179334' fill='black'/>
+<line x1='850' y1='2500' x2='850' y2='1220' stroke='black' stroke-width='4'/>
+<polygon points='850,1220 858.0,1233.856406460551 842.0,1233.856406460551' fill='black'/>
+<ellipse cx='1350.0' cy='2595.0' rx='140.0' ry='45.0' fill='#ffffff' stroke='black' stroke-width='4'/>
+<text x='1350' y='2610.5' text-anchor='middle' font-family='Times New Roman' font-size='26' font-weight='normal' font-style='normal'>
+<tspan x='1350' dy='0'>Kết thúc</tspan>
+</text>
+<line x1='1350' y1='2500' x2='1350' y2='2550' stroke='black' stroke-width='4'/>
+<polygon points='1350,2550 1342.0,2536.143593539449 1358.0,2536.143593539449' fill='black'/>
+</svg>

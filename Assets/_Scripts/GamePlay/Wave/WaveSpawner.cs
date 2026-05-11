@@ -766,12 +766,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
                     Gizmos.color = new Color(groupColor.r, groupColor.g, groupColor.b, 0.3f);
                     Gizmos.DrawWireSphere(group.spawnPosition, group.spreadRadius);
 
-#if UNITY_EDITOR
-                    UnityEditor.Handles.Label(
-                        group.spawnPosition + Vector3.up * 2f,
-                        $"Circle Mode - Group {groupIndex + 1}\n{group.enemyCount} enemies\nDelay: {group.spawnDelay}s\nEffect: {effectDuration}s");
-#endif
-
                     groupIndex++;
                 }
             }
@@ -787,12 +781,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
                 Gizmos.color = new Color(groupColor.r, groupColor.g, groupColor.b, 0.3f);
                 Gizmos.DrawWireSphere(group.spawnPosition, group.spreadRadius);
-
-#if UNITY_EDITOR
-                UnityEditor.Handles.Label(
-                    group.spawnPosition + Vector3.up * 2f,
-                    $"Group {groupIndex + 1}\n{group.enemyCount} enemies ({group.enemyPoolType})\nDelay: {group.spawnDelay}s");
-#endif
 
                 Gizmos.color = new Color(groupColor.r, groupColor.g, groupColor.b, 0.2f);
                 Gizmos.DrawSphere(group.spawnPosition, 0.5f);

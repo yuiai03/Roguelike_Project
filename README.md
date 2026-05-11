@@ -1,1 +1,2 @@
 # Roguelike
+Bổ sung lưu lại exp, lv, wave, skill list, các data khác khi người chơi đang chơi mà out ra thì khi vào lại game vẫn hiển thị bình thường. nhưng trong challegePanel khi ấn F khiêu chiến để hiển thị challegePanel thì sẽ có thêm nút Resume (đã thêm trong scene). Chỉ khi người chơi đang chơi dở mà out ra thì mới hiển thị, còn không thì ẩn đi. Khi ấn nút resume thì load lại cho người chơi lại ở wave đã out ra
