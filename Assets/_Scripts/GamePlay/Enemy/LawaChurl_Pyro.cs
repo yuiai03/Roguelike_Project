@@ -92,6 +92,12 @@ public class LawaChurl_Pyro : Enemy
     private void SpawnPyroEffect(Vector3 position)
     {
         GameObject effectObj = ObjectPool.Instance.Spawn(PoolType.Boss_PyroEffect, position, Quaternion.identity);
+        if (effectObj == null)
+        {
+            return;
+        }
+
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.BossIceSkillEffect);
 
         // Cần gắn script gây damage lên effectObj: projectile hoặc một collider tự nổ
         // Tái sử dụng logic Projectile hoặc viết script AOEDamage riêng trên prefab

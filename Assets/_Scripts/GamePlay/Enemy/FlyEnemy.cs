@@ -152,6 +152,7 @@ public class FlyEnemy : Enemy
         isShootingBurst = true;
         currentBurstCount = 0;
         burstTimer = 0f;
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyProjectileFire);
     }
 
     protected override void ShootProjectile()

@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class CardSelectionPanel : PanelBase
 {
@@ -7,9 +7,11 @@ public class CardSelectionPanel : PanelBase
     [SerializeField] private Transform cardsContainer;
     [SerializeField] private GameObject cardUIPrefab;
 
-    private List<GameObject> spawnedCardUIs = new List<GameObject>();
+    private readonly List<GameObject> spawnedCardUIs = new List<GameObject>();
+    private readonly Queue<int> queuedLevelRewards = new Queue<int>();
+
     private BuffCardManager cardManager;
-    private List<BuffCardConfig> pendingCards;
+    private bool waitingForThemeTransition;
 
     protected override void Awake()
     {
@@ -39,27 +41,9 @@ public class CardSelectionPanel : PanelBase
 
     private void OnPlayerLevelUp(int newLevel)
     {
-        Debug.Log($"Level up to {newLevel}! Preparing card selection...");
-
-        if (cardManager == null)
-        {
-            return;
-        }
-
-        List<BuffCardConfig> cards = cardManager.GetRandomCards(cardManager.GetCardsPerSelection());
-        if (cards == null || cards.Count == 0)
-        {
-            return;
-        }
-
-        MapThemeManager mapThemeManager = MapThemeManager.Instance;
-        if (mapThemeManager != null && mapThemeManager.IsTransitioning)
-        {
-            pendingCards = new List<BuffCardConfig>(cards);
-            return;
-        }
-
-        ShowCards(cards);
+        Debug.Log($"Queued card selection for level {newLevel}.");
+        queuedLevelRewards.Enqueue(newLevel);
+        TryShowNextQueuedCards();
     }
 
     public void ShowCards(List<BuffCardConfig> cards)
@@ -76,7 +60,10 @@ public class CardSelectionPanel : PanelBase
         Show();
 
         Time.timeScale = 0f;
-        if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(false);
+        if (PlayerController.Instance != null)
+        {
+            PlayerController.Instance.SetInputActive(false);
+        }
 
         foreach (BuffCardConfig card in cards)
         {
@@ -117,19 +104,24 @@ public class CardSelectionPanel : PanelBase
         foreach (GameObject cardObj in spawnedCardUIs)
         {
             if (cardObj != null)
+            {
                 Destroy(cardObj);
+            }
         }
+
         spawnedCardUIs.Clear();
     }
 
     public void OnCardSelected(BuffCardConfig card)
     {
-        if (card == null || cardManager == null) return;
+        if (card == null || cardManager == null)
+        {
+            return;
+        }
 
         Debug.Log($"Card selected: {card.cardName}");
 
         cardManager.ApplyCard(card);
-
         HideCards();
     }
 
@@ -137,21 +129,90 @@ public class CardSelectionPanel : PanelBase
     {
         Hide(() =>
         {
-            Time.timeScale = 1f;
-            if (PlayerController.Instance != null) PlayerController.Instance.SetInputActive(true);
+            ClearCards();
+
+            if (TryShowNextQueuedCards())
+            {
+                return;
+            }
+
+            if (queuedLevelRewards.Count == 0)
+            {
+                RestoreGameplayAfterRewards();
+            }
         });
+    }
+
+    private bool TryShowNextQueuedCards()
+    {
+        if (IsOpen)
+        {
+            return false;
+        }
+
+        if (cardManager == null)
+        {
+            if (queuedLevelRewards.Count > 0)
+            {
+                Debug.LogError("BuffCardManager instance not found!");
+                queuedLevelRewards.Clear();
+                RestoreGameplayAfterRewards();
+            }
+
+            return false;
+        }
+
+        MapThemeManager mapThemeManager = MapThemeManager.Instance;
+        if (mapThemeManager != null && mapThemeManager.IsTransitioning)
+        {
+            waitingForThemeTransition = queuedLevelRewards.Count > 0;
+            return false;
+        }
+
+        waitingForThemeTransition = false;
+
+        while (queuedLevelRewards.Count > 0)
+        {
+            int rewardLevel = queuedLevelRewards.Dequeue();
+            List<BuffCardConfig> cards = cardManager.GetRandomCards(cardManager.GetCardsPerSelection());
+            if (cards == null || cards.Count == 0)
+            {
+                Debug.LogWarning($"No cards available for level {rewardLevel}.");
+                continue;
+            }
+
+            Debug.Log($"Showing queued card selection for level {rewardLevel}.");
+            ShowCards(cards);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void RestoreGameplayAfterRewards()
+    {
+        Time.timeScale = 1f;
+        if (PlayerController.Instance != null)
+        {
+            PlayerController.Instance.SetInputActive(true);
+        }
     }
 
     private void HandleThemeTransitionCompleted(int _)
     {
-        if (pendingCards == null || pendingCards.Count == 0)
+        bool wasWaitingForThemeTransition = waitingForThemeTransition;
+
+        if (TryShowNextQueuedCards())
         {
             return;
         }
 
-        List<BuffCardConfig> cardsToShow = pendingCards;
-        pendingCards = null;
-        ShowCards(cardsToShow);
+        if (wasWaitingForThemeTransition && !IsOpen && queuedLevelRewards.Count == 0)
+        {
+            RestoreGameplayAfterRewards();
+        }
+
+        waitingForThemeTransition = false;
     }
 
     private void OnDestroy()
@@ -167,6 +228,7 @@ public class CardSelectionPanel : PanelBase
             MapThemeManager.Instance.OnThemeTransitionCompleted -= HandleThemeTransitionCompleted;
         }
 
+        queuedLevelRewards.Clear();
         ClearCards();
     }
 

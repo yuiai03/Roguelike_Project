@@ -22,5 +22,11 @@ public enum AudioCue
     EnemyDeath,
     LevelUp,
     CardShow,
-    CardPick
+    CardPick,
+    PreBattleMusic,
+    EnemyProjectileFire,
+    EnemySummonCircle,
+    BossGeoRockThrow,
+    BossBoom,
+    BossIceSkillEffect
 }

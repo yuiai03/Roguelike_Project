@@ -36,7 +36,6 @@ public class ChallengePanel : PanelBase
     public void ShowTutorial()
     {
         GameUI.Instance?.InteractPanel?.Hide();
-        AudioManager.Instance?.PlayUISfx(AudioCue.ChallengeOpen);
 
         PlayerController.Instance.SetInputActive(false);
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class AudioManager : Singleton<AudioManager>
 {
@@ -19,7 +20,10 @@ public class AudioManager : Singleton<AudioManager>
     private float musicVolume = 1f;
     private float sfxVolume = 1f;
     private bool isMusicDucked;
+    private bool hasSwitchedToBattleMusic;
     private float currentMusicCueVolumeScale = 1f;
+    private WaveSpawner subscribedWaveSpawner;
+    private readonly Dictionary<AudioCue, float> lastCuePlayTimes = new Dictionary<AudioCue, float>();
 
     public float MusicVolume => musicVolume;
     public float SfxVolume => sfxVolume;
@@ -58,7 +62,13 @@ public class AudioManager : Singleton<AudioManager>
 
     private void Start()
     {
-        PlayMusic(AudioCue.GameMusic);
+        PlayMusic(AudioCue.PreBattleMusic, restartIfSame: true);
+        TrySubscribeToWaveSpawner();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeFromWaveSpawner();
     }
 
     private void Reset()
@@ -84,7 +94,7 @@ public class AudioManager : Singleton<AudioManager>
             return;
         }
 
-        AudioClip clip = GetClip(cue, out float volumeScale, out _);
+        AudioClip clip = GetClip(cue, out float volumeScale, out _, out _);
         if (clip == null)
         {
             return;
@@ -134,6 +144,41 @@ public class AudioManager : Singleton<AudioManager>
         ApplyVolumes();
     }
 
+    private void TrySubscribeToWaveSpawner()
+    {
+        WaveSpawner waveSpawner = WaveSpawner.Instance;
+        if (waveSpawner == null || subscribedWaveSpawner == waveSpawner)
+        {
+            return;
+        }
+
+        UnsubscribeFromWaveSpawner();
+        subscribedWaveSpawner = waveSpawner;
+        subscribedWaveSpawner.OnWaveStart.AddListener(HandleWaveStart);
+    }
+
+    private void UnsubscribeFromWaveSpawner()
+    {
+        if (subscribedWaveSpawner == null)
+        {
+            return;
+        }
+
+        subscribedWaveSpawner.OnWaveStart.RemoveListener(HandleWaveStart);
+        subscribedWaveSpawner = null;
+    }
+
+    private void HandleWaveStart(int waveNumber)
+    {
+        if (hasSwitchedToBattleMusic || waveNumber != 1)
+        {
+            return;
+        }
+
+        hasSwitchedToBattleMusic = true;
+        PlayMusic(AudioCue.GameMusic, restartIfSame: true);
+    }
+
     private void PlayOneShot(AudioSource source, AudioCue cue, float busVolume)
     {
         if (source == null)
@@ -141,20 +186,32 @@ public class AudioManager : Singleton<AudioManager>
             return;
         }
 
-        AudioClip clip = GetClip(cue, out float volumeScale, out float pitch);
+        AudioClip clip = GetClip(cue, out float volumeScale, out float pitch, out float minInterval);
         if (clip == null)
         {
             return;
+        }
+
+        if (minInterval > 0f)
+        {
+            float now = Time.unscaledTime;
+            if (lastCuePlayTimes.TryGetValue(cue, out float lastPlayTime) && now - lastPlayTime < minInterval)
+            {
+                return;
+            }
+
+            lastCuePlayTimes[cue] = now;
         }
 
         source.pitch = pitch;
         source.PlayOneShot(clip, busVolume * volumeScale);
     }
 
-    private AudioClip GetClip(AudioCue cue, out float volumeScale, out float pitch)
+    private AudioClip GetClip(AudioCue cue, out float volumeScale, out float pitch, out float minInterval)
     {
         volumeScale = 1f;
         pitch = 1f;
+        minInterval = 0f;
 
         if (cueDatabase == null)
         {
@@ -164,6 +221,11 @@ public class AudioManager : Singleton<AudioManager>
         if (cueDatabase == null)
         {
             return null;
+        }
+
+        if (cueDatabase.TryGetCue(cue, out AudioCueDefinition definition))
+        {
+            minInterval = Mathf.Max(0f, definition.minInterval);
         }
 
         return cueDatabase.GetRandomClip(cue, out volumeScale, out pitch);

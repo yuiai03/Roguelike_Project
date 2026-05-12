@@ -265,7 +265,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
         attackTimer = enemyData.shootCooldown;
         OnAttack?.Invoke();
-        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyAttack);
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyProjectileFire);
 
         Vector3 spawnPosition = firePoint.position + Vector3.up * 1f;
 
@@ -298,7 +298,6 @@ public class Enemy : MonoBehaviour, IDamageable
                     damageable.TakeDamage(enemyData.contactDamage, collision.GetContact(0).point, hitDirection);
                     attackTimer = enemyData.attackCooldown;
                     OnAttack?.Invoke();
-                    AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyAttack);
                 }
             }
         }

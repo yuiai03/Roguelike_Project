@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,7 +12,11 @@ public class WaveJumpTestPanel : PanelBase
     [SerializeField] private TMP_InputField waveInputField;
     [SerializeField] private Button jumpButton;
     [SerializeField] private Button closeButton;
+    [SerializeField] private Button addExpButton;
+    [SerializeField] private Button levelUpButton;
+    [SerializeField] private Button levelUpFiveButton;
     [SerializeField] private TextMeshProUGUI currentWaveText;
+    [SerializeField] private TextMeshProUGUI currentLevelText;
     [SerializeField] private TextMeshProUGUI statusText;
 
     protected override void Awake()
@@ -37,6 +42,21 @@ public class WaveJumpTestPanel : PanelBase
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(ClosePanel);
+        }
+
+        if (addExpButton != null)
+        {
+            addExpButton.onClick.AddListener(HandleAddExpButtonClicked);
+        }
+
+        if (levelUpButton != null)
+        {
+            levelUpButton.onClick.AddListener(HandleLevelUpButtonClicked);
+        }
+
+        if (levelUpFiveButton != null)
+        {
+            levelUpFiveButton.onClick.AddListener(HandleLevelUpFiveButtonClicked);
         }
     }
 
@@ -80,12 +100,13 @@ public class WaveJumpTestPanel : PanelBase
         Time.timeScale = 0f;
         PlayerController.Instance?.SetInputActive(false);
         GameUI.Instance?.InteractPanel?.Hide();
+
         if (background != null)
         {
             background.SetActive(true);
         }
 
-        RefreshWaveLabel();
+        RefreshPanelState();
         SetStatus(string.Empty);
 
         Show(() =>
@@ -104,8 +125,89 @@ public class WaveJumpTestPanel : PanelBase
 
     public void ClosePanel()
     {
+        ClosePanelInternal(true, null);
+    }
+
+    private void HandleJumpButtonClicked()
+    {
+        if (waveInputField == null)
+        {
+            SetStatus("Missing wave input field.");
+            return;
+        }
+
+        if (!int.TryParse(waveInputField.text, out int targetWave) || targetWave < 1)
+        {
+            SetStatus("Enter a wave >= 1.");
+            waveInputField.Select();
+            waveInputField.ActivateInputField();
+            return;
+        }
+
+        WaveSpawner waveSpawner = WaveSpawner.Instance;
+        if (waveSpawner == null)
+        {
+            SetStatus("WaveSpawner not found.");
+            return;
+        }
+
+        if (!waveSpawner.JumpToWave(targetWave))
+        {
+            SetStatus($"Could not jump to wave {targetWave}.");
+            return;
+        }
+
+        ClosePanel();
+    }
+
+    private void HandleAddExpButtonClicked()
+    {
+        PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
+        if (levelSystem == null)
+        {
+            SetStatus("PlayerLevelSystem not found.");
+            return;
+        }
+
+        bool willLevelUp = levelSystem.GetCurrentExp() + 50f >= levelSystem.GetExpToNextLevel();
+        if (willLevelUp)
+        {
+            ClosePanelInternal(false, () => levelSystem.AddExp(50f));
+            return;
+        }
+
+        levelSystem.AddExp(50f);
+        RefreshPanelState();
+        SetStatus("+50 EXP granted.");
+    }
+
+    private void HandleGrantLevelsButtonClicked(int levelCount)
+    {
+        PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
+        if (levelSystem == null)
+        {
+            SetStatus("PlayerLevelSystem not found.");
+            return;
+        }
+
+        ClosePanelInternal(false, () => levelSystem.GrantLevels(levelCount));
+    }
+
+    private void HandleLevelUpButtonClicked()
+    {
+        HandleGrantLevelsButtonClicked(1);
+    }
+
+    private void HandleLevelUpFiveButtonClicked()
+    {
+        HandleGrantLevelsButtonClicked(5);
+    }
+
+    private void ClosePanelInternal(bool restoreGameplay, Action onClosed)
+    {
         if (!IsOpen)
         {
+            onClosed?.Invoke();
             return;
         }
 
@@ -117,40 +219,14 @@ public class WaveJumpTestPanel : PanelBase
             }
 
             EventSystem.current?.SetSelectedGameObject(null);
-            RestoreGameplay();
+
+            if (restoreGameplay)
+            {
+                RestoreGameplay();
+            }
+
+            onClosed?.Invoke();
         });
-    }
-
-    private void HandleJumpButtonClicked()
-    {
-        if (waveInputField == null)
-        {
-            SetStatus("Thiếu input field.");
-            return;
-        }
-
-        if (!int.TryParse(waveInputField.text, out int targetWave) || targetWave < 1)
-        {
-            SetStatus("Nhập wave >= 1.");
-            waveInputField.Select();
-            waveInputField.ActivateInputField();
-            return;
-        }
-
-        WaveSpawner waveSpawner = WaveSpawner.Instance;
-        if (waveSpawner == null)
-        {
-            SetStatus("Không tìm thấy WaveSpawner.");
-            return;
-        }
-
-        if (!waveSpawner.JumpToWave(targetWave))
-        {
-            SetStatus($"Không thể chuyển tới wave {targetWave}.");
-            return;
-        }
-
-        ClosePanel();
     }
 
     private bool CanOpenPanel()
@@ -170,7 +246,19 @@ public class WaveJumpTestPanel : PanelBase
             if (ui.PauseMenuPanel != null && ui.PauseMenuPanel.IsOpen) return false;
         }
 
-        return LoadingUIManager.Instance == null || !LoadingUIManager.Instance.IsBlocking;
+        if (LoadingUIManager.Instance != null && LoadingUIManager.Instance.IsBlocking)
+        {
+            return false;
+        }
+
+        WaveSpawner waveSpawner = WaveSpawner.Instance;
+        return waveSpawner != null && waveSpawner.IsWaveActive();
+    }
+
+    private void RefreshPanelState()
+    {
+        RefreshWaveLabel();
+        RefreshLevelLabel();
     }
 
     private void RefreshWaveLabel()
@@ -182,8 +270,21 @@ public class WaveJumpTestPanel : PanelBase
 
         WaveSpawner waveSpawner = WaveSpawner.Instance;
         currentWaveText.text = waveSpawner == null
-            ? "Wave hien tai: --"
+            ? "Current Wave: --"
             : WaveSpawner.FormatWaveLabel(waveSpawner.GetCurrentWave(), waveSpawner.GetTotalWaves());
+    }
+
+    private void RefreshLevelLabel()
+    {
+        if (currentLevelText == null)
+        {
+            return;
+        }
+
+        PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
+        currentLevelText.text = levelSystem == null
+            ? "Current Level: --"
+            : $"Current Level: {levelSystem.GetCurrentLevel()}";
     }
 
     private void SetStatus(string message)
@@ -247,12 +348,48 @@ public class WaveJumpTestPanel : PanelBase
             }
         }
 
+        if (addExpButton == null)
+        {
+            Transform addExpTransform = transform.Find("Menu/AddExpButton");
+            if (addExpTransform != null)
+            {
+                addExpButton = addExpTransform.GetComponent<Button>();
+            }
+        }
+
+        if (levelUpButton == null)
+        {
+            Transform levelUpTransform = transform.Find("Menu/LevelUpButton");
+            if (levelUpTransform != null)
+            {
+                levelUpButton = levelUpTransform.GetComponent<Button>();
+            }
+        }
+
+        if (levelUpFiveButton == null)
+        {
+            Transform levelUpFiveTransform = transform.Find("Menu/LevelUpFiveButton");
+            if (levelUpFiveTransform != null)
+            {
+                levelUpFiveButton = levelUpFiveTransform.GetComponent<Button>();
+            }
+        }
+
         if (currentWaveText == null)
         {
             Transform waveLabelTransform = transform.Find("Menu/CurrentWaveText");
             if (waveLabelTransform != null)
             {
                 currentWaveText = waveLabelTransform.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        if (currentLevelText == null)
+        {
+            Transform levelLabelTransform = transform.Find("Menu/CurrentLevelText");
+            if (levelLabelTransform != null)
+            {
+                currentLevelText = levelLabelTransform.GetComponent<TextMeshProUGUI>();
             }
         }
 
@@ -276,6 +413,21 @@ public class WaveJumpTestPanel : PanelBase
         if (closeButton != null)
         {
             closeButton.onClick.RemoveListener(ClosePanel);
+        }
+
+        if (addExpButton != null)
+        {
+            addExpButton.onClick.RemoveListener(HandleAddExpButtonClicked);
+        }
+
+        if (levelUpButton != null)
+        {
+            levelUpButton.onClick.RemoveListener(HandleLevelUpButtonClicked);
+        }
+
+        if (levelUpFiveButton != null)
+        {
+            levelUpFiveButton.onClick.RemoveListener(HandleLevelUpFiveButtonClicked);
         }
     }
 }

@@ -47,6 +47,7 @@ public class ObjectPool : MonoBehaviour
     private Dictionary<PoolType, Queue<GameObject>> poolDictionary;
     private Dictionary<PoolType, Pool> poolConfigs;
     private Dictionary<PoolType, Transform> poolParents;
+    private Dictionary<PoolType, HashSet<GameObject>> activeObjects;
 
     [SerializeField] private List<Pool> pools = new List<Pool>();
 
@@ -63,6 +64,7 @@ public class ObjectPool : MonoBehaviour
         poolDictionary = new Dictionary<PoolType, Queue<GameObject>>();
         poolConfigs = new Dictionary<PoolType, Pool>();
         poolParents = new Dictionary<PoolType, Transform>();
+        activeObjects = new Dictionary<PoolType, HashSet<GameObject>>();
 
         foreach (Pool pool in pools)
         {
@@ -70,6 +72,7 @@ public class ObjectPool : MonoBehaviour
 
             Queue<GameObject> objectPool = new Queue<GameObject>();
             poolConfigs[pool.poolType] = pool;
+            activeObjects[pool.poolType] = new HashSet<GameObject>();
 
             GameObject parentObj = new GameObject($"Pool_{pool.poolType}");
             Transform parent = parentObj.transform;
@@ -117,6 +120,7 @@ public class ObjectPool : MonoBehaviour
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
         objectToSpawn.SetActive(true);
+        activeObjects[poolType].Add(objectToSpawn);
 
         return objectToSpawn;
     }
@@ -124,6 +128,46 @@ public class ObjectPool : MonoBehaviour
     public GameObject Spawn(PoolType poolType, Vector3 position)
     {
         return Spawn(poolType, position, Quaternion.identity);
+    }
+
+    public int GetAvailableCount(PoolType poolType)
+    {
+        if (poolDictionary == null || !poolDictionary.TryGetValue(poolType, out Queue<GameObject> pool))
+        {
+            return 0;
+        }
+
+        return pool.Count;
+    }
+
+    public void Prewarm(PoolType poolType, int requiredAvailableCount)
+    {
+        if (requiredAvailableCount <= 0)
+        {
+            return;
+        }
+
+        if (poolDictionary == null || !poolDictionary.ContainsKey(poolType))
+        {
+            Debug.LogWarning($"Pool with type '{poolType}' doesn't exist!");
+            return;
+        }
+
+        Queue<GameObject> pool = poolDictionary[poolType];
+        if (pool.Count >= requiredAvailableCount)
+        {
+            return;
+        }
+
+        Pool poolConfig = poolConfigs[poolType];
+        Transform parent = poolParents[poolType];
+        int missingCount = requiredAvailableCount - pool.Count;
+
+        for (int i = 0; i < missingCount; i++)
+        {
+            GameObject obj = CreateNewObject(poolConfig.prefab, parent);
+            pool.Enqueue(obj);
+        }
     }
 
     public void Despawn(GameObject obj, PoolType poolType)
@@ -137,9 +181,35 @@ public class ObjectPool : MonoBehaviour
             return;
         }
 
+        if (activeObjects.TryGetValue(poolType, out HashSet<GameObject> activeSet))
+        {
+            bool wasActive = activeSet.Remove(obj);
+            if (!wasActive && poolDictionary[poolType].Contains(obj))
+            {
+                return;
+            }
+        }
+
         obj.SetActive(false);
         obj.transform.SetParent(poolParents[poolType]);
         poolDictionary[poolType].Enqueue(obj);
+    }
+
+    public void DespawnAllActiveObjects()
+    {
+        StopAllCoroutines();
+
+        foreach (KeyValuePair<PoolType, HashSet<GameObject>> entry in activeObjects)
+        {
+            List<GameObject> objectsToDespawn = new List<GameObject>(entry.Value);
+            foreach (GameObject obj in objectsToDespawn)
+            {
+                if (obj != null)
+                {
+                    Despawn(obj, entry.Key);
+                }
+            }
+        }
     }
 
     public void DespawnAfterDelay(GameObject obj, PoolType poolType, float delay)

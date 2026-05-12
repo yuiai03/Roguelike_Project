@@ -14,6 +14,16 @@ public class WaveSpawner : Singleton<WaveSpawner>
     [SerializeField] private float spawnRandomRadius = 2f;
     [SerializeField] private int maxSpawnAttempts = 10;
 
+    [Header("Endless Wave Caps")]
+    [SerializeField, Min(0)] private int maxEndlessEnemyBonusPerGroup = 10;
+    [SerializeField, Min(1)] private int maxGeneratedEnemyCountPerGroup = 30;
+    [SerializeField, Min(0f)] private float maxEndlessSpreadBonus = 8f;
+    [SerializeField, Min(0f)] private float maxGeneratedSpreadRadius = 16f;
+
+    [Header("Spawn Budget")]
+    [SerializeField, Min(1)] private int maxEnemySpawnsPerFrame = 8;
+    [SerializeField, Min(1)] private int maxSpawnEffectsPerFrame = 12;
+
     [Header("Circle Spawn Settings")]
     [SerializeField] private bool useCircleSpawn = false;
     [SerializeField] private float effectDuration = 1f;
@@ -32,6 +42,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
     private readonly List<Enemy> activeEnemies = new List<Enemy>();
     private readonly List<SpawnPoint> pendingSpawns = new List<SpawnPoint>();
+    private readonly Dictionary<Enemy, UnityAction> enemyDeathHandlers = new Dictionary<Enemy, UnityAction>();
 
     private int totalEnemiesToSpawn;
     private int totalEnemiesSpawned;
@@ -134,6 +145,28 @@ public class WaveSpawner : Singleton<WaveSpawner>
         JumpToWave(Mathf.Max(1, currentWave + 1));
     }
 
+    public void StopAndClearCurrentWave()
+    {
+        CancelInvoke(nameof(StartNextWave));
+
+        if (pendingWaveTransitionRoutine != null)
+        {
+            StopCoroutine(pendingWaveTransitionRoutine);
+            pendingWaveTransitionRoutine = null;
+        }
+
+        StopAllCoroutines();
+        InvalidateCurrentWaveSession();
+        pendingSpawns.Clear();
+        isWaveActive = false;
+
+        KillAllEnemies();
+
+        totalEnemiesToSpawn = 0;
+        totalEnemiesSpawned = 0;
+        OnEnemyCountChanged?.Invoke(0, 0);
+    }
+
     public int GetCurrentWave() => currentWave;
     public int GetTotalWaves() => waveConfig != null ? waveConfig.waves.Count : 0;
     public int GetActiveEnemyCount() => activeEnemies.Count;
@@ -151,7 +184,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
         if (totalWaves > 0 && currentWave > totalWaves)
         {
-            return $"Wave: {currentWave} (Endless)";
+            return $"Wave: {currentWave}";
         }
 
         return totalWaves > 0 ? $"Wave: {currentWave}/{totalWaves}" : $"Wave: {currentWave}";
@@ -220,17 +253,19 @@ public class WaveSpawner : Singleton<WaveSpawner>
             enemyGroups = new List<EnemyGroup>()
         };
 
-        int extraEnemies = loopCount;
-        float extraRadius = loopCount;
+        int extraEnemies = Mathf.Min(loopCount, Mathf.Max(0, maxEndlessEnemyBonusPerGroup));
+        float extraRadius = Mathf.Min(loopCount, Mathf.Max(0f, maxEndlessSpreadBonus));
+        int maxEnemyCount = Mathf.Max(1, maxGeneratedEnemyCountPerGroup);
+        float maxSpreadRadius = Mathf.Max(0f, maxGeneratedSpreadRadius);
 
         foreach (EnemyGroup baseGroup in baseWave.enemyGroups)
         {
             endlessWave.enemyGroups.Add(new EnemyGroup
             {
                 enemyPoolType = baseGroup.enemyPoolType,
-                enemyCount = baseGroup.enemyCount + extraEnemies,
+                enemyCount = Mathf.Min(baseGroup.enemyCount + extraEnemies, maxEnemyCount),
                 spawnPosition = baseGroup.spawnPosition,
-                spreadRadius = baseGroup.spreadRadius + extraRadius,
+                spreadRadius = Mathf.Min(baseGroup.spreadRadius + extraRadius, maxSpreadRadius),
                 spawnDelay = baseGroup.spawnDelay
             });
         }
@@ -241,6 +276,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
     private IEnumerator RunWave(SimpleWaveData wave, PoolType bossPoolType, int sessionId)
     {
         Debug.Log($"=== Wave {currentWave} Incoming! ===");
+        PrewarmPoolsForWave(wave, bossPoolType);
         yield return new WaitForSeconds(wave.preparationTime);
 
         if (!IsWaveSessionCurrent(sessionId))
@@ -294,7 +330,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
             yield break;
         }
 
-        SpawnGroup(group, groupIndex, sessionId);
+        yield return StartCoroutine(SpawnGroup(group, groupIndex, sessionId));
     }
 
     private IEnumerator SpawnCircle(SimpleWaveData wave, int sessionId)
@@ -323,9 +359,18 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
         List<Vector3> usedPositions = new List<Vector3>();
         List<SpawnPoint> groupPendingSpawns = new List<SpawnPoint>();
+        bool playedSummonSfx = false;
+        int effectsThisFrame = 0;
+        int effectBudget = GetSpawnEffectBudget();
 
         for (int i = 0; i < group.enemyCount; i++)
         {
+            if (!IsWaveSessionCurrent(sessionId))
+            {
+                RemovePendingSpawns(groupPendingSpawns);
+                yield break;
+            }
+
             Vector3 spawnPos = CalculateRandomSpawnPosition(group.spawnPosition, group.spreadRadius, usedPositions);
             usedPositions.Add(spawnPos);
 
@@ -337,7 +382,19 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
             pendingSpawns.Add(pendingSpawn);
             groupPendingSpawns.Add(pendingSpawn);
+            if (!playedSummonSfx && spawnEffectPoolType != PoolType.None)
+            {
+                AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemySummonCircle);
+                playedSummonSfx = true;
+            }
             SpawnSpawnEffect(spawnPos);
+            effectsThisFrame++;
+
+            if (effectsThisFrame >= effectBudget)
+            {
+                effectsThisFrame = 0;
+                yield return null;
+            }
         }
 
         if (spawnEffectPoolType != PoolType.None || effectDuration > 0f)
@@ -351,11 +408,27 @@ public class WaveSpawner : Singleton<WaveSpawner>
             yield break;
         }
 
+        int spawnedThisFrame = 0;
+        int spawnBudget = GetEnemySpawnBudget();
         foreach (SpawnPoint pendingSpawn in groupPendingSpawns)
         {
+            if (!IsWaveSessionCurrent(sessionId))
+            {
+                RemovePendingSpawns(groupPendingSpawns);
+                yield break;
+            }
+
             pendingSpawns.Remove(pendingSpawn);
             SpawnEnemyFromPool(pendingSpawn.poolType, pendingSpawn.position);
             totalEnemiesSpawned++;
+            spawnedThisFrame++;
+
+            if (spawnedThisFrame >= spawnBudget)
+            {
+                OnEnemyCountChanged?.Invoke(activeEnemies.Count, totalEnemiesToSpawn);
+                spawnedThisFrame = 0;
+                yield return null;
+            }
         }
 
         OnEnemyCountChanged?.Invoke(activeEnemies.Count, totalEnemiesToSpawn);
@@ -371,6 +444,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
         };
 
         pendingSpawns.Add(pendingSpawn);
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemySummonCircle);
         SpawnSpawnEffect(bossSpawnPosition);
 
         if (effectDuration > 0f)
@@ -482,30 +556,45 @@ public class WaveSpawner : Singleton<WaveSpawner>
         return Utils.GetGroundPosition(requestedPosition, spawnEffectGroundMask);
     }
 
-    private void SpawnGroup(EnemyGroup group, int groupIndex, int sessionId)
+    private IEnumerator SpawnGroup(EnemyGroup group, int groupIndex, int sessionId)
     {
         if (!IsWaveSessionCurrent(sessionId))
         {
-            return;
+            yield break;
         }
 
         if (ObjectPool.Instance == null)
         {
             Debug.LogError("ObjectPool instance not found.");
-            return;
+            yield break;
         }
 
         Debug.Log($"Spawning Group {groupIndex}: {group.enemyCount} enemies ({group.enemyPoolType}) at {group.spawnPosition}");
 
         List<Vector3> usedPositions = new List<Vector3>();
+        int spawnedThisFrame = 0;
+        int spawnBudget = GetEnemySpawnBudget();
 
         for (int i = 0; i < group.enemyCount; i++)
         {
+            if (!IsWaveSessionCurrent(sessionId))
+            {
+                yield break;
+            }
+
             Vector3 spawnPos = CalculateRandomSpawnPosition(group.spawnPosition, group.spreadRadius, usedPositions);
             usedPositions.Add(spawnPos);
 
             SpawnEnemyFromPool(group.enemyPoolType, spawnPos);
             totalEnemiesSpawned++;
+            spawnedThisFrame++;
+
+            if (spawnedThisFrame >= spawnBudget)
+            {
+                OnEnemyCountChanged?.Invoke(activeEnemies.Count, totalEnemiesToSpawn);
+                spawnedThisFrame = 0;
+                yield return null;
+            }
         }
 
         OnEnemyCountChanged?.Invoke(activeEnemies.Count, totalEnemiesToSpawn);
@@ -584,17 +673,71 @@ public class WaveSpawner : Singleton<WaveSpawner>
             }
         }
 
-        enemy.OnDeath.AddListener(() => OnEnemyDied(enemy));
+        RegisterEnemyDeathHandler(enemy);
         activeEnemies.Add(enemy);
+    }
+
+    private void RegisterEnemyDeathHandler(Enemy enemy)
+    {
+        if (enemy == null)
+        {
+            return;
+        }
+
+        UnregisterEnemyDeathHandler(enemy);
+
+        UnityAction handler = () => OnEnemyDied(enemy);
+        enemyDeathHandlers[enemy] = handler;
+        enemy.OnDeath.AddListener(handler);
+    }
+
+    private void UnregisterEnemyDeathHandler(Enemy enemy)
+    {
+        if (enemy == null || !enemyDeathHandlers.TryGetValue(enemy, out UnityAction handler))
+        {
+            return;
+        }
+
+        enemy.OnDeath.RemoveListener(handler);
+        enemyDeathHandlers.Remove(enemy);
+    }
+
+    private void UnregisterAllEnemyDeathHandlers()
+    {
+        foreach (KeyValuePair<Enemy, UnityAction> entry in new List<KeyValuePair<Enemy, UnityAction>>(enemyDeathHandlers))
+        {
+            if (entry.Key != null)
+            {
+                entry.Key.OnDeath.RemoveListener(entry.Value);
+            }
+        }
+
+        enemyDeathHandlers.Clear();
     }
 
     private void CleanupDeadEnemies()
     {
-        activeEnemies.RemoveAll(enemy => enemy == null || enemy.IsDead());
+        for (int i = activeEnemies.Count - 1; i >= 0; i--)
+        {
+            Enemy enemy = activeEnemies[i];
+            if (enemy == null)
+            {
+                activeEnemies.RemoveAt(i);
+                continue;
+            }
+
+            if (enemy.IsDead())
+            {
+                UnregisterEnemyDeathHandler(enemy);
+                activeEnemies.RemoveAt(i);
+            }
+        }
     }
 
     private void OnEnemyDied(Enemy enemy)
     {
+        UnregisterEnemyDeathHandler(enemy);
+
         if (!activeEnemies.Contains(enemy))
         {
             return;
@@ -634,7 +777,14 @@ public class WaveSpawner : Singleton<WaveSpawner>
     {
         foreach (Enemy enemy in activeEnemies.ToArray())
         {
-            if (enemy == null || enemy.IsDead())
+            if (enemy == null)
+            {
+                continue;
+            }
+
+            UnregisterEnemyDeathHandler(enemy);
+
+            if (enemy.IsDead())
             {
                 continue;
             }
@@ -652,6 +802,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
         }
 
         activeEnemies.Clear();
+        UnregisterAllEnemyDeathHandlers();
         OnEnemyCountChanged?.Invoke(0, totalEnemiesToSpawn);
     }
 
@@ -701,6 +852,71 @@ public class WaveSpawner : Singleton<WaveSpawner>
         }
     }
 
+    private void PrewarmPoolsForWave(SimpleWaveData wave, PoolType bossPoolType)
+    {
+        if (wave == null || ObjectPool.Instance == null)
+        {
+            return;
+        }
+
+        if (wave.isBossWave)
+        {
+            PrewarmPool(bossPoolType, 1);
+            if (useCircleSpawn && spawnEffectPoolType != PoolType.None)
+            {
+                PrewarmPool(spawnEffectPoolType, 1);
+            }
+
+            return;
+        }
+
+        Dictionary<PoolType, int> requiredCounts = new Dictionary<PoolType, int>();
+        foreach (EnemyGroup group in wave.enemyGroups)
+        {
+            if (group.enemyPoolType == PoolType.None || group.enemyCount <= 0)
+            {
+                continue;
+            }
+
+            if (!requiredCounts.ContainsKey(group.enemyPoolType))
+            {
+                requiredCounts[group.enemyPoolType] = 0;
+            }
+
+            requiredCounts[group.enemyPoolType] += group.enemyCount;
+        }
+
+        foreach (KeyValuePair<PoolType, int> entry in requiredCounts)
+        {
+            PrewarmPool(entry.Key, entry.Value);
+        }
+
+        if (useCircleSpawn && spawnEffectPoolType != PoolType.None)
+        {
+            PrewarmPool(spawnEffectPoolType, CountEnemiesToSpawn(wave));
+        }
+    }
+
+    private void PrewarmPool(PoolType poolType, int requiredAvailableCount)
+    {
+        if (poolType == PoolType.None || requiredAvailableCount <= 0)
+        {
+            return;
+        }
+
+        ObjectPool.Instance?.Prewarm(poolType, requiredAvailableCount);
+    }
+
+    private int GetEnemySpawnBudget()
+    {
+        return Mathf.Max(1, maxEnemySpawnsPerFrame);
+    }
+
+    private int GetSpawnEffectBudget()
+    {
+        return Mathf.Max(1, maxSpawnEffectsPerFrame);
+    }
+
     private static int CountEnemiesToSpawn(SimpleWaveData wave)
     {
         int count = 0;
@@ -729,6 +945,11 @@ public class WaveSpawner : Singleton<WaveSpawner>
         {
             pendingSpawns.Remove(pendingSpawn);
         }
+    }
+
+    private void OnDestroy()
+    {
+        UnregisterAllEnemyDeathHandlers();
     }
 
     private void OnDrawGizmosSelected()

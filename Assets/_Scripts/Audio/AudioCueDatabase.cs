@@ -112,5 +112,8 @@ public class AudioCueDefinition
     [Range(0f, 1f)]
     public float volumeScale = 1f;
 
+    [Min(0f)]
+    public float minInterval;
+
     public Vector2 pitchRange = Vector2.one;
 }

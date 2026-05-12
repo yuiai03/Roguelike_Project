@@ -84,6 +84,7 @@ public abstract class BossEnemy : Enemy
     {
         if (bossConfig == null) return;
         float dmg = damageOverride > 0 ? damageOverride : bossConfig.bossProjectileDamage;
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyProjectileFire);
 
         for (int i = 0; i < bulletCount; i++)
         {
@@ -98,6 +99,7 @@ public abstract class BossEnemy : Enemy
     {
         if (bossConfig == null || player == null) return;
         float dmg = damageOverride > 0 ? damageOverride : bossConfig.bossProjectileDamage;
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.EnemyProjectileFire);
 
         Vector3 baseDir = (player.position - transform.position).normalized;
         baseDir.y = 0f;

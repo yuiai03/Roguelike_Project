@@ -64,6 +64,6 @@ public abstract class HealthBarUIBase : MonoBehaviour
 
         fillImage.fillAmount = currentHealth / maxHealth;
 
-        if (healthText != null) healthText.text = currentHealth.ToString();
+        if (healthText != null) healthText.text = Utils.FormatWholeNumber(currentHealth);
     }
 }

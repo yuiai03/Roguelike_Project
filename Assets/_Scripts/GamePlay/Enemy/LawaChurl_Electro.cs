@@ -64,6 +64,7 @@ public class LawaChurl_Electro : Enemy
     {
         attackTimer = enemyData.shootCooldown;
         OnAttack?.Invoke();
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.BossBoom);
 
         Vector3 targetPos = player.position;
         Vector3 groundTargetPos = Utils.GetGroundPosition(targetPos, groundMask);

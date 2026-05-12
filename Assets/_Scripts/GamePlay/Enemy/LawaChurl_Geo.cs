@@ -58,6 +58,7 @@ public class LawaChurl_Geo : Enemy
         if (projectilePrefab == null) return;
 
         attackTimer = enemyData.shootCooldown;
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.BossGeoRockThrow);
 
         Vector3 spawnPosition = firePoint.position + Vector3.up * 1f;
         Vector3 targetPosition = player.position + Vector3.up * 1f + moveOffset * 0.3f;

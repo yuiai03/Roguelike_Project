@@ -13,14 +13,29 @@ namespace Roguelike.UI.Leaderboard
         [Header("Background Settings")]
         [SerializeField] private UnityEngine.UI.Image backgroundImage;
 
+        [Header("Text Colors")]
+        [SerializeField] private Color myEntryTextColor = Color.yellow;
+
         private CanvasGroup canvasGroup;
         private Tween revealTween;
+        private Color normalRankTextColor = Color.white;
+        private Color normalNameTextColor = Color.white;
+        private Color normalScoreTextColor = Color.white;
+        private bool hasCachedTextColors;
+
+        private void Awake()
+        {
+            CacheNormalTextColors();
+        }
 
         public void Setup(int rank, string displayName, int score, bool highlightAsMyEntry = false)
         {
+            CacheNormalTextColors();
+
             if (rankText != null) rankText.text = $"#{rank}";
             if (nameText != null) nameText.text = string.IsNullOrEmpty(displayName) ? "Unknown Player" : displayName;
             if (scoreText != null) scoreText.text = score.ToString();
+            ApplyTextColors(highlightAsMyEntry);
 
             if (backgroundImage == null || GameUI.Instance == null || GameUI.Instance.LeaderboardPanel == null)
             {
@@ -75,6 +90,26 @@ namespace Roguelike.UI.Leaderboard
             }
 
             return canvasGroup;
+        }
+
+        private void CacheNormalTextColors()
+        {
+            if (hasCachedTextColors)
+            {
+                return;
+            }
+
+            if (rankText != null) normalRankTextColor = rankText.color;
+            if (nameText != null) normalNameTextColor = nameText.color;
+            if (scoreText != null) normalScoreTextColor = scoreText.color;
+            hasCachedTextColors = true;
+        }
+
+        private void ApplyTextColors(bool highlightAsMyEntry)
+        {
+            if (rankText != null) rankText.color = highlightAsMyEntry ? myEntryTextColor : normalRankTextColor;
+            if (nameText != null) nameText.color = highlightAsMyEntry ? myEntryTextColor : normalNameTextColor;
+            if (scoreText != null) scoreText.color = highlightAsMyEntry ? myEntryTextColor : normalScoreTextColor;
         }
 
         private void OnDisable()

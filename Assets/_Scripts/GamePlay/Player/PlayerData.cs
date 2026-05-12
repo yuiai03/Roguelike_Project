@@ -115,12 +115,12 @@ public class PlayerData : MonoBehaviour
 
     public float GetTotalDamage()
     {
-        return Mathf.Round(attackDamage + damageBonus);
+        return Utils.RoundToDisplayInt(attackDamage + damageBonus);
     }
 
     public float GetScaledAttackDamage(float multiplier)
     {
-        return GetTotalDamage() * multiplier;
+        return Utils.RoundToDisplayInt(GetTotalDamage() * multiplier);
     }
 
     public float GetAttackCooldown()
@@ -130,6 +130,6 @@ public class PlayerData : MonoBehaviour
 
     public float GetMaxHealth()
     {
-        return maxHealth + healthBonus;
+        return Utils.RoundToDisplayInt(maxHealth + healthBonus);
     }
 }

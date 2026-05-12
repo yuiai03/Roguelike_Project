@@ -18,16 +18,31 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
 
     private Coroutine activeTransitionRoutine;
     private Coroutine startupFadeRoutine;
+    private Coroutine restartRoutine;
     private bool startupOverlayHidden;
 
     protected override void Awake()
     {
+        isDontDestroy = true;
+        transform.SetParent(null, false);
         base.Awake();
+
+        if (Instance != this)
+        {
+            return;
+        }
+
+        EnsureStandaloneLoadingCanvas();
         InitializeOverlayVisible();
     }
 
     private void Start()
     {
+        if (Instance != this)
+        {
+            return;
+        }
+
         if (PlayFabLeaderboardManager.Instance != null)
         {
             PlayFabLeaderboardManager.Instance.OnProfileLoadedEvent += HideLoading;
@@ -40,6 +55,11 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
 
     private void OnDestroy()
     {
+        if (Instance != this)
+        {
+            return;
+        }
+
         if (PlayFabLeaderboardManager.Instance != null)
         {
             PlayFabLeaderboardManager.Instance.OnProfileLoadedEvent -= HideLoading;
@@ -54,6 +74,11 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
         }
 
         if (activeTransitionRoutine != null)
+        {
+            return;
+        }
+
+        if (restartRoutine != null)
         {
             return;
         }
@@ -88,7 +113,12 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
 
     public void ShowBlackFadeAndRestart()
     {
-        PlayBlackTransition(RestartScene, null, fadeDuration, 0f, 0f);
+        if (restartRoutine != null)
+        {
+            return;
+        }
+
+        restartRoutine = StartCoroutine(RestartSceneWithPersistentLoading());
     }
 
     public void PlayBlackTransition(
@@ -153,6 +183,90 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
         SetOverlayHidden();
         activeTransitionRoutine = null;
         onComplete?.Invoke();
+    }
+
+    private IEnumerator RestartSceneWithPersistentLoading()
+    {
+        Time.timeScale = 1f;
+
+        if (startupFadeRoutine != null)
+        {
+            StopCoroutine(startupFadeRoutine);
+            startupFadeRoutine = null;
+        }
+
+        if (activeTransitionRoutine != null)
+        {
+            StopCoroutine(activeTransitionRoutine);
+            activeTransitionRoutine = null;
+        }
+
+        if (loadingPanel != null)
+        {
+            loadingPanel.SetActive(true);
+        }
+
+        if (loadingCanvasGroup != null)
+        {
+            loadingCanvasGroup.blocksRaycasts = true;
+            yield return FadeCanvasGroup(loadingCanvasGroup.alpha, 1f, fadeDuration);
+        }
+        else if (fadeDuration > 0f)
+        {
+            yield return new WaitForSecondsRealtime(fadeDuration);
+        }
+
+        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        if (loadOperation != null)
+        {
+            while (!loadOperation.isDone)
+            {
+                yield return null;
+            }
+        }
+
+        yield return null;
+
+        if (loadingCanvasGroup != null)
+        {
+            yield return FadeCanvasGroup(loadingCanvasGroup.alpha, 0f, fadeDuration);
+        }
+        else if (fadeDuration > 0f)
+        {
+            yield return new WaitForSecondsRealtime(fadeDuration);
+        }
+
+        SetOverlayHidden();
+        restartRoutine = null;
+    }
+
+    private void EnsureStandaloneLoadingCanvas()
+    {
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas == null)
+        {
+            canvas = gameObject.AddComponent<Canvas>();
+        }
+
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = short.MaxValue;
+
+        if (GetComponent<GraphicRaycaster>() == null)
+        {
+            gameObject.AddComponent<GraphicRaycaster>();
+        }
+
+        RectTransform rectTransform = transform as RectTransform;
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.offsetMin = Vector2.zero;
+        rectTransform.offsetMax = Vector2.zero;
+        rectTransform.localScale = Vector3.one;
     }
 
     private IEnumerator FadeCanvasGroup(float from, float to, float duration)

@@ -4,7 +4,7 @@ public static class Utils
 {
     public static int RoundToDisplayInt(float value)
     {
-        return Mathf.RoundToInt(value);
+        return Mathf.CeilToInt(value);
     }
 
     public static string FormatWholeNumber(float value)

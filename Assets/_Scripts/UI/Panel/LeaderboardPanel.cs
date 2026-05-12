@@ -5,6 +5,8 @@ using Roguelike.Systems.Leaderboard;
 using Roguelike.UI.Leaderboard;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -13,6 +15,8 @@ using UnityEngine.UI;
 public class LeaderboardPanel : PanelBase
 {
     private const string LeaderboardTitle = "LEADERBOARD";
+    private const string BackHintText = "ESC TO BACK";
+    private const string DeathBackHintText = "ESC TO RESTART";
 
     [Header("Tham chieu trong Menu")]
     [SerializeField] private GameObject bg;
@@ -40,6 +44,8 @@ public class LeaderboardPanel : PanelBase
     public static Action OnClosed;
 
     private bool ownsPlayerInput = true;
+    private bool isDeathMode;
+    private bool isRestartingAfterDeath;
 
     protected override void Awake()
     {
@@ -70,6 +76,20 @@ public class LeaderboardPanel : PanelBase
         }
     }
 
+    private void Update()
+    {
+        if (!isDeathMode || !IsOpen)
+        {
+            return;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+        {
+            RestartRunAfterDeath();
+        }
+    }
+
     public void FetchLeaderboard()
     {
         ClearEntries();
@@ -89,7 +109,21 @@ public class LeaderboardPanel : PanelBase
 
     public void Show(bool takeInputOwnership, Action onComplete = null)
     {
+        ShowInternal(takeInputOwnership, false, onComplete);
+    }
+
+    public void ShowAfterDeath(Action onComplete = null)
+    {
+        ShowInternal(false, true, onComplete);
+    }
+
+    private void ShowInternal(bool takeInputOwnership, bool deathMode, Action onComplete)
+    {
         ownsPlayerInput = takeInputOwnership;
+        isDeathMode = deathMode;
+        isRestartingAfterDeath = false;
+        RefreshBackHintText();
+
         GameUI.Instance?.InteractPanel?.Hide();
         if (ownsPlayerInput && PlayerController.Instance != null)
         {
@@ -133,6 +167,10 @@ public class LeaderboardPanel : PanelBase
     {
         base.Hide(() =>
         {
+            isDeathMode = false;
+            isRestartingAfterDeath = false;
+            RefreshBackHintText();
+
             bg.SetActive(false);
             if (backHintText != null)
             {
@@ -152,6 +190,12 @@ public class LeaderboardPanel : PanelBase
 
     private void HandleHideClicked()
     {
+        if (isDeathMode)
+        {
+            RestartRunAfterDeath();
+            return;
+        }
+
         Hide();
     }
 
@@ -179,7 +223,7 @@ public class LeaderboardPanel : PanelBase
 
     private void UpdatePlayerLeaderboardUI(PlayerLeaderboardEntry entry)
     {
-        if (myEntryUI == null)
+        if (myEntryUI == null || entry == null)
         {
             return;
         }
@@ -213,11 +257,35 @@ public class LeaderboardPanel : PanelBase
             leaderboardTitleText.text = LeaderboardTitle;
         }
 
+        RefreshBackHintText();
+    }
+
+    private void RefreshBackHintText()
+    {
         if (backHintText != null)
         {
-            backHintText.text = "ESC TO BACK";
+            backHintText.text = isDeathMode ? DeathBackHintText : BackHintText;
             backHintText.gameObject.SetActive(false);
         }
+    }
+
+    private void RestartRunAfterDeath()
+    {
+        if (isRestartingAfterDeath)
+        {
+            return;
+        }
+
+        isRestartingAfterDeath = true;
+        Time.timeScale = 1f;
+
+        if (LoadingUIManager.Instance != null)
+        {
+            LoadingUIManager.Instance.ShowBlackFadeAndRestart();
+            return;
+        }
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void OnDestroy()

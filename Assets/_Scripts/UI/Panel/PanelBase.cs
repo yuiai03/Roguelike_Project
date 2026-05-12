@@ -29,6 +29,7 @@ public abstract class PanelBase : MonoBehaviour
         DOTween.Kill(canvasGroup);
         canvasGroup.alpha = 0f;
         canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
         canvasGroup.DOFade(1f, showDuration).SetUpdate(true).OnComplete(() =>
         {
             onComplete?.Invoke();
@@ -40,6 +41,7 @@ public abstract class PanelBase : MonoBehaviour
         CanvasGroup canvasGroup = GetOrAddCG(gameObject);
         DOTween.Kill(canvasGroup);
         canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
         canvasGroup.DOFade(0f, hideDuration).SetUpdate(true).OnComplete(() =>
         {
             menu.SetActive(false);

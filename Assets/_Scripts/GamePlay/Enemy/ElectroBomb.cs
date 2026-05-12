@@ -66,6 +66,8 @@ public class ElectroBomb : MonoBehaviour
 
     private void Explode()
     {
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.BossBoom);
+
         // AoE Damage
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, damageLayer);
         foreach (Collider hit in hits)

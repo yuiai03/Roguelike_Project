@@ -40,6 +40,19 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
         }
     }
 
+    public void GrantLevels(int count)
+    {
+        if (count <= 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            AddExp(Mathf.Max(0f, expToNextLevel - currentExp));
+        }
+    }
+
     private void LevelUp()
     {
         currentLevel++;
@@ -72,6 +85,6 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     [ContextMenu("Level Up")]
     public void LevelUpCheat()
     {
-        AddExp(expToNextLevel - currentExp);
+        GrantLevels(1);
     }
 }

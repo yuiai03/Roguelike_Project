@@ -169,6 +169,7 @@ public class Spirit : MonoBehaviour
         if (dir == Vector3.zero) return;
 
         StartCoroutine(ShootAnimationCrt(dir));
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.PlayerAttack);
         SpawnSpiritProjectile(dir, aoe: spiritType == SpiritType.Explosion, aoeRad: aoeRadius, pierce: spiritType == SpiritType.Pierce);
     }
 
@@ -178,6 +179,7 @@ public class Spirit : MonoBehaviour
         if (dir == Vector3.zero) return;
 
         StartCoroutine(ShootAnimationCrt(dir));
+        AudioManager.Instance?.PlayWorldSfx(AudioCue.PlayerAttack);
 
         int projectileCount = GetTripleShotProjectileCount();
         if (projectileCount == 1)

@@ -162,8 +162,15 @@ namespace Roguelike.Systems.Leaderboard
 
         #region 3. U P D A T E   S C O R E
 
-        public void SubmitScore(int finalScore)
+        public void SubmitScore(int finalScore, System.Action onSuccess = null, System.Action onFailure = null)
         {
+            if (!PlayFabClientAPI.IsClientLoggedIn())
+            {
+                Debug.LogWarning("Chua dang nhap PlayFab, khong the gui diem ngay luc nay.");
+                onFailure?.Invoke();
+                return;
+            }
+
             Debug.Log($"Đang gửi điểm {finalScore} lên PlayFab ({LeaderboardStatisticName})...");
 
             var request = new UpdatePlayerStatisticsRequest
@@ -178,7 +185,17 @@ namespace Roguelike.Systems.Leaderboard
                 }
             };
 
-            PlayFabClientAPI.UpdatePlayerStatistics(request, OnScoreSubmitSuccess, OnError);
+            PlayFabClientAPI.UpdatePlayerStatistics(request,
+                result =>
+                {
+                    OnScoreSubmitSuccess(result);
+                    onSuccess?.Invoke();
+                },
+                error =>
+                {
+                    OnError(error);
+                    onFailure?.Invoke();
+                });
         }
 
         private void OnScoreSubmitSuccess(UpdatePlayerStatisticsResult result)
