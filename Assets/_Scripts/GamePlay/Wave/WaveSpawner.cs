@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class WaveSpawner : Singleton<WaveSpawner>
 {
     private const float SpawnCircleVisualLift = 0.05f;
-    private const float MapTransitionPostEnemyDeathDelaySeconds = 0.5f;
+    private const float MapTransitionPostEnemyDeathDelaySeconds = 1.5f;
 
     [Header("Configuration")]
     [SerializeField] private WaveConfig waveConfig;
