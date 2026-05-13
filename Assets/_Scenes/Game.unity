@@ -17819,6 +17819,7 @@ MonoBehaviour:
   currentExp: 0
   expToNextLevel: 100
   expScalingFactor: 1.1
+  totalExpRequiredForNextLevel: 100
   totalExpGained: 0
   OnLevelUp:
     m_PersistentCalls:
@@ -18205,6 +18206,7 @@ MonoBehaviour:
   entriesContainer: {fileID: 373497254}
   entryPrefab: {fileID: 2786876314225228140, guid: 57c405059b9d21a4298a360b4eb5a2c6, type: 3}
   leaderboardTitleText: {fileID: 2099001004}
+  leaderboardNoteText: {fileID: 0}
   backHintText: {fileID: 1391585609}
   myEntryUI: {fileID: 1012769735}
   entryFadeDuration: 0.25
@@ -35018,82 +35020,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!1 &1240287831
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1240287833}
-  - component: {fileID: 1240287832}
-  m_Layer: 0
-  m_Name: -----WaveSpawner-----
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1240287832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1240287831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d0b9dd96bb4be5458e3ae251e396803, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isDontDestroy: 0
-  waveConfig: {fileID: 11400000, guid: 39803f1e892ff7d419e550243e212b11, type: 2}
-  spawnRandomRadius: 2
-  maxSpawnAttempts: 10
-  maxEndlessEnemyBonusPerGroup: 10
-  maxGeneratedEnemyCountPerGroup: 30
-  maxEndlessSpreadBonus: 8
-  maxGeneratedSpreadRadius: 16
-  maxEnemySpawnsPerFrame: 8
-  maxSpawnEffectsPerFrame: 12
-  useCircleSpawn: 1
-  effectDuration: 1
-  spawnEffectPoolType: 5
-  spawnEffectGroundMask:
-    serializedVersion: 2
-    m_Bits: 0
-  currentWave: 0
-  OnWaveStart:
-    m_PersistentCalls:
-      m_Calls: []
-  OnWaveComplete:
-    m_PersistentCalls:
-      m_Calls: []
-  OnEnemyCountChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnAllWavesComplete:
-    m_PersistentCalls:
-      m_Calls: []
-  OnBossWaveStart:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!4 &1240287833
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1240287831}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1245772562
 GameObject:
   m_ObjectHideFlags: 0
@@ -58012,7 +57938,6 @@ SceneRoots:
   - {fileID: 7041077586504248152}
   - {fileID: 2563449999859580742}
   - {fileID: 1081393078}
-  - {fileID: 1240287833}
   - {fileID: 938836865}
   - {fileID: 2076761063}
   - {fileID: 1736932460}

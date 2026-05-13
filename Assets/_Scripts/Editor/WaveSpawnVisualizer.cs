@@ -231,13 +231,6 @@ public class WaveSpawnVisualizer : EditorWindow
                     Handles.DrawWireDisc(g.spawnPosition, Vector3.up, g.spreadRadius);
                     Handles.DrawSolidDisc(g.spawnPosition, Vector3.up, 0.4f);
 
-                    GUIStyle style = new GUIStyle(GUI.skin.label)
-                    {
-                        normal = { textColor = Color.yellow },
-                        fontStyle = FontStyle.Bold
-                    };
-                    Handles.Label(g.spawnPosition + Vector3.up * 3f,
-                        $"Wave {endlessPreviewWave} Preview\n{g.enemyCount}x {g.enemyPoolType}", style);
                 }
             }
         }
@@ -256,17 +249,6 @@ public class WaveSpawnVisualizer : EditorWindow
             Handles.DrawWireDisc(group.spawnPosition, Vector3.up, group.spreadRadius);
             Handles.DrawSolidDisc(group.spawnPosition, Vector3.up, 0.3f);
 
-            GUIStyle style = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = isSelected ? Color.white : new Color(1, 1, 1, 0.5f) },
-                fontStyle = FontStyle.Bold
-            };
-
-            Handles.Label(
-                group.spawnPosition + Vector3.up * 2f,
-                $"W{waveIndex + 1}-G{i + 1}: {group.enemyCount}x {group.enemyPoolType}",
-                style
-            );
         }
     }
 

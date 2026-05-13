@@ -12,6 +12,9 @@ public enum PlacementPattern
 
 public class SpawnPointPlacer : EditorWindow
 {
+    private static GUIStyle sceneDelayLabelStyle;
+    private static GUIStyle sceneMainLabelStyle;
+
     private WaveConfig targetConfig;
     private int targetWaveIndex = 0;
     private int selectedGroupIndex = -1; // -1 = không chọn cái nào
@@ -33,6 +36,7 @@ public class SpawnPointPlacer : EditorWindow
     private bool allowMelee = true;
     private bool allowRanged = true;
     private bool allowFly = false;
+    private bool allowRandomBoss = false;
 
     private bool placementMode = false;
 
@@ -109,6 +113,7 @@ public class SpawnPointPlacer : EditorWindow
                 allowMelee  = EditorGUILayout.Toggle("Melee Enemy", allowMelee);
                 allowRanged = EditorGUILayout.Toggle("Ranged Enemy", allowRanged);
                 allowFly    = EditorGUILayout.Toggle("Fly Enemy", allowFly);
+                allowRandomBoss = EditorGUILayout.Toggle("Random Boss", allowRandomBoss);
                 EditorGUI.indentLevel--;
             }
             else
@@ -248,29 +253,11 @@ public class SpawnPointPlacer : EditorWindow
     // ─── SCENE GUI ────────────────────────────────────────────────────
     private void OnSceneGUI(SceneView sceneView)
     {
-        // Click existing spawn point to select it (no placement mode needed)
+        // Show existing spawn groups in both normal and placement modes.
         Event e = Event.current;
-        if (!placementMode && targetConfig != null && targetWaveIndex < targetConfig.waves.Count)
+        if (targetConfig != null && targetWaveIndex < targetConfig.waves.Count)
         {
-            SimpleWaveData wave = targetConfig.waves[targetWaveIndex];
-            for (int i = 0; i < wave.enemyGroups.Count; i++)
-            {
-                float handleSize = HandleUtility.GetHandleSize(wave.enemyGroups[i].spawnPosition) * 0.5f;
-                if (Handles.Button(wave.enemyGroups[i].spawnPosition, Quaternion.identity,
-                    handleSize, handleSize, Handles.SphereHandleCap))
-                {
-                    selectedGroupIndex = i;
-                    Repaint();
-                }
-
-                // Highlight selected
-                Color c = selectedGroupIndex == i ? Color.yellow : Color.HSVToRGB((i * 0.15f) % 1f, 0.8f, 1f);
-                Handles.color = c;
-                Handles.DrawWireDisc(wave.enemyGroups[i].spawnPosition, Vector3.up, wave.enemyGroups[i].spreadRadius);
-                Handles.DrawSolidDisc(wave.enemyGroups[i].spawnPosition, Vector3.up, 0.35f);
-                Handles.Label(wave.enemyGroups[i].spawnPosition + Vector3.up * 2f,
-                    $"[{i+1}] {wave.enemyGroups[i].enemyCount}x {wave.enemyGroups[i].enemyPoolType}\nDelay: {wave.enemyGroups[i].spawnDelay}s");
-            }
+            DrawExistingSpawnGroups(targetConfig.waves[targetWaveIndex], !placementMode);
         }
 
         if (!placementMode || targetConfig == null || targetWaveIndex >= targetConfig.waves.Count) return;
@@ -303,17 +290,24 @@ public class SpawnPointPlacer : EditorWindow
         // Preview
         List<Vector3> previewPoints = GetPatternPositions(center);
         PoolType displayType = randomizeMode ? PoolType.Enemy_Melee : enemyType;
+        string spawnDelayText = FormatSpawnDelay(spawnDelay);
 
         Handles.color = new Color(0, 1, 0, 0.6f);
+        float delayLabelHeight = pattern == PlacementPattern.Single ? 1.8f : 1.2f;
         foreach (var p in previewPoints)
         {
             Handles.DrawWireDisc(p, Vector3.up, spreadRadius);
             Handles.DrawSolidDisc(p, Vector3.up, 0.3f);
+            Handles.Label(
+                p + Vector3.up * delayLabelHeight,
+                $"Delay: {spawnDelayText}",
+                GetSceneDelayLabelStyle());
         }
 
         Handles.color = Color.green;
         Handles.Label(center + Vector3.up * 2.5f,
-            $"[{pattern}] Click to place\n{enemyCount}x {(randomizeMode ? "Random" : displayType.ToString())}");
+            $"[{pattern}] Click to place\n{enemyCount}x {(randomizeMode ? "Random" : displayType.ToString())}\nDelay: {spawnDelayText}",
+            GetSceneMainLabelStyle());
 
         if (e.type == EventType.MouseDown && e.button == 0)
         {
@@ -324,15 +318,43 @@ public class SpawnPointPlacer : EditorWindow
         DrawOverlay(e);
     }
 
+    private void DrawExistingSpawnGroups(SimpleWaveData wave, bool allowSelection)
+    {
+        for (int i = 0; i < wave.enemyGroups.Count; i++)
+        {
+            EnemyGroup group = wave.enemyGroups[i];
+
+            if (allowSelection)
+            {
+                float handleSize = HandleUtility.GetHandleSize(group.spawnPosition) * 0.5f;
+                if (Handles.Button(group.spawnPosition, Quaternion.identity, handleSize, handleSize, Handles.SphereHandleCap))
+                {
+                    selectedGroupIndex = i;
+                    Repaint();
+                }
+            }
+
+            Color c = selectedGroupIndex == i ? Color.yellow : Color.HSVToRGB((i * 0.15f) % 1f, 0.8f, 1f);
+            Handles.color = c;
+            Handles.DrawWireDisc(group.spawnPosition, Vector3.up, group.spreadRadius);
+            Handles.DrawSolidDisc(group.spawnPosition, Vector3.up, 0.35f);
+            Handles.Label(
+                group.spawnPosition + Vector3.up * 2f,
+                $"W{targetWaveIndex + 1}-G{i + 1}: {group.enemyCount}x {group.enemyPoolType} | Delay: {FormatSpawnDelay(group.spawnDelay)}",
+                GetSceneMainLabelStyle());
+        }
+    }
+
     private void DrawOverlay(Event e)
     {
         Handles.BeginGUI();
-        GUILayout.BeginArea(new Rect(10, 10, 320, 60));
+        GUILayout.BeginArea(new Rect(10, 10, 340, 82));
         GUILayout.Box(
             $"PLACEMENT MODE | Pattern: {pattern}" +
             (randomizeMode ? " | Randomize ON" : $" | Type: {enemyType}") +
+            $"\nDelay: {FormatSpawnDelay(spawnDelay)}" +
             "\n[1] Melee  [2] Ranged  [3] Fly  |  ESC to cancel",
-            GUILayout.Width(320)
+            GUILayout.Width(340)
         );
         GUILayout.EndArea();
         Handles.EndGUI();
@@ -399,10 +421,65 @@ public class SpawnPointPlacer : EditorWindow
 
     private PoolType GetRandomAllowedType()
     {
+        return PickRandomAllowedType(allowMelee, allowRanged, allowFly, allowRandomBoss);
+    }
+
+    private static string FormatSpawnDelay(float delay)
+    {
+        return $"{delay:F1}s";
+    }
+
+    private static GUIStyle GetSceneDelayLabelStyle()
+    {
+        if (sceneDelayLabelStyle == null)
+        {
+            sceneDelayLabelStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold,
+                fontSize = 12
+            };
+            sceneDelayLabelStyle.normal.textColor = Color.yellow;
+        }
+
+        return sceneDelayLabelStyle;
+    }
+
+    private static GUIStyle GetSceneMainLabelStyle()
+    {
+        if (sceneMainLabelStyle == null)
+        {
+            sceneMainLabelStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold,
+                fontSize = 12
+            };
+            sceneMainLabelStyle.normal.textColor = Color.white;
+        }
+
+        return sceneMainLabelStyle;
+    }
+
+    internal static List<PoolType> BuildRandomAllowedTypes(bool allowMelee, bool allowRanged, bool allowFly, bool allowRandomBoss)
+    {
         var allowed = new List<PoolType>();
         if (allowMelee)  allowed.Add(PoolType.Enemy_Melee);
         if (allowRanged) allowed.Add(PoolType.Enemy_Ranged);
         if (allowFly)    allowed.Add(PoolType.Enemy_Fly);
+        if (allowRandomBoss)
+        {
+            allowed.Add(PoolType.Boss_Geo);
+            allowed.Add(PoolType.Boss_Pyro);
+            allowed.Add(PoolType.Boss_Electro);
+        }
+
+        return allowed;
+    }
+
+    internal static PoolType PickRandomAllowedType(bool allowMelee, bool allowRanged, bool allowFly, bool allowRandomBoss)
+    {
+        List<PoolType> allowed = BuildRandomAllowedTypes(allowMelee, allowRanged, allowFly, allowRandomBoss);
 
         if (allowed.Count == 0) return PoolType.Enemy_Melee;
         return allowed[Random.Range(0, allowed.Count)];
