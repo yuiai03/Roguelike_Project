@@ -38,7 +38,7 @@ public class PlayerData : MonoBehaviour
 
     [Header("MultiShot")]
     public int multiShotCount = 1; 
-    public float multiShotAngle = 10f; 
+    public float multiShotAngle = 12f;
     public float multiShotAtkMultiplier = 1f;
 
     [Header("AoE Explosion")]
@@ -92,6 +92,7 @@ public class PlayerData : MonoBehaviour
         luckBonus = 0f;
 
         multiShotCount = 1;
+        multiShotAngle = 12f;
         multiShotAtkMultiplier = 1f;
         isAoEEnabled = false;
         aoeAtkMultiplier = 1f;

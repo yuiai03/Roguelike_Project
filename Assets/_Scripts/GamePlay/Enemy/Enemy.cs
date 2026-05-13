@@ -5,6 +5,8 @@ using UnityEngine.Events;
 [RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour, IDamageable
 {
+    public const float DeathCleanupDelaySeconds = 0.5f;
+
     [Header("Model Reference")]
     [SerializeField] protected Transform modelTransform;
 
@@ -375,11 +377,11 @@ public class Enemy : MonoBehaviour, IDamageable
 
         if (poolType != PoolType.None && ObjectPool.Instance != null)
         {
-            ObjectPool.Instance.DespawnAfterDelay(gameObject, poolType, 0.5f);
+            ObjectPool.Instance.DespawnAfterDelay(gameObject, poolType, DeathCleanupDelaySeconds);
         }
         else
         {
-            Destroy(gameObject, 0.5f);
+            Destroy(gameObject, DeathCleanupDelaySeconds);
         }
     }
 

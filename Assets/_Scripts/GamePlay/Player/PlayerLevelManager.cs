@@ -8,6 +8,7 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     [SerializeField] private float currentExp = 0f;
     [SerializeField] private float expToNextLevel = 100f;
     [SerializeField] private float expScalingFactor = 1.1f;
+    [SerializeField] private float totalExpRequiredForNextLevel = 100f;
 
     [Header("Leaderboard Data")]
     public float totalExpGained = 0f;
@@ -17,18 +18,24 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     public UnityEvent<float, float> OnExpChanged;
     public UnityEvent<int, int> OnLevelChanged;
 
+    private System.Action startGameHandler;
+
     private void Start()
     {
+        Time.timeScale = 1f;
+        EnsureTotalExpRequiredInitialized();
+
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
         OnLevelChanged?.Invoke(currentLevel, 999);
-        ChallengePanel.onGameStart += () =>
-        {
-            LevelUp();
-        };
+
+        startGameHandler = LevelUp;
+        ChallengePanel.onGameStart += startGameHandler;
     }
 
     public void AddExp(float amount)
     {
+        EnsureTotalExpRequiredInitialized();
+
         currentExp += amount;
         totalExpGained += amount;
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
@@ -55,10 +62,13 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
 
     private void LevelUp()
     {
+        EnsureTotalExpRequiredInitialized();
+
         currentLevel++;
         AudioManager.Instance?.PlayWorldSfx(AudioCue.LevelUp);
 
         expToNextLevel = Mathf.Floor(expToNextLevel * expScalingFactor);
+        totalExpRequiredForNextLevel += expToNextLevel;
 
         Debug.Log($"=== LEVEL UP! Now Level {currentLevel} ===");
         Debug.Log($"Next level requires: {expToNextLevel} EXP");
@@ -66,8 +76,6 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
         OnLevelChanged?.Invoke(currentLevel, 999);
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
         OnLevelUp?.Invoke(currentLevel);
-
-        Time.timeScale = 0f;
     }
 
     public int GetCurrentLevel() => currentLevel;
@@ -75,6 +83,19 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     public float GetExpToNextLevel() => expToNextLevel;
     public float GetExpProgress() => currentExp / expToNextLevel;
     public float GetTotalExpGained() => totalExpGained;
+    public float GetTotalExpRequiredForNextLevel()
+    {
+        EnsureTotalExpRequiredInitialized();
+        return totalExpRequiredForNextLevel;
+    }
+
+    private void EnsureTotalExpRequiredInitialized()
+    {
+        if (totalExpRequiredForNextLevel <= 0f || totalExpRequiredForNextLevel < expToNextLevel)
+        {
+            totalExpRequiredForNextLevel = expToNextLevel;
+        }
+    }
 
     [ContextMenu("Add 50 Exp")]
     public void AddExpCheat()
@@ -86,5 +107,13 @@ public class PlayerLevelSystem : Singleton<PlayerLevelSystem>
     public void LevelUpCheat()
     {
         GrantLevels(1);
+    }
+
+    private void OnDestroy()
+    {
+        if (startGameHandler != null)
+        {
+            ChallengePanel.onGameStart -= startGameHandler;
+        }
     }
 }

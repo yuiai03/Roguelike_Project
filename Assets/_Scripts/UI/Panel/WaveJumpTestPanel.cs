@@ -128,6 +128,18 @@ public class WaveJumpTestPanel : PanelBase
         ClosePanelInternal(true, null);
     }
 
+    public void ForceHideForSceneReload()
+    {
+        HideImmediate();
+
+        if (background != null)
+        {
+            background.SetActive(false);
+        }
+
+        EventSystem.current?.SetSelectedGameObject(null);
+    }
+
     private void HandleJumpButtonClicked()
     {
         if (waveInputField == null)

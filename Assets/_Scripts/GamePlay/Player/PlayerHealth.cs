@@ -220,7 +220,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         controller?.SetInputActive(false);
 
         PlayerAnimationController animationController = GetComponent<PlayerAnimationController>();
-        animationController?.PlayAnimationImmediate(PlayerAnimationController.AnimationState.Idle);
+        animationController?.ForceIdleImmediate();
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)

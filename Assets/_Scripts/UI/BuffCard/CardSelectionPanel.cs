@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class CardSelectionPanel : PanelBase
@@ -41,6 +42,12 @@ public class CardSelectionPanel : PanelBase
 
     private void OnPlayerLevelUp(int newLevel)
     {
+        if (ShouldSuppressCardSelection())
+        {
+            Debug.Log($"Skipped card selection for level {newLevel} because leaderboard or death UI is active.");
+            return;
+        }
+
         Debug.Log($"Queued card selection for level {newLevel}.");
         queuedLevelRewards.Enqueue(newLevel);
         TryShowNextQueuedCards();
@@ -143,8 +150,33 @@ public class CardSelectionPanel : PanelBase
         });
     }
 
+    public void CancelPendingSelectionsForLeaderboard()
+    {
+        queuedLevelRewards.Clear();
+        waitingForThemeTransition = false;
+        ClearCards();
+
+        CanvasGroup canvasGroup = GetOrAddCG(gameObject);
+        DOTween.Kill(canvasGroup);
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+
+        if (menu != null)
+        {
+            menu.SetActive(false);
+        }
+    }
+
     private bool TryShowNextQueuedCards()
     {
+        if (ShouldSuppressCardSelection())
+        {
+            queuedLevelRewards.Clear();
+            waitingForThemeTransition = false;
+            return false;
+        }
+
         if (IsOpen)
         {
             return false;
@@ -191,11 +223,27 @@ public class CardSelectionPanel : PanelBase
 
     private void RestoreGameplayAfterRewards()
     {
+        if (PlayerHealth.Instance != null && PlayerHealth.Instance.IsDead())
+        {
+            return;
+        }
+
         Time.timeScale = 1f;
         if (PlayerController.Instance != null)
         {
             PlayerController.Instance.SetInputActive(true);
         }
+    }
+
+    private bool ShouldSuppressCardSelection()
+    {
+        if (PlayerHealth.Instance != null && PlayerHealth.Instance.IsDead())
+        {
+            return true;
+        }
+
+        LeaderboardPanel leaderboardPanel = GameUI.Instance != null ? GameUI.Instance.LeaderboardPanel : null;
+        return leaderboardPanel != null && leaderboardPanel.IsOpen;
     }
 
     private void HandleThemeTransitionCompleted(int _)

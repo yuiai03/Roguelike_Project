@@ -48,7 +48,7 @@ public class Spirit : MonoBehaviour
 
     [Header("Triple Shot")]
     [SerializeField] private int tripleShotProjectileCount = 3;
-    [SerializeField] private float tripleShotSpreadAngle = 12f;
+    [SerializeField] private float tripleShotSpreadAngle = 9f;
     [SerializeField] private float retargetRetryFactor = 0.3f;
 
     private Transform player;
@@ -270,7 +270,7 @@ public class Spirit : MonoBehaviour
 
     private float GetTripleShotSpreadAngle()
     {
-        return tripleShotSpreadAngle > 0f ? tripleShotSpreadAngle : 12f;
+        return tripleShotSpreadAngle > 0f ? tripleShotSpreadAngle : 9f;
     }
 
     private System.Collections.IEnumerator ShootAnimationCrt(Vector3 targetDirection)

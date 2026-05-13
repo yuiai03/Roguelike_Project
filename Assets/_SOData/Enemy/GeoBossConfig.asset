@@ -31,7 +31,7 @@ MonoBehaviour:
   phase1SpeedMult: 1
   phase2SpeedMult: 1.3
   phase3SpeedMult: 1.6
-  bossProjectileSpeed: 15
+  bossProjectileSpeed: 12
   bossProjectileLifetime: 6
   bossProjectileDamage: 25
   bossShootCooldown: 10

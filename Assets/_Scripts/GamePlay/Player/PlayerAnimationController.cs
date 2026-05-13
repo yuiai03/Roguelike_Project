@@ -60,11 +60,20 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (animator == null) return;
 
+        animator.enabled = true;
+        animator.speed = 1f;
+
         previousState = currentState;
         currentState = state;
 
         int stateHash = GetStateHash(state);
         animator.Play(stateHash, 0, 0f);
+        animator.Update(0f);
+    }
+
+    public void ForceIdleImmediate()
+    {
+        PlayAnimationImmediate(AnimationState.Idle);
     }
 
     private int GetStateHash(AnimationState state)

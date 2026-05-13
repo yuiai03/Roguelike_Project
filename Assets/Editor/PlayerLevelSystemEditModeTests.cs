@@ -42,6 +42,12 @@ public class PlayerLevelSystemEditModeTests
     }
 
     [Test]
+    public void InitialTotalExpRequiredForNextLevel_UsesStartingRequirement()
+    {
+        Assert.AreEqual(100f, levelSystem.GetTotalExpRequiredForNextLevel(), 0.0001f);
+    }
+
+    [Test]
     public void GrantLevels_LevelsOnce_UpdatesStateAndInvokesEvent()
     {
         levelSystem.GrantLevels(1);
@@ -50,6 +56,7 @@ public class PlayerLevelSystemEditModeTests
         Assert.AreEqual(0f, levelSystem.GetCurrentExp(), 0.0001f);
         Assert.AreEqual(110f, levelSystem.GetExpToNextLevel(), 0.0001f);
         Assert.AreEqual(100f, levelSystem.GetTotalExpGained(), 0.0001f);
+        Assert.AreEqual(210f, levelSystem.GetTotalExpRequiredForNextLevel(), 0.0001f);
         Assert.AreEqual(1, levelUpEventCount);
     }
 
@@ -62,6 +69,7 @@ public class PlayerLevelSystemEditModeTests
         Assert.AreEqual(0f, levelSystem.GetCurrentExp(), 0.0001f);
         Assert.AreEqual(160f, levelSystem.GetExpToNextLevel(), 0.0001f);
         Assert.AreEqual(610f, levelSystem.GetTotalExpGained(), 0.0001f);
+        Assert.AreEqual(770f, levelSystem.GetTotalExpRequiredForNextLevel(), 0.0001f);
         Assert.AreEqual(5, levelUpEventCount);
     }
 

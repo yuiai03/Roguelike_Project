@@ -412,7 +412,7 @@ MonoBehaviour:
   damageBonus: 0
   attackSpeedBonus: 0
   multiShotCount: 1
-  multiShotAngle: 15
+  multiShotAngle: 12
   multiShotDamage: 0
   isAoEEnabled: 0
   aoeRadius: 3

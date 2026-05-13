@@ -85,6 +85,7 @@ public class EnemyAnimationController : MonoBehaviour
         if (enemy != null)
         {
             enemy.OnAttack.AddListener(OnEnemyAttack);
+            enemy.OnDeath.AddListener(OnEnemyDeath);
         }
     }
 
@@ -93,12 +94,13 @@ public class EnemyAnimationController : MonoBehaviour
         if (enemy != null)
         {
             enemy.OnAttack.RemoveListener(OnEnemyAttack);
+            enemy.OnDeath.RemoveListener(OnEnemyDeath);
         }
     }
 
     private void OnEnemyAttack()
     {
-        if (animator == null) return;
+        if (animator == null || (enemy != null && enemy.IsDead())) return;
         
         // Use CrossFade or Play with the state hash directly instead of a Trigger
         animator.Play(attackHash, 0, 0f);
@@ -117,9 +119,15 @@ public class EnemyAnimationController : MonoBehaviour
         }
     }
 
+    private void OnEnemyDeath()
+    {
+        lastEnemyState = EnemyState.Dead;
+        PlayAnimationImmediate(EnemyAnimState.Idle);
+    }
+
     private void Update()
     {
-        if (animator == null || enemy == null || enemy.IsDead())
+        if (animator == null || enemy == null)
         {
             return;
         }
@@ -159,8 +167,6 @@ public class EnemyAnimationController : MonoBehaviour
                 return EnemyAnimState.Idle;
 
             case EnemyState.Dead:
-
-                if (animator != null) animator.enabled = false;
                 return EnemyAnimState.Idle;
 
             case EnemyState.Chasing:
@@ -196,11 +202,15 @@ public class EnemyAnimationController : MonoBehaviour
     {
         if (animator == null) return;
 
+        animator.enabled = true;
+        animator.speed = 1f;
+
         previousAnimState = currentAnimState;
         currentAnimState = state;
 
         int stateHash = GetStateHash(state);
         animator.Play(stateHash, 0, 0f);
+        animator.Update(0f);
 
         if (debugMode)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using PlayFab.ClientModels;
 using Roguelike.Systems.Leaderboard;
 using Roguelike.UI.Leaderboard;
@@ -15,6 +16,7 @@ using UnityEngine.UI;
 public class LeaderboardPanel : PanelBase
 {
     private const string LeaderboardTitle = "LEADERBOARD";
+    private const string LeaderboardNote = "b\u1ea3ng x\u1ebfp h\u1ea1ng \u0111\u01b0\u1ee3c t\u00ednh theo t\u1ed5ng \u0111i\u1ec3m kinh nghi\u1ec7m b\u1ea1n nh\u1eadn \u0111\u01b0\u1ee3c";
     private const string BackHintText = "ESC TO BACK";
     private const string DeathBackHintText = "ESC TO RESTART";
 
@@ -26,6 +28,7 @@ public class LeaderboardPanel : PanelBase
     [SerializeField] private Transform entriesContainer;
     [SerializeField] private GameObject entryPrefab;
     [SerializeField] private TextMeshProUGUI leaderboardTitleText;
+    [SerializeField] private TextMeshProUGUI leaderboardNoteText;
     [SerializeField] private TextMeshProUGUI backHintText;
 
     [Header("My Score UI")]
@@ -46,10 +49,12 @@ public class LeaderboardPanel : PanelBase
     private bool ownsPlayerInput = true;
     private bool isDeathMode;
     private bool isRestartingAfterDeath;
+    private PlayFabLeaderboardManager subscribedLeaderboardManager;
 
     protected override void Awake()
     {
         base.Awake();
+        EnsureLeaderboardNoteText();
         RefreshStaticTexts();
 
         if (hideButton != null)
@@ -60,20 +65,12 @@ public class LeaderboardPanel : PanelBase
 
     private void OnEnable()
     {
-        if (PlayFabLeaderboardManager.Instance != null)
-        {
-            PlayFabLeaderboardManager.Instance.OnLeaderboardDataArrived += UpdateLeaderboardUI;
-            PlayFabLeaderboardManager.Instance.OnPlayerLeaderboardDataArrived += UpdatePlayerLeaderboardUI;
-        }
+        SubscribeToCurrentLeaderboardManager();
     }
 
     private void OnDisable()
     {
-        if (PlayFabLeaderboardManager.Instance != null)
-        {
-            PlayFabLeaderboardManager.Instance.OnLeaderboardDataArrived -= UpdateLeaderboardUI;
-            PlayFabLeaderboardManager.Instance.OnPlayerLeaderboardDataArrived -= UpdatePlayerLeaderboardUI;
-        }
+        UnsubscribeFromLeaderboardManager();
     }
 
     private void Update()
@@ -100,10 +97,11 @@ public class LeaderboardPanel : PanelBase
             myEntryUI.gameObject.SetActive(false);
         }
 
-        if (PlayFabLeaderboardManager.Instance != null)
+        PlayFabLeaderboardManager leaderboardManager = SubscribeToCurrentLeaderboardManager();
+        if (leaderboardManager != null)
         {
-            PlayFabLeaderboardManager.Instance.GetLeaderboardData();
-            PlayFabLeaderboardManager.Instance.GetPlayerLeaderboardData();
+            leaderboardManager.GetLeaderboardData();
+            leaderboardManager.GetPlayerLeaderboardData();
         }
     }
 
@@ -114,6 +112,7 @@ public class LeaderboardPanel : PanelBase
 
     public void ShowAfterDeath(Action onComplete = null)
     {
+        GameUI.Instance?.CardSelectionPanel?.CancelPendingSelectionsForLeaderboard();
         ShowInternal(false, true, onComplete);
     }
 
@@ -123,22 +122,12 @@ public class LeaderboardPanel : PanelBase
         isDeathMode = deathMode;
         isRestartingAfterDeath = false;
         RefreshBackHintText();
+        PrepareVisualsForShow();
 
         GameUI.Instance?.InteractPanel?.Hide();
         if (ownsPlayerInput && PlayerController.Instance != null)
         {
             PlayerController.Instance.SetInputActive(false);
-        }
-
-        bg.SetActive(true);
-        if (leaderboardTitleText != null)
-        {
-            leaderboardTitleText.gameObject.SetActive(true);
-        }
-
-        if (backHintText != null)
-        {
-            backHintText.gameObject.SetActive(true);
         }
 
         AudioManager.Instance?.PlayUISfx(AudioCue.UiLeaderboardOpen);
@@ -163,6 +152,48 @@ public class LeaderboardPanel : PanelBase
         HideInternal(ownsPlayerInput, onComplete);
     }
 
+    public void ForceHideForSceneReload()
+    {
+        CanvasGroup canvasGroup = GetOrAddCG(gameObject);
+        DOTween.Kill(canvasGroup);
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+
+        isDeathMode = false;
+        isRestartingAfterDeath = false;
+        ownsPlayerInput = false;
+
+        ClearEntries();
+        if (myEntryUI != null)
+        {
+            myEntryUI.HideInstant();
+            myEntryUI.gameObject.SetActive(false);
+        }
+
+        if (menu != null)
+        {
+            menu.SetActive(false);
+        }
+
+        if (bg != null)
+        {
+            bg.SetActive(false);
+        }
+
+        if (leaderboardTitleText != null)
+        {
+            leaderboardTitleText.gameObject.SetActive(false);
+        }
+
+        if (leaderboardNoteText != null)
+        {
+            leaderboardNoteText.gameObject.SetActive(false);
+        }
+
+        RefreshBackHintText();
+    }
+
     private void HideInternal(bool restoreInput, Action onComplete = null)
     {
         base.Hide(() =>
@@ -171,7 +202,16 @@ public class LeaderboardPanel : PanelBase
             isRestartingAfterDeath = false;
             RefreshBackHintText();
 
-            bg.SetActive(false);
+            if (bg != null)
+            {
+                bg.SetActive(false);
+            }
+
+            if (leaderboardNoteText != null)
+            {
+                leaderboardNoteText.gameObject.SetActive(false);
+            }
+
             if (backHintText != null)
             {
                 backHintText.gameObject.SetActive(false);
@@ -197,6 +237,71 @@ public class LeaderboardPanel : PanelBase
         }
 
         Hide();
+    }
+
+    private PlayFabLeaderboardManager SubscribeToCurrentLeaderboardManager()
+    {
+        PlayFabLeaderboardManager leaderboardManager = PlayFabLeaderboardManager.Instance;
+        if (subscribedLeaderboardManager == leaderboardManager)
+        {
+            return subscribedLeaderboardManager;
+        }
+
+        UnsubscribeFromLeaderboardManager();
+
+        subscribedLeaderboardManager = leaderboardManager;
+        if (subscribedLeaderboardManager != null)
+        {
+            subscribedLeaderboardManager.OnLeaderboardDataArrived += UpdateLeaderboardUI;
+            subscribedLeaderboardManager.OnPlayerLeaderboardDataArrived += UpdatePlayerLeaderboardUI;
+        }
+
+        return subscribedLeaderboardManager;
+    }
+
+    private void UnsubscribeFromLeaderboardManager()
+    {
+        if (subscribedLeaderboardManager != null)
+        {
+            subscribedLeaderboardManager.OnLeaderboardDataArrived -= UpdateLeaderboardUI;
+            subscribedLeaderboardManager.OnPlayerLeaderboardDataArrived -= UpdatePlayerLeaderboardUI;
+        }
+
+        subscribedLeaderboardManager = null;
+    }
+
+    private void PrepareVisualsForShow()
+    {
+        CanvasGroup canvasGroup = GetOrAddCG(gameObject);
+        DOTween.Kill(canvasGroup);
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
+
+        if (menu != null)
+        {
+            menu.SetActive(true);
+        }
+
+        if (bg != null)
+        {
+            bg.SetActive(true);
+        }
+
+        if (leaderboardTitleText != null)
+        {
+            leaderboardTitleText.gameObject.SetActive(true);
+        }
+
+        if (leaderboardNoteText != null)
+        {
+            leaderboardNoteText.gameObject.SetActive(true);
+        }
+
+        if (backHintText != null)
+        {
+            backHintText.gameObject.SetActive(true);
+        }
     }
 
     private void UpdateLeaderboardUI(List<PlayerLeaderboardEntry> leaderboardData)
@@ -252,12 +357,55 @@ public class LeaderboardPanel : PanelBase
 
     private void RefreshStaticTexts()
     {
+        EnsureLeaderboardNoteText();
+
         if (leaderboardTitleText != null)
         {
             leaderboardTitleText.text = LeaderboardTitle;
         }
 
+        if (leaderboardNoteText != null)
+        {
+            leaderboardNoteText.text = LeaderboardNote;
+        }
+
         RefreshBackHintText();
+    }
+
+    private void EnsureLeaderboardNoteText()
+    {
+        if (leaderboardNoteText != null || leaderboardTitleText == null)
+        {
+            return;
+        }
+
+        GameObject noteObject = Instantiate(leaderboardTitleText.gameObject, leaderboardTitleText.transform.parent);
+        noteObject.name = "LeaderboardNoteText";
+        noteObject.transform.SetSiblingIndex(leaderboardTitleText.transform.GetSiblingIndex() + 1);
+
+        leaderboardNoteText = noteObject.GetComponent<TextMeshProUGUI>();
+        if (leaderboardNoteText == null)
+        {
+            return;
+        }
+
+        RectTransform titleRect = leaderboardTitleText.rectTransform;
+        RectTransform noteRect = leaderboardNoteText.rectTransform;
+        noteRect.anchorMin = titleRect.anchorMin;
+        noteRect.anchorMax = titleRect.anchorMax;
+        noteRect.pivot = titleRect.pivot;
+        noteRect.anchoredPosition = titleRect.anchoredPosition + new Vector2(0f, -34f);
+        noteRect.sizeDelta = new Vector2(Mathf.Max(titleRect.sizeDelta.x, 560f), 36f);
+
+        leaderboardNoteText.fontSize = Mathf.Max(12f, leaderboardTitleText.fontSize * 0.45f);
+        leaderboardNoteText.fontStyle = FontStyles.Normal;
+        leaderboardNoteText.alignment = TextAlignmentOptions.Center;
+        leaderboardNoteText.enableWordWrapping = true;
+        leaderboardNoteText.raycastTarget = false;
+
+        Color noteColor = leaderboardTitleText.color;
+        noteColor.a = Mathf.Min(noteColor.a, 0.85f);
+        leaderboardNoteText.color = noteColor;
     }
 
     private void RefreshBackHintText()
@@ -285,11 +433,14 @@ public class LeaderboardPanel : PanelBase
             return;
         }
 
+        GameUI.Instance?.PrepareForSceneReload();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void OnDestroy()
     {
+        UnsubscribeFromLeaderboardManager();
+
         if (hideButton != null)
         {
             hideButton.onClick.RemoveListener(HandleHideClicked);

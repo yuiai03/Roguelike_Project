@@ -176,19 +176,17 @@ public class WaveSpawnVisualizer : EditorWindow
 
                     int baseIndex = (endlessPreviewWave - 1) % configCount;
                     int loopCount = (endlessPreviewWave - 1) / configCount;
-                    int extraEnemies = loopCount;
-                    float extraRadius = loopCount * 1f;
 
                     SimpleWaveData baseWave = waveConfig.waves[baseIndex];
 
                     EditorGUILayout.LabelField($"→ Loops: {loopCount}  |  Based on Wave {baseIndex + 1}", EditorStyles.miniLabel);
-                    EditorGUILayout.LabelField($"→ Extra enemies per group: +{extraEnemies}  |  Extra radius: +{extraRadius:F1}", EditorStyles.miniLabel);
+                    EditorGUILayout.LabelField("→ Uses configured enemy counts and spread radius unchanged.", EditorStyles.miniLabel);
                     EditorGUILayout.LabelField($"→ Groups: {baseWave.enemyGroups.Count}", EditorStyles.miniLabel);
 
                     for (int i = 0; i < baseWave.enemyGroups.Count; i++)
                     {
                         var g = baseWave.enemyGroups[i];
-                        EditorGUILayout.LabelField($"   Group {i+1}: {g.enemyCount + extraEnemies}x {g.enemyPoolType} | r={g.spreadRadius + extraRadius:F1}", EditorStyles.miniLabel);
+                        EditorGUILayout.LabelField($"   Group {i+1}: {g.enemyCount}x {g.enemyPoolType} | r={g.spreadRadius:F1}", EditorStyles.miniLabel);
                     }
 
                     if (GUILayout.Button("Show in Scene View"))
@@ -223,9 +221,6 @@ public class WaveSpawnVisualizer : EditorWindow
             if (endlessPreviewWave > configCount && configCount > 0)
             {
                 int baseIndex = (endlessPreviewWave - 1) % configCount;
-                int loopCount = (endlessPreviewWave - 1) / configCount;
-                int extraEnemies = loopCount;
-                float extraRadius = loopCount * 1f;
 
                 SimpleWaveData baseWave = waveConfig.waves[baseIndex];
                 for (int i = 0; i < baseWave.enemyGroups.Count; i++)
@@ -233,7 +228,7 @@ public class WaveSpawnVisualizer : EditorWindow
                     var g = baseWave.enemyGroups[i];
                     Color c = new Color(1f, 0.5f, 0f, 0.8f); // orange for endless
                     Handles.color = c;
-                    Handles.DrawWireDisc(g.spawnPosition, Vector3.up, g.spreadRadius + extraRadius);
+                    Handles.DrawWireDisc(g.spawnPosition, Vector3.up, g.spreadRadius);
                     Handles.DrawSolidDisc(g.spawnPosition, Vector3.up, 0.4f);
 
                     GUIStyle style = new GUIStyle(GUI.skin.label)
@@ -242,7 +237,7 @@ public class WaveSpawnVisualizer : EditorWindow
                         fontStyle = FontStyle.Bold
                     };
                     Handles.Label(g.spawnPosition + Vector3.up * 3f,
-                        $"Wave {endlessPreviewWave} Preview\n{g.enemyCount + extraEnemies}x {g.enemyPoolType}", style);
+                        $"Wave {endlessPreviewWave} Preview\n{g.enemyCount}x {g.enemyPoolType}", style);
                 }
             }
         }

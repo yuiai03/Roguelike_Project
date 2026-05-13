@@ -33,6 +33,20 @@ public class GameUI : Singleton<GameUI>
     public PauseMenuPanel PauseMenuPanel => pauseMenuPanel;
     public WaveJumpTestPanel WaveJumpTestPanel => waveJumpTestPanel;
 
+    public void PrepareForSceneReload()
+    {
+        ResolveMissingReferences();
+
+        Time.timeScale = 1f;
+
+        playerStatsPanel?.ResetForReplay();
+        cardSelectionPanel?.CancelPendingSelectionsForLeaderboard();
+        leaderboardPanel?.ForceHideForSceneReload();
+        pauseMenuPanel?.ForceHideForSceneReload();
+        interactPanel?.HideImmediate();
+        waveJumpTestPanel?.ForceHideForSceneReload();
+    }
+
     private void ResolveMissingReferences()
     {
         if (interactPanel == null) interactPanel = GetComponentInChildren<InteractPanel>(true);

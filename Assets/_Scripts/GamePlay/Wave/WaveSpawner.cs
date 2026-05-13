@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class WaveSpawner : Singleton<WaveSpawner>
 {
     private const float SpawnCircleVisualLift = 0.05f;
+    private const float MapTransitionPostEnemyDeathDelaySeconds = 0.5f;
 
     [Header("Configuration")]
     [SerializeField] private WaveConfig waveConfig;
@@ -13,12 +14,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
     [Header("Settings")]
     [SerializeField] private float spawnRandomRadius = 2f;
     [SerializeField] private int maxSpawnAttempts = 10;
-
-    [Header("Endless Wave Caps")]
-    [SerializeField, Min(0)] private int maxEndlessEnemyBonusPerGroup = 10;
-    [SerializeField, Min(1)] private int maxGeneratedEnemyCountPerGroup = 30;
-    [SerializeField, Min(0f)] private float maxEndlessSpreadBonus = 8f;
-    [SerializeField, Min(0f)] private float maxGeneratedSpreadRadius = 16f;
 
     [Header("Spawn Budget")]
     [SerializeField, Min(1)] private int maxEnemySpawnsPerFrame = 8;
@@ -241,7 +236,6 @@ public class WaveSpawner : Singleton<WaveSpawner>
         }
 
         int baseIndex = (waveNumber - 1) % waveConfig.waves.Count;
-        int loopCount = (waveNumber - 1) / waveConfig.waves.Count;
         SimpleWaveData baseWave = waveConfig.waves[baseIndex];
 
         SimpleWaveData endlessWave = new SimpleWaveData
@@ -253,19 +247,14 @@ public class WaveSpawner : Singleton<WaveSpawner>
             enemyGroups = new List<EnemyGroup>()
         };
 
-        int extraEnemies = Mathf.Min(loopCount, Mathf.Max(0, maxEndlessEnemyBonusPerGroup));
-        float extraRadius = Mathf.Min(loopCount, Mathf.Max(0f, maxEndlessSpreadBonus));
-        int maxEnemyCount = Mathf.Max(1, maxGeneratedEnemyCountPerGroup);
-        float maxSpreadRadius = Mathf.Max(0f, maxGeneratedSpreadRadius);
-
         foreach (EnemyGroup baseGroup in baseWave.enemyGroups)
         {
             endlessWave.enemyGroups.Add(new EnemyGroup
             {
                 enemyPoolType = baseGroup.enemyPoolType,
-                enemyCount = Mathf.Min(baseGroup.enemyCount + extraEnemies, maxEnemyCount),
+                enemyCount = baseGroup.enemyCount,
                 spawnPosition = baseGroup.spawnPosition,
-                spreadRadius = Mathf.Min(baseGroup.spreadRadius + extraRadius, maxSpreadRadius),
+                spreadRadius = baseGroup.spreadRadius,
                 spawnDelay = baseGroup.spawnDelay
             });
         }
@@ -821,6 +810,8 @@ public class WaveSpawner : Singleton<WaveSpawner>
     {
         int upcomingWave = currentWave + 1;
         bool transitionCompleted = false;
+
+        yield return new WaitForSeconds(Enemy.DeathCleanupDelaySeconds + MapTransitionPostEnemyDeathDelaySeconds);
 
         LockGameplayForMapTransition();
         MapThemeManager.Instance?.TransitionToWaveTheme(upcomingWave, () => transitionCompleted = true);

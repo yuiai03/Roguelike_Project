@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using Roguelike.Systems.Leaderboard;
@@ -23,8 +22,6 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
 
     protected override void Awake()
     {
-        isDontDestroy = true;
-        transform.SetParent(null, false);
         base.Awake();
 
         if (Instance != this)
@@ -32,7 +29,6 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
             return;
         }
 
-        EnsureStandaloneLoadingCanvas();
         InitializeOverlayVisible();
     }
 
@@ -118,6 +114,7 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
             return;
         }
 
+        GameUI.Instance?.PrepareForSceneReload();
         restartRoutine = StartCoroutine(RestartSceneWithPersistentLoading());
     }
 
@@ -238,35 +235,6 @@ public class LoadingUIManager : Singleton<LoadingUIManager>
 
         SetOverlayHidden();
         restartRoutine = null;
-    }
-
-    private void EnsureStandaloneLoadingCanvas()
-    {
-        Canvas canvas = GetComponent<Canvas>();
-        if (canvas == null)
-        {
-            canvas = gameObject.AddComponent<Canvas>();
-        }
-
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = short.MaxValue;
-
-        if (GetComponent<GraphicRaycaster>() == null)
-        {
-            gameObject.AddComponent<GraphicRaycaster>();
-        }
-
-        RectTransform rectTransform = transform as RectTransform;
-        if (rectTransform == null)
-        {
-            return;
-        }
-
-        rectTransform.anchorMin = Vector2.zero;
-        rectTransform.anchorMax = Vector2.one;
-        rectTransform.offsetMin = Vector2.zero;
-        rectTransform.offsetMax = Vector2.zero;
-        rectTransform.localScale = Vector3.one;
     }
 
     private IEnumerator FadeCanvasGroup(float from, float to, float duration)

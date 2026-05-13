@@ -49,6 +49,22 @@ public abstract class PanelBase : MonoBehaviour
         });
     }
 
+    public virtual void HideImmediate(Action onComplete = null)
+    {
+        CanvasGroup canvasGroup = GetOrAddCG(gameObject);
+        DOTween.Kill(canvasGroup);
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+
+        if (menu != null)
+        {
+            menu.SetActive(false);
+        }
+
+        onComplete?.Invoke();
+    }
+
     protected CanvasGroup GetOrAddCG(GameObject go)
     {
         CanvasGroup cg = go.GetComponent<CanvasGroup>();

@@ -89,7 +89,7 @@ MonoBehaviour:
   healingInterval: 3.5
   fullHealthTolerance: 0.01
   tripleShotProjectileCount: 3
-  tripleShotSpreadAngle: 12
+  tripleShotSpreadAngle: 9
   retargetRetryFactor: 0.3
 --- !u!1001 &7737749631627673000
 PrefabInstance:

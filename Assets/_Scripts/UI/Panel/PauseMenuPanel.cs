@@ -57,6 +57,7 @@ public class PauseMenuPanel : PanelBase
 
     private PauseView currentView = PauseView.Hidden;
     private bool isBusy;
+    private bool gameplayHudEnabled;
 
     protected override void Awake()
     {
@@ -70,7 +71,7 @@ public class PauseMenuPanel : PanelBase
 
         base.Awake();
         ApplyStaticVisuals();
-        SetHudVisible(true);
+        SetHudVisible(false);
         ShowMainViewInternal(null);
         currentView = PauseView.Hidden;
 
@@ -88,11 +89,13 @@ public class PauseMenuPanel : PanelBase
     private void OnEnable()
     {
         LeaderboardPanel.OnClosed += HandleLeaderboardClosed;
+        ChallengePanel.onGameStart += HandleGameStarted;
     }
 
     private void OnDisable()
     {
         LeaderboardPanel.OnClosed -= HandleLeaderboardClosed;
+        ChallengePanel.onGameStart -= HandleGameStarted;
     }
 
     private void Update()
@@ -203,7 +206,7 @@ public class PauseMenuPanel : PanelBase
                 PlayerController.Instance.SetInputActive(true);
             }
 
-            SetHudVisible(true);
+            RefreshHudVisibility();
         });
     }
 
@@ -298,7 +301,39 @@ public class PauseMenuPanel : PanelBase
         }
 
         Time.timeScale = 1f;
+        GameUI.Instance?.PrepareForSceneReload();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ForceHideForSceneReload()
+    {
+        isBusy = false;
+        currentView = PauseView.Hidden;
+        SetHudVisible(false);
+        AudioManager.Instance?.SetMusicDucked(false);
+
+        if (GameUI.Instance?.LeaderboardPanel?.IsOpen == true)
+        {
+            GameUI.Instance.LeaderboardPanel.HideWithoutInputRestore();
+        }
+
+        if (menu != null)
+        {
+            CanvasGroup menuCanvasGroup = GetOrAddCG(menu);
+            DOTween.Kill(menuCanvasGroup);
+            menuCanvasGroup.alpha = 0f;
+            menuCanvasGroup.blocksRaycasts = false;
+            menuCanvasGroup.interactable = false;
+            menu.SetActive(false);
+        }
+
+        SetPauseMenuOverlayState(false);
+        SetViewRootState(pauseCardRoot, false);
+        SetViewRootState(settingsPanelRoot, false);
+        if (mainView != null) mainView.SetActive(false);
+        if (settingsView != null) settingsView.SetActive(false);
+        EventSystem.current?.SetSelectedGameObject(null);
+        RefreshHudVisibility();
     }
 
     private void QuitGame()
@@ -428,8 +463,14 @@ public class PauseMenuPanel : PanelBase
 
     private void RefreshHudVisibility()
     {
-        bool shouldShow = !IsOpen && !HasBlockingOverlay();
+        bool shouldShow = gameplayHudEnabled && !IsOpen && !HasBlockingOverlay();
         SetHudVisible(shouldShow);
+    }
+
+    private void HandleGameStarted()
+    {
+        gameplayHudEnabled = true;
+        RefreshHudVisibility();
     }
 
     private bool CanOpenPauseMenu()
@@ -635,6 +676,7 @@ public class PauseMenuPanel : PanelBase
 
     private void OnDestroy()
     {
+        ChallengePanel.onGameStart -= HandleGameStarted;
         if (leaderboardButton != null) leaderboardButton.onClick.RemoveListener(OpenLeaderboardFromPause);
         if (settingsButton != null) settingsButton.onClick.RemoveListener(OpenSettings);
         if (actionButton != null) actionButton.onClick.RemoveListener(HandleActionButton);

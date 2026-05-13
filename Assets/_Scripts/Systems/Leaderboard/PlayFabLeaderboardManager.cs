@@ -30,7 +30,14 @@ namespace Roguelike.Systems.Leaderboard
 
         protected override void Awake()
         {
+            isDontDestroy = true;
             base.Awake();
+
+            if (Instance != this)
+            {
+                return;
+            }
+
             if (string.IsNullOrEmpty(PlayFabSettings.TitleId))
             {
                 PlayFabSettings.TitleId = PlayFabTitleId;
@@ -39,6 +46,11 @@ namespace Roguelike.Systems.Leaderboard
 
         private void Start()
         {
+            if (Instance != this)
+            {
+                return;
+            }
+
             Login();
         }
 

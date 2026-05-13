@@ -971,7 +971,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d48263c35719b3542a37fdef9c137f9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDontDestroy: 0
+  isDontDestroy: 1
   interactPanel: {fileID: 467324524}
   challengePanel: {fileID: 1955495041}
   leaderboardPanel: {fileID: 1039853409}
@@ -18133,7 +18133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97a7397fa6e6fa4989f63057e742b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDontDestroy: 0
+  isDontDestroy: 1
   loadingPanel: {fileID: 1423237433}
   loadingCanvasGroup: {fileID: 1423237437}
   fadeDuration: 0.5
@@ -35051,6 +35051,12 @@ MonoBehaviour:
   waveConfig: {fileID: 11400000, guid: 39803f1e892ff7d419e550243e212b11, type: 2}
   spawnRandomRadius: 2
   maxSpawnAttempts: 10
+  maxEndlessEnemyBonusPerGroup: 10
+  maxGeneratedEnemyCountPerGroup: 30
+  maxEndlessSpreadBonus: 8
+  maxGeneratedSpreadRadius: 16
+  maxEnemySpawnsPerFrame: 8
+  maxSpawnEffectsPerFrame: 12
   useCircleSpawn: 1
   effectDuration: 1
   spawnEffectPoolType: 5
@@ -35209,10 +35215,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1423237434}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -120, y: 50}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -15, y: 60}
+  m_SizeDelta: {x: -29.999884, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1249009613
 MonoBehaviour:
@@ -35261,14 +35267,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0

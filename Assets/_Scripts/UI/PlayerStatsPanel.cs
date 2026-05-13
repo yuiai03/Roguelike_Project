@@ -21,48 +21,92 @@ public class PlayerStatsPanel : PanelBase
     [Header("Wave Display")]
     [SerializeField] private TextMeshProUGUI waveText;
 
-    private PlayerLevelSystem levelSystem => PlayerLevelSystem.Instance;
-    private WaveSpawner waveSpawner => WaveSpawner.Instance;
+    private PlayerLevelSystem boundLevelSystem;
+    private WaveSpawner boundWaveSpawner;
+    private PlayerHealth boundPlayerHealth;
     private System.Action startGameHandler;
 
     private void Start()
     {
-        menu.SetActive(false);
-
-        if (playerHealth != null)
-        {
-            UpdateHealthBar(playerHealth.GetCurrentHealth(), playerHealth.GetMaxHealth());
-            playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
-        }
-
-        if (levelSystem != null)
-        {
-            UpdateLevel(levelSystem.GetCurrentLevel(), 999);
-            UpdateExp(levelSystem.GetCurrentExp(), levelSystem.GetExpToNextLevel());
-            levelSystem.OnLevelChanged.AddListener(UpdateLevel);
-            levelSystem.OnExpChanged.AddListener(UpdateExp);
-        }
-
-        if (waveSpawner != null)
-        {
-            UpdateWave(waveSpawner.GetCurrentWave());
-            waveSpawner.OnWaveStart.AddListener(UpdateWave);
-        }
-
-        startGameHandler = () => Show();
+        startGameHandler = HandleGameStart;
         ChallengePanel.onGameStart += startGameHandler;
 
-        menu.SetActive(false);
+        ResetForReplay();
     }
 
     private void Update()
     {
-        if (waveSpawner == null || waveText == null)
+        if (!IsOpen || boundWaveSpawner == null || waveText == null)
         {
             return;
         }
 
-        waveText.text = WaveSpawner.FormatWaveLabel(waveSpawner.GetCurrentWave(), waveSpawner.GetTotalWaves());
+        waveText.text = WaveSpawner.FormatWaveLabel(boundWaveSpawner.GetCurrentWave(), boundWaveSpawner.GetTotalWaves());
+    }
+
+    public void ResetForReplay()
+    {
+        UnbindRuntimeReferences();
+        HideImmediate();
+    }
+
+    private void HandleGameStart()
+    {
+        BindRuntimeReferences();
+        Show();
+    }
+
+    private void BindRuntimeReferences()
+    {
+        UnbindRuntimeReferences();
+
+        boundPlayerHealth = PlayerHealth.Instance != null ? PlayerHealth.Instance : playerHealth;
+        boundLevelSystem = PlayerLevelSystem.Instance;
+        boundWaveSpawner = WaveSpawner.Instance;
+        playerHealth = boundPlayerHealth;
+
+        if (boundPlayerHealth != null)
+        {
+            UpdateHealthBar(boundPlayerHealth.GetCurrentHealth(), boundPlayerHealth.GetMaxHealth());
+            boundPlayerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
+        }
+
+        if (boundLevelSystem != null)
+        {
+            UpdateLevel(boundLevelSystem.GetCurrentLevel(), 999);
+            UpdateExp(boundLevelSystem.GetCurrentExp(), boundLevelSystem.GetExpToNextLevel());
+            boundLevelSystem.OnLevelChanged.AddListener(UpdateLevel);
+            boundLevelSystem.OnExpChanged.AddListener(UpdateExp);
+        }
+
+        if (boundWaveSpawner != null)
+        {
+            UpdateWave(boundWaveSpawner.GetCurrentWave());
+            boundWaveSpawner.OnWaveStart.AddListener(UpdateWave);
+        }
+    }
+
+    private void UnbindRuntimeReferences()
+    {
+        if (boundPlayerHealth != null)
+        {
+            boundPlayerHealth.OnHealthChanged.RemoveListener(UpdateHealthBar);
+        }
+
+        if (boundLevelSystem != null)
+        {
+            boundLevelSystem.OnLevelChanged.RemoveListener(UpdateLevel);
+            boundLevelSystem.OnExpChanged.RemoveListener(UpdateExp);
+        }
+
+        if (boundWaveSpawner != null)
+        {
+            boundWaveSpawner.OnWaveStart.RemoveListener(UpdateWave);
+        }
+
+        boundPlayerHealth = null;
+        boundLevelSystem = null;
+        boundWaveSpawner = null;
     }
 
     private void UpdateLevel(int currentLevel, int maxLevel)
@@ -77,12 +121,14 @@ public class PlayerStatsPanel : PanelBase
     {
         if (expBarFill != null)
         {
-            expBarFill.fillAmount = currentExp / maxExp;
+            expBarFill.fillAmount = maxExp > 0f ? Mathf.Clamp01(currentExp / maxExp) : 0f;
         }
 
         if (expText != null)
         {
-            expText.text = $"{Utils.FormatWholeNumber(currentExp)}/{Utils.FormatWholeNumber(maxExp)}";
+            float totalExp = boundLevelSystem != null ? boundLevelSystem.GetTotalExpGained() : currentExp;
+            float totalExpRequired = boundLevelSystem != null ? boundLevelSystem.GetTotalExpRequiredForNextLevel() : maxExp;
+            expText.text = $"{Utils.FormatWholeNumber(totalExp)}/{Utils.FormatWholeNumber(totalExpRequired)}";
         }
     }
 
@@ -101,9 +147,9 @@ public class PlayerStatsPanel : PanelBase
 
     private void UpdateWave(int waveNumber)
     {
-        if (waveText != null && waveSpawner != null)
+        if (waveText != null && boundWaveSpawner != null)
         {
-            waveText.text = WaveSpawner.FormatWaveLabel(waveNumber, waveSpawner.GetTotalWaves());
+            waveText.text = WaveSpawner.FormatWaveLabel(waveNumber, boundWaveSpawner.GetTotalWaves());
         }
     }
 
@@ -114,20 +160,6 @@ public class PlayerStatsPanel : PanelBase
             ChallengePanel.onGameStart -= startGameHandler;
         }
 
-        if (playerHealth != null)
-        {
-            playerHealth.OnHealthChanged.RemoveListener(UpdateHealthBar);
-        }
-
-        if (levelSystem != null)
-        {
-            levelSystem.OnLevelChanged.RemoveListener(UpdateLevel);
-            levelSystem.OnExpChanged.RemoveListener(UpdateExp);
-        }
-
-        if (waveSpawner != null)
-        {
-            waveSpawner.OnWaveStart.RemoveListener(UpdateWave);
-        }
+        UnbindRuntimeReferences();
     }
 }

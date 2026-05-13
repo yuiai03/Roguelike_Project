@@ -17,7 +17,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 2bcaa66283f895042af47e1bbce05bab, type: 3}
   buffType: 4
   value: 10
-  attackDamageMultiplier: 1
+  attackDamageMultiplier: 0.5
   rarity: 1
   maxLevel: 1
   shotCount: 1
