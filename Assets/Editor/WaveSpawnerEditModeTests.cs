@@ -88,10 +88,30 @@ public class WaveSpawnerEditModeTests
     }
 
     [Test]
-    public void FormatWaveLabel_UsesWaveNumberOnly_WhenWaveExceedsConfiguredCount()
+    public void FormatWaveLabel_UsesWaveNumberOnly()
     {
         Assert.AreEqual("Wave: 17", WaveSpawner.FormatWaveLabel(17, 10));
-        Assert.AreEqual("Wave: 5/10", WaveSpawner.FormatWaveLabel(5, 10));
+        Assert.AreEqual("Wave: 5", WaveSpawner.FormatWaveLabel(5, 10));
+        Assert.AreEqual("Wave: 0", WaveSpawner.FormatWaveLabel(0, 10));
+    }
+
+    [Test]
+    public void CountEnemiesToSpawn_UsesConfiguredBossGroups()
+    {
+        SimpleWaveData bossWave = new SimpleWaveData
+        {
+            isBossWave = true,
+            bossPoolTypes = WaveConfig.CreateDefaultBossPoolTypes(),
+            bossSpawnPosition = Vector3.zero,
+            enemyGroups = new List<EnemyGroup>
+            {
+                new EnemyGroup { enemyPoolType = PoolType.Boss_Geo, enemyCount = 1 },
+                new EnemyGroup { enemyPoolType = PoolType.Boss_Pyro, enemyCount = 1 },
+                new EnemyGroup { enemyPoolType = PoolType.Boss_Electro, enemyCount = 1 }
+            }
+        };
+
+        Assert.AreEqual(3, CountEnemiesToSpawn(bossWave));
     }
 
     [Test]
@@ -231,6 +251,13 @@ public class WaveSpawnerEditModeTests
         }
 
         return count;
+    }
+
+    private static int CountEnemiesToSpawn(SimpleWaveData wave)
+    {
+        MethodInfo methodInfo = typeof(WaveSpawner).GetMethod("CountEnemiesToSpawn", BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.IsNotNull(methodInfo, "Could not find CountEnemiesToSpawn.");
+        return (int)methodInfo.Invoke(null, new object[] { wave });
     }
 
     private static void ResetSingletonInstance()

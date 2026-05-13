@@ -36451,7 +36451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Wave: 0/0'
+  m_text: 'Wave: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -51603,6 +51603,78 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1914028876}
   m_CullTransparentMesh: 1
+--- !u!1 &1934328621
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1934328623}
+  - component: {fileID: 1934328622}
+  m_Layer: 0
+  m_Name: -----WaveSpawner-----
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1934328622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934328621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d0b9dd96bb4be5458e3ae251e396803, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  isDontDestroy: 0
+  waveConfig: {fileID: 11400000, guid: 39803f1e892ff7d419e550243e212b11, type: 2}
+  spawnRandomRadius: 2
+  maxSpawnAttempts: 10
+  maxEnemySpawnsPerFrame: 8
+  maxSpawnEffectsPerFrame: 12
+  useCircleSpawn: 1
+  effectDuration: 1
+  spawnEffectPoolType: 5
+  spawnEffectGroundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  currentWave: 0
+  OnWaveStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnWaveComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEnemyCountChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAllWavesComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBossWaveStart:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &1934328623
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934328621}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1944403542
 GameObject:
   m_ObjectHideFlags: 0
@@ -57942,3 +58014,4 @@ SceneRoots:
   - {fileID: 2076761063}
   - {fileID: 1736932460}
   - {fileID: 48735027}
+  - {fileID: 1934328623}

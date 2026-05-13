@@ -92,11 +92,14 @@ public class WaveSpawner : Singleton<WaveSpawner>
         }
 
         int sessionId = BeginNewWaveSession();
-        PoolType bossPoolType = wave.isBossWave ? PickRandomBossPoolType(wave.bossPoolTypes) : PoolType.None;
+        bool usesConfiguredSpawnGroups = HasConfiguredSpawnGroups(wave);
+        PoolType bossPoolType = wave.isBossWave && !usesConfiguredSpawnGroups
+            ? PickRandomBossPoolType(wave.bossPoolTypes)
+            : PoolType.None;
 
         if (wave.isBossWave)
         {
-            string bossName = GetBossName(bossPoolType);
+            string bossName = usesConfiguredSpawnGroups ? GetConfiguredBossWaveName(wave) : GetBossName(bossPoolType);
             Debug.Log($"=== BOSS WAVE {currentWave}: {bossName} ===");
             OnBossWaveStart?.Invoke(currentWave, bossName);
         }
@@ -172,17 +175,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
     public static string FormatWaveLabel(int currentWave, int totalWaves)
     {
-        if (currentWave <= 0)
-        {
-            return totalWaves > 0 ? $"Wave: 0/{totalWaves}" : "Wave: 0";
-        }
-
-        if (totalWaves > 0 && currentWave > totalWaves)
-        {
-            return $"Wave: {currentWave}";
-        }
-
-        return totalWaves > 0 ? $"Wave: {currentWave}/{totalWaves}" : $"Wave: {currentWave}";
+        return $"Wave: {Mathf.Max(0, currentWave)}";
     }
 
     public static PoolType PickRandomBossPoolType(IReadOnlyList<PoolType> bossPoolTypes)
@@ -275,13 +268,14 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
         isWaveActive = true;
         totalEnemiesSpawned = 0;
-        totalEnemiesToSpawn = wave.isBossWave ? 1 : CountEnemiesToSpawn(wave);
+        bool usesConfiguredSpawnGroups = HasConfiguredSpawnGroups(wave);
+        totalEnemiesToSpawn = wave.isBossWave && !usesConfiguredSpawnGroups ? 1 : CountEnemiesToSpawn(wave);
         OnEnemyCountChanged?.Invoke(activeEnemies.Count, totalEnemiesToSpawn);
 
         Debug.Log($"=== Wave {currentWave} Started! ===");
         OnWaveStart?.Invoke(currentWave);
 
-        if (wave.isBossWave)
+        if (wave.isBossWave && !usesConfiguredSpawnGroups)
         {
             if (useCircleSpawn && spawnEffectPoolType != PoolType.None && effectDuration > 0f)
             {
@@ -309,6 +303,11 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
     private IEnumerator SpawnGroupRoutine(EnemyGroup group, int groupIndex, int sessionId)
     {
+        if (!IsSpawnableGroup(group))
+        {
+            yield break;
+        }
+
         if (group.spawnDelay > 0f)
         {
             yield return new WaitForSeconds(group.spawnDelay);
@@ -328,6 +327,11 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
         foreach (EnemyGroup group in wave.enemyGroups)
         {
+            if (!IsSpawnableGroup(group))
+            {
+                continue;
+            }
+
             StartCoroutine(SpawnCircleGroupRoutine(group, sessionId));
         }
 
@@ -336,6 +340,11 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
     private IEnumerator SpawnCircleGroupRoutine(EnemyGroup group, int sessionId)
     {
+        if (!IsSpawnableGroup(group))
+        {
+            yield break;
+        }
+
         if (group.spawnDelay > 0f)
         {
             yield return new WaitForSeconds(group.spawnDelay);
@@ -547,6 +556,11 @@ public class WaveSpawner : Singleton<WaveSpawner>
 
     private IEnumerator SpawnGroup(EnemyGroup group, int groupIndex, int sessionId)
     {
+        if (!IsSpawnableGroup(group))
+        {
+            yield break;
+        }
+
         if (!IsWaveSessionCurrent(sessionId))
         {
             yield break;
@@ -850,7 +864,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
             return;
         }
 
-        if (wave.isBossWave)
+        if (wave.isBossWave && !HasConfiguredSpawnGroups(wave))
         {
             PrewarmPool(bossPoolType, 1);
             if (useCircleSpawn && spawnEffectPoolType != PoolType.None)
@@ -864,7 +878,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
         Dictionary<PoolType, int> requiredCounts = new Dictionary<PoolType, int>();
         foreach (EnemyGroup group in wave.enemyGroups)
         {
-            if (group.enemyPoolType == PoolType.None || group.enemyCount <= 0)
+            if (!IsSpawnableGroup(group))
             {
                 continue;
             }
@@ -913,10 +927,66 @@ public class WaveSpawner : Singleton<WaveSpawner>
         int count = 0;
         foreach (EnemyGroup group in wave.enemyGroups)
         {
+            if (!IsSpawnableGroup(group))
+            {
+                continue;
+            }
+
             count += group.enemyCount;
         }
 
         return count;
+    }
+
+    private static bool HasConfiguredSpawnGroups(SimpleWaveData wave)
+    {
+        if (wave == null || wave.enemyGroups == null)
+        {
+            return false;
+        }
+
+        foreach (EnemyGroup group in wave.enemyGroups)
+        {
+            if (IsSpawnableGroup(group))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsSpawnableGroup(EnemyGroup group)
+    {
+        return group != null && group.enemyPoolType != PoolType.None && group.enemyCount > 0;
+    }
+
+    private static string GetConfiguredBossWaveName(SimpleWaveData wave)
+    {
+        PoolType bossPoolType = PoolType.None;
+        bool foundBoss = false;
+
+        foreach (EnemyGroup group in wave.enemyGroups)
+        {
+            if (!IsSpawnableGroup(group) || !IsSupportedBossPool(group.enemyPoolType))
+            {
+                continue;
+            }
+
+            if (!foundBoss)
+            {
+                bossPoolType = group.enemyPoolType;
+                foundBoss = true;
+                continue;
+            }
+
+            if (bossPoolType != group.enemyPoolType)
+            {
+                return "Configured Bosses";
+            }
+        }
+
+        return foundBoss ? GetBossName(bossPoolType) : "Configured Bosses";
     }
 
     private static string GetBossName(PoolType bossPoolType)
@@ -1014,7 +1084,7 @@ public class WaveSpawner : Singleton<WaveSpawner>
             }
         }
 
-        if (!wave.isBossWave)
+        if (!wave.isBossWave || HasConfiguredSpawnGroups(wave))
         {
             return;
         }

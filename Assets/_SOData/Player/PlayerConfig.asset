@@ -20,7 +20,7 @@ MonoBehaviour:
   dashCooldown: 1
   groundDistance: 0.3
   maxHealth: 1000
-  attackDamage: 500
+  attackDamage: 50
   attackCooldown: 1
   attackRange: 50
   projectileSpeed: 30
