@@ -1,0 +1,61 @@
+<mxfile host="app.diagrams.net" modified="2026-05-21T00:00:00.000Z" agent="Codex" version="24.7.17">
+  <diagram id="d9e50ea6b4b2" name="3.5.4 Class Diagram - Projectile va Damage Flow">
+    <mxGraphModel dx="2250" dy="1280" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2250" pageHeight="1280" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="3.5.4 Class Diagram - Projectile va Damage Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontFamily=Times New Roman;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="2090" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;PlayerAttack&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- attackTimer: float&lt;br&gt;- currentTarget: Transform&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;- PerformAttack()&lt;br&gt;- SpawnSingleProjectile(...)&lt;br&gt;- FindNearestEnemy(): Transform&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="120" y="140" width="360" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;Enemy&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- firePoint: Transform&lt;br&gt;- projectilePrefab: GameObject&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;# ShootProjectile()&lt;br&gt;+ TakeDamage(...)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="120" y="720" width="340" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;Projectile&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;# damage: float&lt;br&gt;# speed: float&lt;br&gt;# lifetime: float&lt;br&gt;# direction: Vector3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ Initialize(...)&lt;br&gt;# Update()&lt;br&gt;# OnHit(other: Collider)&lt;br&gt;# DispawnProjectile()&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="760" y="430" width="390" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;PlayerProjectile&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- isAoEEnabled: bool&lt;br&gt;- aoeRadius: float&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ InitializeExtra(...)&lt;br&gt;# OnHit(other: Collider)&lt;br&gt;# DispawnProjectile()&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="120" width="360" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;EnemyProjectile&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- owner: GameObject&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;# OnHit(other: Collider)&lt;br&gt;# DispawnProjectile()&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="430" width="340" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;SpiritProjectileScript&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- ownerEnemy: Enemy&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ InitializeSpirit(...)&lt;br&gt;# OnHit(other: Collider)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="730" width="360" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;IDamageable&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ IsDead(): bool&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ TakeDamage(...)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1820" y="430" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="e1000" value="kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n3" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1001" value="kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n3" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1002" value="kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n3" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1003" value="spawn" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n1" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1004" value="shoot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n2" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1005" value="special" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n2" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1006" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n4" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1007" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n5" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1008" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n6" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

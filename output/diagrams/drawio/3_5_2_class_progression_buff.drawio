@@ -1,0 +1,37 @@
+<mxfile host="app.diagrams.net" modified="2026-05-21T00:00:00.000Z" agent="Codex" version="24.7.17">
+  <diagram id="65c96cfa4f7a" name="3.5.2 Class Diagram - Progression va Buff">
+    <mxGraphModel dx="2200" dy="1280" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1280" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="3.5.2 Class Diagram - Progression va Buff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontFamily=Times New Roman;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="2040" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;PlayerLevelSystem&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- currentLevel: int&lt;br&gt;- currentExp: float&lt;br&gt;+ totalExpGained: float&lt;br&gt;+ OnLevelUp: UnityEvent&amp;lt;int&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ AddExp(amount: float)&lt;br&gt;+ GrantLevels(count: int)&lt;br&gt;+ GetCurrentLevel(): int&lt;br&gt;+ GetTotalExpGained(): float&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="120" y="140" width="390" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;BuffCardManager&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ Instance&lt;br&gt;- availableCards: List&amp;lt;BuffCardConfig&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ SelectCards()&lt;br&gt;+ ApplyBuff(...)&lt;br&gt;+ GetCardLevel(...): int&lt;br&gt;+ GetMaxLevelForBuff(...): int&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="740" y="140" width="390" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;CardSelectionPanel&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- queuedLevelRewards: Queue&amp;lt;int&amp;gt;&lt;br&gt;- cardManager: BuffCardManager&lt;br&gt;- waitingForThemeTransition: bool&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;- OnPlayerLevelUp(newLevel: int)&lt;br&gt;+ ShowCards(cards: List&amp;lt;BuffCardConfig&amp;gt;)&lt;br&gt;+ Hide()&lt;br&gt;- TryShowNextQueuedCards()&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="140" width="430" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;PlayerStatsPanel&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- boundLevelSystem: PlayerLevelSystem&lt;br&gt;- boundWaveSpawner: WaveSpawner&lt;br&gt;- boundPlayerHealth: PlayerHealth&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ ResetForReplay()&lt;br&gt;- BindRuntimeReferences()&lt;br&gt;- UpdateExp(...)&lt;br&gt;- UpdateWave(waveNumber: int)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="740" y="610" width="430" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="e1000" value="OnLevelUp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n1" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1001" value="OnExpChanged / OnLevelChanged" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n1" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1002" value="cards" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n2" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1003" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n3" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" modified="2026-05-21T00:00:00.000Z" agent="Codex" version="24.7.17">
+  <diagram id="a3b62a54c89b" name="3.5.7 Class Diagram - Spawn Enemy va Wave Runtime">
+    <mxGraphModel dx="2800" dy="1320" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1320" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="3.5.7 Class Diagram - Spawn Enemy va Wave Runtime" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontFamily=Times New Roman;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="2640" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;ChallengePanel&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ onGameStart: Action&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ StartGame()&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="120" y="250" width="300" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;WaveSpawner&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;- waveConfig: WaveConfig&lt;br&gt;- currentWave: int&lt;br&gt;- waveSessionId: int&lt;br&gt;+ OnWaveStart: UnityEvent&amp;lt;int&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ StartNextWave()&lt;br&gt;+ JumpToWave(...)&lt;br&gt;- GenerateEndlessWave(...)&lt;br&gt;- RunWave(...)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="520" y="170" width="430" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;WaveConfig&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ waves: List&amp;lt;SimpleWaveData&amp;gt;&lt;br&gt;+ autoScale: bool&lt;br&gt;+ scalePerWave: float&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ GetWave(waveNumber: int)&lt;br&gt;+ Generate30Waves()&lt;br&gt;+ CreateDefaultBossPoolTypes()&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="170" width="390" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;SimpleWaveData&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ enemyGroups: List&amp;lt;EnemyGroup&amp;gt;&lt;br&gt;+ preparationTime: float&lt;br&gt;+ isBossWave: bool&lt;br&gt;+ bossSpawnPosition: Vector3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="170" width="400" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;EnemyGroup&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ enemyPoolType: PoolType&lt;br&gt;+ enemyCount: int&lt;br&gt;+ spawnPosition: Vector3&lt;br&gt;+ spawnDelay: float&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="570" width="390" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;ObjectPool&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ Instance&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ Spawn(poolType, position, rotation)&lt;br&gt;+ Despawn(obj)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2140" y="400" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="&lt;table style=&#x27;width:100%;height:100%;border-collapse:collapse;&#x27;&gt;&lt;tr&gt;&lt;td style=&#x27;text-align:center;border-bottom:1px solid #000;padding:6px;&#x27;&gt;&lt;b&gt;Enemy&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;border-bottom:1px solid #000;padding:8px;&#x27;&gt;&lt;b&gt;Thuộc tính&lt;/b&gt;&lt;br&gt;+ OnDeath&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#x27;padding:8px;&#x27;&gt;&lt;b&gt;Phương thức&lt;/b&gt;&lt;br&gt;+ TakeDamage(...)&lt;br&gt;+ IsDead(): bool&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fontFamily=Times New Roman;fontSize=24;strokeWidth=2;rounded=0;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="400" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="e1000" value="StartNextWave" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1001" value="đọc cấu hình" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n2" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1002" value="waves" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n3" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1003" value="enemyGroups" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n4" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1004" value="spawn" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n2" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1005" value="enemy instance" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontColor=#000000;fontSize=12;fontFamily=Times New Roman;" edge="1" parent="1" source="n6" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
