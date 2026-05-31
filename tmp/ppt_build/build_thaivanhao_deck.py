@@ -1,463 +1,874 @@
-from __future__ import annotations
-
 from pathlib import Path
-from zipfile import ZipFile
+import shutil
 
 from PIL import Image
 from pptx import Presentation
 from pptx.dml.color import RGBColor
-from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
-from pptx.enum.text import PP_ALIGN
+from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE, MSO_SHAPE_TYPE
+from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
 
 ROOT = Path(r"E:\Github\Roguelike_Project")
-DOCX = Path(r"C:\Users\haov8\Downloads\_Temp\ThaiVanHao-2121051075.docx")
-TEMPLATE = Path(r"C:\Users\haov8\Downloads\BaoCaoDoAnGame_tren_form_BaoCaoDoAn_final-1.pptx")
-OUT_DIR = ROOT / "output" / "ppt"
-ASSET_DIR = OUT_DIR / "assets_thaivanhao"
-OUT = OUT_DIR / "ThaiVanHao-2121051075_BaoCaoDoAnGame.pptx"
+OUTPUT_PPTX = ROOT / "output" / "ppt" / "ThaiVanHao-2121051075_BaoCaoDoAnGame.pptx"
+TEMPLATE_PPTX = Path(r"C:\Users\haov8\Downloads\BaoCaoDoAnGame_tren_form_BaoCaoDoAn_final-1.pptx")
+ALT_PPTX = ROOT / "output" / "ppt" / "ThaiVanHao-2121051075_BaoCaoDoAnGame_font36_placeholder.pptx"
+ASSET_DIR = ROOT / "output" / "ppt" / "assets_thaivanhao"
 
-FONT = "Times New Roman"
-TITLE_SIZE = 16
-BODY_SIZE = 13
-FOOTER_SIZE = 9
+FONT_NAME = "Times New Roman"
+TITLE_SIZE = Pt(36)
+BODY_SIZE = Pt(20)
+SMALL_SIZE = Pt(18)
 
-NAVY = RGBColor(25, 55, 105)
-BLUE = RGBColor(55, 96, 146)
-ORANGE = RGBColor(230, 120, 35)
-GRAY = RGBColor(90, 90, 90)
-LIGHT_GRAY = RGBColor(235, 240, 246)
-WHITE = RGBColor(255, 255, 255)
-BLACK = RGBColor(20, 20, 20)
+TITLE_COLOR = RGBColor(31, 78, 121)
+BODY_COLOR = RGBColor(0, 0, 0)
+FRAME_COLOR = RGBColor(31, 78, 121)
+FRAME_FILL = RGBColor(245, 247, 250)
+
+SLIDE_WIDTH = Inches(13.333)
+SLIDE_HEIGHT = Inches(7.5)
+
+TITLE_LEFT = Inches(2.35)
+TITLE_TOP = Inches(1.25)
+TITLE_WIDTH = Inches(6.80)
+TITLE_HEIGHT = Inches(0.65)
+LONG_TITLE_TOP = Inches(0.92)
+LONG_TITLE_HEIGHT = Inches(1.12)
+
+CONTENT_LEFT = Inches(0.85)
+CONTENT_RIGHT = Inches(0.80)
+CONTENT_WIDTH = SLIDE_WIDTH - CONTENT_LEFT - CONTENT_RIGHT
+SECTION_TOP = Inches(2.22)
+TEXT_TOP = Inches(2.72)
+LONG_SECTION_TOP = Inches(2.44)
+LONG_TEXT_TOP = Inches(2.94)
+TEXT_LINE_HEIGHT = Inches(0.78)
+TEXT_GAP = Inches(0.06)
+
+DISPLAY_TITLE_OVERRIDES = {
+    "LÝ THUYẾT VÀ CÔNG NGHỆ": "LÝ THUYẾT VÀ\nCÔNG NGHỆ",
+    "GIAO DIỆN VÀ TRẢI NGHIỆM": "GIAO DIỆN VÀ\nTRẢI NGHIỆM",
+}
+
+SLIDES = [
+    {
+        "kind": "cover",
+        "title": "ĐỒ ÁN TỐT NGHIỆP",
+        "subtitle": "NGHIÊN CỨU VÀ PHÁT TRIỂN TRÒ CHƠI SINH TỒN 3D",
+        "lines": [
+            "Sinh viên thực hiện: Thái Văn Hào",
+            "Mã sinh viên: 2121051075",
+            "Giáo viên hướng dẫn: Phạm Quang Hiển",
+        ],
+    },
+    {
+        "kind": "agenda",
+        "title": "NỘI DUNG TRÌNH BÀY",
+        "lines": [
+            "1. GIỚI THIỆU ĐỀ TÀI",
+            "2. LÝ THUYẾT VÀ CÔNG NGHỆ",
+            "3. PHÂN TÍCH HỆ THỐNG",
+            "4. QUY TRÌNH THỰC HIỆN",
+            "5. GIAO DIỆN VÀ TRẢI NGHIỆM",
+            "6. KẾT LUẬN",
+        ],
+    },
+    {
+        "kind": "text",
+        "title": "GIỚI THIỆU ĐỀ TÀI",
+        "section": "Lý do chọn đề tài:",
+        "lines": [
+            "Thể loại roguelike sinh tồn đánh quái có tính hấp dẫn, nhịp độ nhanh và giá trị chơi lại cao.",
+            "Đề tài phù hợp để áp dụng tổng hợp kiến thức về Unity, C#, gameplay, UI và backend.",
+            "Roguelike sinh tồn có vòng chơi ngắn, dễ demo và dễ đánh giá.",
+            "Đề tài có tiềm năng mở rộng thành một game hoàn thiện hơn trong tương lai.",
+        ],
+    },
+    {
+        "kind": "two_col",
+        "title": "GIỚI THIỆU ĐỀ TÀI",
+        "left_title": "Mục tiêu",
+        "left_lines": [
+            "Xây dựng game sinh tồn đánh quái 3D trên Unity.",
+            "Hoàn thiện gameplay từ di chuyển, chiến đấu, nhận kinh nghiệm đến chọn buff theo wave.",
+            "Xây dựng giao diện và bảng xếp hạng để sản phẩm có thể chạy, build và chơi mượt mà trên các thiết bị khác nhau",
+        ],
+        "right_title": "Phạm vi",
+        "right_lines": [
+            "Tập trung vào gameplay chính, enemy, wave, buff, HUD, menu tạm dừng, nhập tên và bảng xếp hạng",
+            "Chưa đi sâu vào multiplayer, cốt truyện",
+            "Sản phẩm là một bản game cơ bản có thể phát triển thêm nhiều tính năng sau này",
+        ],
+    },
+    {
+        "kind": "text_image",
+        "title": "LÝ THUYẾT VÀ CÔNG NGHỆ",
+        "section": "Tổng quan gameplay",
+        "lines": [
+            "Người chơi di chuyển, né tránh enemy và tấn công mục tiêu.",
+            "Khi tiêu diệt enemy, người chơi nhận kinh nghiệm, lên cấp và chọn buff để tăng sức mạnh.",
+            "Độ khó tăng dần theo từng wave và có boss ở các mốc quan trọng.",
+            "Trò chơi có HUD và bảng xếp hạng để hỗ trợ trải nghiệm và theo dõi kết quả.",
+        ],
+        "image_path": ASSET_DIR / "doc_image_34.jpeg",
+        "placeholder": "Chèn hình gameplay tổng quan",
+    },
+    {
+        "kind": "tech_grid",
+        "title": "LÝ THUYẾT VÀ CÔNG NGHỆ",
+        "items": [
+            {
+                "title": "Unity Engine",
+                "placeholder": "Chèn logo / ảnh Unity",
+                "role": "Dựng scene, gameplay runtime và UI.",
+            },
+            {
+                "title": "C#",
+                "placeholder": "Chèn logo / ảnh C#",
+                "role": "Ngôn ngữ lập trình chính",
+            },
+            {
+                "title": "PlayFab",
+                "placeholder": "Chèn logo / ảnh PlayFab",
+                "role": "Lưu leaderboard và đồng bộ tên người chơi.",
+            },
+            {
+                "title": "Visual Studio Code",
+                "placeholder": "Chèn logo / ảnh Visual Studio Code",
+                "role": "Môi trường lập trình, xử lý logic",
+            },
+        ],
+    },
+    {
+        "kind": "two_col",
+        "title": "PHÂN TÍCH HỆ THỐNG",
+        "section": "Nhóm chức năng chính",
+        "left_title": "Gameplay chính",
+        "left_lines": [
+            "Định danh người chơi, bắt đầu trận đấu",
+            "Điều khiển nhân vật, chiến đấu với enemy và vượt qua các wave.",
+            "Nhận kinh nghiệm, lên cấp, chọn buff và đổi theme map theo tiến trình.",
+        ],
+        "right_title": "Giao diện và hệ thống hỗ trợ",
+        "right_lines": [
+            "Hiển thị HUD, menu tạm dừng, cài đặt và loading hỗ trợ trong trận.",
+            "Nhập tên người chơi và hiển thị bảng xếp hạng.",
+            "Kết nối các chức năng thành một vòng chơi hoàn chỉnh.",
+        ],
+    },
+    {
+        "kind": "two_col",
+        "title": "PHÂN TÍCH HỆ THỐNG",
+        "section": "Tổ chức project và module code",
+        "left_title": "Nhóm gameplay",
+        "left_lines": [
+            "Xử lý điều khiển nhân vật và chiến đấu.",
+            "Quản lý enemy, đạn bắn và wave",
+            "Tổ chức dữ liệu để dễ chỉnh sửa và phát triển thêm.",
+        ],
+        "right_title": "Nhóm hỗ trợ",
+        "right_lines": [
+            "Quản lý kinh nghiệm, lên cấp và buff.",
+            "Hiển thị giao diện và các chức năng hỗ trợ trong game.",
+            "Kết nối bảng xếp hạng và lưu điểm người chơi.",
+        ],
+    },
+    {
+        "kind": "text_image",
+        "title": "QUY TRÌNH THỰC HIỆN",
+        "section": "Điều khiển và chiến đấu",
+        "lines": [
+            "Người chơi di chuyển nhân vật bằng bàn phím và có thể sử dụng dash để né enemy.",
+            "Hệ thống tự động tìm mục tiêu gần nhất để thực hiện tấn công.",
+            "Cơ chế bắn tự động giúp người chơi tập trung nhiều hơn vào di chuyển và chiến thuật giữ vị trí.",
+            "Cách chơi này giúp trận đấu diễn ra nhanh và tạo cảm giác liên tục.",
+        ],
+        "image_path": ASSET_DIR / "doc_image_35.png",
+        "placeholder": "Chèn hình combat",
+    },
+    {
+        "kind": "text_image_grid",
+        "title": "QUY TRÌNH THỰC HIỆN",
+        "section": "Enemy, boss và wave",
+        "lines": [
+            "Enemy được chia theo vai trò áp sát, bay hoặc gây áp lực từ xa.",
+            "WaveSpawner sinh quái theo cấu hình từng wave.",
+            "Boss wave xuất hiện ở các mốc quan trọng để tăng cao trào.",
+            "Độ khó tăng dần theo số lượng quái, nhịp spawn và chỉ số.",
+        ],
+        "images": [
+            {"path": ASSET_DIR / "doc_image_37.png", "caption": "Enemy bay"},
+            {"path": ASSET_DIR / "doc_image_38.png", "caption": "Enemy đánh xa"},
+            {"path": ASSET_DIR / "doc_image_39.png", "caption": "Enemy cận chiến"},
+            {"path": ASSET_DIR / "doc_image_40.png", "caption": "Boss / LawaChurl"},
+        ],
+    },
+    {
+        "kind": "text_image",
+        "title": "QUY TRÌNH THỰC HIỆN",
+        "section": "Kinh nghiệm, lên cấp và buff",
+        "lines": [
+            "Người chơi nhận kinh nghiệm khi tiêu diệt enemy.",
+            "Khi đủ kinh nghiệm, nhân vật sẽ lên cấp.",
+            "Mỗi lần lên cấp, người chơi được chọn buff để tăng sức mạnh.",
+            "Các buff giúp thay đổi cách chơi và hỗ trợ vượt qua các wave khó hơn.",
+        ],
+        "image_path": ASSET_DIR / "doc_image_01.png",
+        "placeholder": "Chèn hình level-up / buff",
+    },
+    {
+        "kind": "text_image",
+        "title": "GIAO DIỆN VÀ TRẢI NGHIỆM",
+        "section": "HUD, pause, settings, theme map",
+        "lines": [
+            "HUD hiển thị các thông tin chính như máu, kinh nghiệm, cấp độ và wave hiện tại.",
+            "Menu pause và settings hỗ trợ tạm dừng trò chơi và điều chỉnh âm thanh.",
+            "Theme map được thay đổi theo từng giai đoạn để tạo cảm giác mới trong quá trình chơi.",
+            "Các giao diện được hiển thị đúng theo trạng thái của trận đấu.",
+        ],
+        "image_path": ASSET_DIR / "doc_image_04.png",
+        "placeholder": "Chèn hình pause / settings",
+    },
+    {
+        "kind": "text_image",
+        "title": "GIAO DIỆN VÀ TRẢI NGHIỆM",
+        "section": "Challenge và bắt đầu trận",
+        "lines": [
+            "Người chơi tương tác với khu vực challenge để mở panel bắt đầu trận.",
+            "Panel hiển thị hướng dẫn điều khiển cơ bản trước khi vào trận.",
+            "Sau khi xác nhận bắt đầu, hệ thống khởi tạo wave đầu tiên và chuyển sang trạng thái chiến đấu.",
+        ],
+        "image_path": ASSET_DIR / "doc_image_47.png",
+        "placeholder": "Chèn hình challenge bắt đầu",
+    },
+    {
+        "kind": "text_image",
+        "title": "GIAO DIỆN VÀ TRẢI NGHIỆM",
+        "section": "Leaderboard",
+        "lines": [
+            "Điểm số của người chơi được gửi lên hệ thống PlayFab sau khi kết thúc trận đấu.",
+            "Bảng xếp hạng hiển thị danh sách người chơi theo điểm số từ cao xuống thấp.",
+            "Người chơi có thể theo dõi thứ hạng của mình trực tiếp trên giao diện.",
+        ],
+        "image_path": ASSET_DIR / "doc_image_02.png",
+        "placeholder": "Chèn hình leaderboard",
+    },
+    {
+        "kind": "text",
+        "title": "KẾT LUẬN",
+        "section": "Kiểm thử và kết quả đạt được",
+        "lines": [
+            "Đề tài đã kiểm thử các chức năng chính như vào trận, chiến đấu, lên cấp, tạm dừng và bảng xếp hạng.",
+            "Kết quả đạt được là xây dựng được một game sinh tồn 3D có thể chạy và trình bày trên thực tế.",
+            "Sản phẩm đã thể hiện rõ phần gameplay, giao diện và kết nối bảng xếp hạng trực tuyến.",
+        ],
+    },
+    {
+        "kind": "text",
+        "title": "KẾT LUẬN",
+        "section": "Hạn chế và hướng phát triển",
+        "lines": [
+            "Số lượng enemy, buff và nội dung trong game hiện vẫn còn chưa nhiều.",
+            "Một số phần giao diện và hiệu năng vẫn cần tiếp tục hoàn thiện.",
+            "Trong thời gian tới, đề tài có thể mở rộng thêm map, boss, buff và các chỉ số thống kê.",
+        ],
+    },
+    {
+        "kind": "thanks",
+        "title": "EM XIN CẢM ƠN THẦY CÔ ĐÃ LẮNG NGHE",
+    },
+]
 
 
-def extract_assets() -> dict[int, Path]:
-    ASSET_DIR.mkdir(parents=True, exist_ok=True)
-    assets: dict[int, Path] = {}
-    with ZipFile(DOCX) as z:
-        media = [n for n in z.namelist() if n.startswith("word/media/")]
-        for idx, name in enumerate(media, start=1):
-            out = ASSET_DIR / f"doc_image_{idx:02d}{Path(name).suffix.lower()}"
-            out.write_bytes(z.read(name))
-            assets[idx] = out
-    return assets
-
-
-def clear_slide_shapes(slide) -> None:
-    sp_tree = slide.shapes._spTree  # noqa: SLF001 - python-pptx has no public clear API.
+def clear_slide(slide):
     for shape in list(slide.shapes):
-        sp_tree.remove(shape._element)  # noqa: SLF001
+        element = shape.element if shape.shape_type == MSO_SHAPE_TYPE.PLACEHOLDER else shape._element
+        element.getparent().remove(element)
 
 
-def set_runs(paragraph, size: int, color=BLACK, bold=False) -> None:
-    for run in paragraph.runs:
-        run.font.name = FONT
-        run.font.size = Pt(size)
-        run.font.color.rgb = color
-        run.font.bold = bold
+def ensure_slide_count(prs, count):
+    while len(prs.slides) < count:
+        prs.slides.add_slide(prs.slide_layouts[1])
+    while len(prs.slides) > count:
+        slide_id = prs.slides._sldIdLst[-1]
+        prs.part.drop_rel(slide_id.rId)
+        prs.slides._sldIdLst.remove(slide_id)
 
 
-def add_text(slide, text: str, x, y, w, h, size=BODY_SIZE, color=BLACK, bold=False, align=None):
-    box = slide.shapes.add_textbox(x, y, w, h)
-    tf = box.text_frame
-    tf.clear()
-    tf.word_wrap = True
-    tf.margin_left = Inches(0.04)
-    tf.margin_right = Inches(0.04)
-    tf.margin_top = Inches(0.02)
-    tf.margin_bottom = Inches(0.02)
-    p = tf.paragraphs[0]
-    p.text = text
-    p.space_after = Pt(0)
-    p.line_spacing = 1.0
-    if align is not None:
-        p.alignment = align
-    set_runs(p, size, color, bold)
+def set_shape_name(shape, name):
+    for element in shape._element.iter():
+        if element.tag.endswith("}cNvPr"):
+            element.set("name", name)
+            break
+
+
+def add_run(paragraph, text, size, bold=False, color=BODY_COLOR):
+    run = paragraph.add_run()
+    run.text = text
+    run.font.name = FONT_NAME
+    run.font.size = size
+    run.font.bold = bold
+    run.font.color.rgb = color
+    return run
+
+
+def add_text_box(
+    slide,
+    left,
+    top,
+    width,
+    height,
+    text,
+    size,
+    *,
+    bold=False,
+    align=PP_ALIGN.LEFT,
+    color=BODY_COLOR,
+    vertical_anchor=MSO_ANCHOR.TOP,
+    margin=0.02,
+    name=None,
+):
+    box = slide.shapes.add_textbox(left, top, width, height)
+    frame = box.text_frame
+    frame.clear()
+    frame.word_wrap = True
+    frame.margin_left = Inches(margin)
+    frame.margin_right = Inches(margin)
+    frame.margin_top = Inches(margin)
+    frame.margin_bottom = Inches(margin)
+    frame.vertical_anchor = vertical_anchor
+
+    paragraph = frame.paragraphs[0]
+    paragraph.alignment = align
+    paragraph.line_spacing = 1.05
+    paragraph.space_before = Pt(0)
+    paragraph.space_after = Pt(0)
+    add_run(paragraph, text, size, bold=bold, color=color)
+
+    if name:
+        set_shape_name(box, name)
     return box
 
 
-def add_bullets(slide, bullets: list[str], x, y, w, h, size=BODY_SIZE):
-    box = slide.shapes.add_textbox(x, y, w, h)
-    tf = box.text_frame
-    tf.clear()
-    tf.word_wrap = True
-    tf.margin_left = Inches(0.06)
-    tf.margin_right = Inches(0.06)
-    tf.margin_top = Inches(0.03)
-    tf.margin_bottom = Inches(0.03)
-    for idx, bullet in enumerate(bullets):
-        p = tf.paragraphs[0] if idx == 0 else tf.add_paragraph()
-        p.text = bullet
-        p.level = 0
-        p.space_after = Pt(5)
-        p.line_spacing = 1.05
-        set_runs(p, size, BLACK, False)
-    return box
+def add_title(slide, text):
+    display_text = DISPLAY_TITLE_OVERRIDES.get(text, text)
+    title_top = LONG_TITLE_TOP if text in DISPLAY_TITLE_OVERRIDES else TITLE_TOP
+    title_height = LONG_TITLE_HEIGHT if text in DISPLAY_TITLE_OVERRIDES else TITLE_HEIGHT
+    add_text_box(
+        slide,
+        TITLE_LEFT,
+        title_top,
+        TITLE_WIDTH,
+        title_height,
+        display_text,
+        TITLE_SIZE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+        color=TITLE_COLOR,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
 
 
-def add_title(slide, title: str, number: int) -> None:
-    add_text(slide, title, Inches(0.75), Inches(0.35), Inches(11.65), Inches(0.34), TITLE_SIZE, NAVY, True)
-    line = slide.shapes.add_shape(MSO_AUTO_SHAPE_TYPE.RECTANGLE, Inches(0.75), Inches(0.78), Inches(11.65), Inches(0.02))
-    line.fill.solid()
-    line.fill.fore_color.rgb = LIGHT_GRAY
-    line.line.fill.background()
-    accent = slide.shapes.add_shape(MSO_AUTO_SHAPE_TYPE.RECTANGLE, Inches(0.75), Inches(0.78), Inches(1.2), Inches(0.03))
-    accent.fill.solid()
-    accent.fill.fore_color.rgb = ORANGE
-    accent.line.fill.background()
-    add_footer(slide, number)
+def section_top_for_title(title):
+    return LONG_SECTION_TOP if title in DISPLAY_TITLE_OVERRIDES else SECTION_TOP
 
 
-def add_footer(slide, number: int) -> None:
-    add_text(slide, "Bộ môn Mạng máy tính", Inches(0.78), Inches(7.12), Inches(3.0), Inches(0.2), FOOTER_SIZE, GRAY)
-    add_text(slide, str(number), Inches(12.05), Inches(7.12), Inches(0.45), Inches(0.2), FOOTER_SIZE, GRAY, align=PP_ALIGN.RIGHT)
+def text_top_for_title(title):
+    return LONG_TEXT_TOP if title in DISPLAY_TITLE_OVERRIDES else TEXT_TOP
 
 
-def add_panel(slide, title: str, bullets: list[str], x, y, w, h):
-    rect = slide.shapes.add_shape(MSO_AUTO_SHAPE_TYPE.RECTANGLE, x, y, w, h)
+def add_section_heading(slide, text, *, title):
+    add_text_box(
+        slide,
+        CONTENT_LEFT,
+        section_top_for_title(title),
+        CONTENT_WIDTH,
+        Inches(0.35),
+        text,
+        BODY_SIZE,
+        bold=True,
+        color=BODY_COLOR,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
+
+
+def add_bullet_lines(slide, left, top, width, lines, *, start_order=10):
+    y = top
+    order = start_order
+    for index, line in enumerate(lines, start=1):
+        text = f"- {line}"
+        add_text_box(
+            slide,
+            left,
+            y,
+            width,
+            TEXT_LINE_HEIGHT,
+            text,
+            BODY_SIZE,
+            name=f"anim-appear-{order:02d}-line-{index}",
+        )
+        y += TEXT_LINE_HEIGHT + TEXT_GAP
+        order += 10
+
+
+def add_center_lines(slide, top, lines, *, start_order=10):
+    y = top
+    order = start_order
+    for index, line in enumerate(lines, start=1):
+        add_text_box(
+            slide,
+            CONTENT_LEFT,
+            y,
+            CONTENT_WIDTH,
+            Inches(0.36),
+            line,
+            BODY_SIZE,
+            align=PP_ALIGN.CENTER,
+            name=f"anim-appear-{order:02d}-agenda-{index}",
+        )
+        y += Inches(0.48)
+        order += 10
+
+
+def add_frame(slide, left, top, width, height):
+    rect = slide.shapes.add_shape(MSO_AUTO_SHAPE_TYPE.RECTANGLE, left, top, width, height)
     rect.fill.solid()
-    rect.fill.fore_color.rgb = WHITE
-    rect.line.color.rgb = LIGHT_GRAY
-    add_text(slide, title, x + Inches(0.14), y + Inches(0.12), w - Inches(0.28), Inches(0.28), BODY_SIZE, BLUE, True)
-    add_bullets(slide, bullets, x + Inches(0.14), y + Inches(0.48), w - Inches(0.28), h - Inches(0.6), BODY_SIZE)
+    rect.fill.fore_color.rgb = FRAME_FILL
+    rect.line.color.rgb = FRAME_COLOR
+    rect.line.width = Pt(1.1)
+    return rect
 
 
-def add_image_fit(slide, image_path: Path, x, y, w, h):
-    with Image.open(image_path) as im:
-        iw, ih = im.size
-    scale = min(w / iw, h / ih)
-    pw, ph = iw * scale, ih * scale
-    pic = slide.shapes.add_picture(str(image_path), x + (w - pw) / 2, y + (h - ph) / 2, width=int(pw), height=int(ph))
-    border = slide.shapes.add_shape(MSO_AUTO_SHAPE_TYPE.RECTANGLE, x, y, w, h)
-    border.fill.background()
-    border.line.color.rgb = LIGHT_GRAY
-    return pic
+def add_placeholder(slide, left, top, width, height, caption):
+    rect = add_frame(slide, left, top, width, height)
+    frame = rect.text_frame
+    frame.clear()
+    frame.word_wrap = True
+    frame.margin_left = Inches(0.08)
+    frame.margin_right = Inches(0.08)
+    frame.margin_top = Inches(0.08)
+    frame.margin_bottom = Inches(0.08)
+    frame.vertical_anchor = MSO_ANCHOR.MIDDLE
+    paragraph = frame.paragraphs[0]
+    paragraph.alignment = PP_ALIGN.CENTER
+    paragraph.line_spacing = 1.0
+    add_run(paragraph, caption, BODY_SIZE, color=FRAME_COLOR)
+    return rect
 
 
-def add_image_caption(slide, image_path: Path, caption: str, x, y, w, h):
-    add_image_fit(slide, image_path, x, y, w, h)
-    add_text(slide, caption, x, y + h + Inches(0.05), w, Inches(0.28), FOOTER_SIZE, GRAY, align=PP_ALIGN.CENTER)
+def add_picture_in_frame(slide, image_path, left, top, width, height, *, name=None):
+    add_frame(slide, left, top, width, height)
+    inset = Inches(0.06)
+    inner_left = left + inset
+    inner_top = top + inset
+    inner_width = width - inset * 2
+    inner_height = height - inset * 2
+
+    with Image.open(image_path) as image:
+        image_width, image_height = image.size
+
+    image_ratio = image_width / image_height
+    frame_ratio = inner_width / inner_height
+
+    if image_ratio >= frame_ratio:
+        final_width = inner_width
+        final_height = round(inner_width / image_ratio)
+        final_left = inner_left
+        final_top = inner_top + round((inner_height - final_height) / 2)
+    else:
+        final_height = inner_height
+        final_width = round(inner_height * image_ratio)
+        final_left = inner_left + round((inner_width - final_width) / 2)
+        final_top = inner_top
+
+    picture = slide.shapes.add_picture(
+        str(image_path),
+        final_left,
+        final_top,
+        width=final_width,
+        height=final_height,
+    )
+    picture.line.color.rgb = FRAME_COLOR
+    picture.line.width = Pt(0.7)
+    if name:
+        set_shape_name(picture, name)
+    return picture
 
 
-def prepare_prs() -> tuple[Presentation, list]:
-    prs = Presentation(TEMPLATE)
-    base_slides = list(prs.slides)
-    for slide in base_slides:
-        clear_slide_shapes(slide)
-    while len(prs.slides) < 20:
-        prs.slides.add_slide(prs.slide_layouts[6])
-    for slide in list(prs.slides)[15:]:
-        clear_slide_shapes(slide)
-    return prs, list(prs.slides)
+def add_media(slide, left, top, width, height, *, image_path=None, placeholder="", anim_name=None):
+    if image_path and Path(image_path).exists():
+        return add_picture_in_frame(slide, Path(image_path), left, top, width, height, name=anim_name)
+    shape = add_placeholder(slide, left, top, width, height, placeholder)
+    if anim_name:
+        set_shape_name(shape, anim_name)
+    return shape
 
 
-def build() -> None:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    assets = extract_assets()
-    prs, slides = prepare_prs()
+def build_cover(slide, spec):
+    add_text_box(
+        slide,
+        Inches(2.70),
+        Inches(1.75),
+        Inches(8.00),
+        Inches(0.45),
+        spec["title"],
+        Pt(24),
+        bold=True,
+        align=PP_ALIGN.CENTER,
+        color=TITLE_COLOR,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
+    add_text_box(
+        slide,
+        Inches(1.55),
+        Inches(2.45),
+        Inches(10.20),
+        Inches(1.10),
+        spec["subtitle"],
+        TITLE_SIZE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
+    y = Inches(4.25)
+    for line in spec["lines"]:
+        add_text_box(
+            slide,
+            Inches(2.10),
+            y,
+            Inches(9.10),
+            Inches(0.35),
+            line,
+            BODY_SIZE,
+            align=PP_ALIGN.CENTER,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+        y += Inches(0.42)
 
-    # 1. Cover
-    s = slides[0]
-    add_footer(s, 1)
-    add_text(s, "BÁO CÁO ĐỒ ÁN TỐT NGHIỆP", Inches(1.0), Inches(1.45), Inches(11.25), Inches(0.38), 16, NAVY, True, PP_ALIGN.CENTER)
-    add_text(s, "NGHIÊN CỨU VÀ PHÁT TRIỂN TRÒ CHƠI SINH TỒN 3D", Inches(1.2), Inches(2.25), Inches(10.85), Inches(0.55), 16, ORANGE, True, PP_ALIGN.CENTER)
-    add_text(
-        s,
-        "Sinh viên thực hiện: Thái Văn Hào\nMã sinh viên: 2121051075\nGiáo viên hướng dẫn: Phạm Quang Hiển\nHà Nội, 5/2026",
-        Inches(3.1),
-        Inches(3.55),
-        Inches(7.2),
-        Inches(1.25),
-        13,
-        BLACK,
-        False,
-        PP_ALIGN.CENTER,
+
+def build_agenda(slide, spec):
+    add_title(slide, spec["title"])
+    add_center_lines(slide, Inches(2.70), spec["lines"])
+
+
+def build_text(slide, spec):
+    add_title(slide, spec["title"])
+    add_section_heading(slide, spec["section"], title=spec["title"])
+    add_bullet_lines(slide, CONTENT_LEFT, text_top_for_title(spec["title"]), Inches(11.00), spec["lines"])
+
+
+def build_two_col(slide, spec):
+    add_title(slide, spec["title"])
+    if spec.get("section"):
+        add_section_heading(slide, spec["section"], title=spec["title"])
+        title_y = Inches(2.68)
+    else:
+        title_y = Inches(2.45)
+
+    gap = Inches(0.45)
+    col_width = (CONTENT_WIDTH - gap) / 2
+    left_x = CONTENT_LEFT
+    right_x = CONTENT_LEFT + col_width + gap
+
+    add_text_box(
+        slide,
+        left_x,
+        title_y,
+        col_width,
+        Inches(0.35),
+        spec["left_title"],
+        BODY_SIZE,
+        bold=True,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
+    add_text_box(
+        slide,
+        right_x,
+        title_y,
+        col_width,
+        Inches(0.35),
+        spec["right_title"],
+        BODY_SIZE,
+        bold=True,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
+    add_bullet_lines(slide, left_x, title_y + Inches(0.45), col_width, spec["left_lines"], start_order=10)
+    add_bullet_lines(slide, right_x, title_y + Inches(0.45), col_width, spec["right_lines"], start_order=40)
+
+
+def build_text_image(slide, spec):
+    add_title(slide, spec["title"])
+    add_section_heading(slide, spec["section"], title=spec["title"])
+    media_top = text_top_for_title(spec["title"])
+    add_media(
+        slide,
+        Inches(7.15),
+        media_top,
+        Inches(5.10),
+        Inches(3.45),
+        image_path=spec.get("image_path"),
+        placeholder=spec["placeholder"],
+        anim_name="anim-fade-10-media",
+    )
+    add_bullet_lines(slide, CONTENT_LEFT, media_top, Inches(5.70), spec["lines"], start_order=20)
+
+
+def build_text_image_grid(slide, spec):
+    add_title(slide, spec["title"])
+    add_section_heading(slide, spec["section"], title=spec["title"])
+    media_top = text_top_for_title(spec["title"])
+    add_bullet_lines(slide, CONTENT_LEFT, media_top, Inches(5.55), spec["lines"], start_order=50)
+
+    grid_left = Inches(7.10)
+    grid_top = media_top
+    col_gap = Inches(0.18)
+    row_gap = Inches(0.14)
+    image_width = Inches(2.42)
+    image_height = Inches(1.22)
+    caption_height = Inches(0.28)
+
+    positions = [
+        (grid_left, grid_top),
+        (grid_left + image_width + col_gap, grid_top),
+        (grid_left, grid_top + image_height + caption_height + row_gap),
+        (grid_left + image_width + col_gap, grid_top + image_height + caption_height + row_gap),
+    ]
+
+    for index, (item, (x, y)) in enumerate(zip(spec["images"], positions), start=1):
+        add_media(
+            slide,
+            x,
+            y,
+            image_width,
+            image_height,
+            image_path=item["path"],
+            placeholder="Chèn hình enemy",
+            anim_name=f"anim-fade-{index * 10:02d}-enemy-{index}",
+        )
+        add_text_box(
+            slide,
+            x,
+            y + image_height + Inches(0.03),
+            image_width,
+            caption_height,
+            item["caption"],
+            BODY_SIZE,
+            align=PP_ALIGN.CENTER,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+            name=f"anim-appear-{index * 10 + 1:02d}-enemy-cap-{index}",
+        )
+
+
+def build_tech_grid(slide, spec):
+    add_title(slide, spec["title"])
+    top_y = Inches(2.58) if spec["title"] in DISPLAY_TITLE_OVERRIDES else Inches(2.40)
+    row_gap = Inches(0.38)
+    col_gap = Inches(0.40)
+    cell_width = (CONTENT_WIDTH - col_gap) / 2
+    left_x = CONTENT_LEFT
+    right_x = CONTENT_LEFT + cell_width + col_gap
+    positions = [
+        (left_x, top_y),
+        (right_x, top_y),
+        (left_x, top_y + Inches(1.92) + row_gap),
+        (right_x, top_y + Inches(1.92) + row_gap),
+    ]
+
+    for item, (cell_x, cell_y) in zip(spec["items"], positions):
+        add_text_box(
+            slide,
+            cell_x,
+            cell_y,
+            cell_width,
+            Inches(0.35),
+            item["title"],
+            BODY_SIZE,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+        add_placeholder(
+            slide,
+            cell_x + Inches(0.04),
+            cell_y + Inches(0.42),
+            cell_width - Inches(0.08),
+            Inches(0.92),
+            item["placeholder"],
+        )
+        add_text_box(
+            slide,
+            cell_x + Inches(0.02),
+            cell_y + Inches(1.42),
+            cell_width - Inches(0.04),
+            Inches(0.40),
+            item["role"],
+            BODY_SIZE,
+            align=PP_ALIGN.CENTER,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+
+
+def build_demo_grid(slide, spec):
+    add_title(slide, spec["title"])
+    add_section_heading(slide, spec["section"], title=spec["title"])
+
+    image_width = Inches(3.45)
+    image_height = Inches(2.35)
+    image_top = text_top_for_title(spec["title"])
+    caption_top = image_top + image_height + Inches(0.11)
+    left_positions = [Inches(0.95), Inches(4.95), Inches(8.95)]
+
+    for index, (item, x) in enumerate(zip(spec["images"], left_positions), start=1):
+        add_media(
+            slide,
+            x,
+            image_top,
+            image_width,
+            image_height,
+            image_path=item["path"],
+            placeholder="Chèn hình demo",
+            anim_name=f"anim-fade-{index * 10:02d}-demo-{index}",
+        )
+        add_text_box(
+            slide,
+            x,
+            caption_top,
+            image_width,
+            Inches(0.35),
+            item["caption"],
+            BODY_SIZE,
+            align=PP_ALIGN.CENTER,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+
+    add_text_box(
+        slide,
+        CONTENT_LEFT,
+        caption_top + Inches(0.62),
+        CONTENT_WIDTH,
+        Inches(0.55),
+        spec["note"],
+        BODY_SIZE,
+        align=PP_ALIGN.CENTER,
+        name="anim-appear-40-demo-note",
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
     )
 
-    # 2. Agenda
-    s = slides[1]
-    add_title(s, "Nội dung trình bày", 2)
-    add_bullets(
-        s,
-        [
-            "Lý do chọn đề tài, mục tiêu và phạm vi thực hiện.",
-            "Công nghệ sử dụng và cách tổ chức project Unity.",
-            "Các hệ thống gameplay đã xây dựng: Player, Enemy, Wave, EXP, Buff.",
-            "Các giao diện và chức năng hỗ trợ: HUD, Challenge, Pause, Settings, Leaderboard.",
-            "Kiểm thử, kết quả đạt được, hạn chế và hướng phát triển.",
-        ],
-        Inches(1.1),
-        Inches(1.25),
-        Inches(10.9),
-        Inches(4.8),
+
+def build_closing(slide, spec):
+    add_title(slide, spec["title"])
+    add_section_heading(slide, spec["section"], title=spec["title"])
+    add_bullet_lines(slide, CONTENT_LEFT, text_top_for_title(spec["title"]), Inches(11.00), spec["lines"])
+    add_text_box(
+        slide,
+        Inches(1.40),
+        Inches(5.95),
+        Inches(10.60),
+        Inches(0.42),
+        spec["thanks"],
+        BODY_SIZE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+        color=TITLE_COLOR,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
     )
 
-    # 3
-    s = slides[2]
-    add_title(s, "Lý do chọn đề tài", 3)
-    add_bullets(
-        s,
-        [
-            "Game 3D giúp vận dụng nhiều kiến thức: lập trình, đồ họa, UI, âm thanh và thiết kế hệ thống.",
-            "Thể loại sinh tồn kết hợp Roguelike có vòng lặp chơi rõ, dễ demo và có khả năng mở rộng.",
-            "Đề tài phù hợp để xây dựng một sản phẩm đồ án có thể chơi thử, không chỉ dừng ở mô phỏng lý thuyết.",
-        ],
-        Inches(0.95),
-        Inches(1.2),
-        Inches(6.0),
-        Inches(4.8),
-    )
-    add_image_caption(s, assets[28], "Hình ảnh gameplay trong báo cáo", Inches(7.25), Inches(1.22), Inches(4.85), Inches(3.05))
 
-    # 4
-    s = slides[3]
-    add_title(s, "Mục tiêu và phạm vi", 4)
-    add_panel(
-        s,
-        "Mục tiêu",
-        [
-            "Xây dựng game Roguelike sinh tồn 3D trên Unity.",
-            "Hoàn thiện vòng lặp chơi: chiến đấu, nhận EXP, chọn buff, vượt wave.",
-            "Tổ chức code và dữ liệu để có thể mở rộng sau đồ án.",
-        ],
-        Inches(0.9),
-        Inches(1.25),
-        Inches(5.7),
-        Inches(4.5),
-    )
-    add_panel(
-        s,
-        "Phạm vi",
-        [
-            "Tập trung prototype gameplay chính.",
-            "Backend giới hạn ở định danh người chơi và HighScore.",
-            "Chưa đặt mục tiêu hoàn thiện như game thương mại.",
-        ],
-        Inches(6.85),
-        Inches(1.25),
-        Inches(5.35),
-        Inches(4.5),
-    )
-
-    # 5
-    s = slides[4]
-    add_title(s, "Công nghệ sử dụng", 5)
-    add_panel(
-        s,
-        "Unity và C#",
-        ["Xử lý gameplay runtime, input, collision, animation và UI.", "MonoBehaviour dùng cho các hệ thống tương tác trực tiếp trong scene."],
+def build_thanks(slide, spec):
+    add_text_box(
+        slide,
+        Inches(1.15),
+        Inches(3.05),
+        Inches(11.10),
         Inches(0.85),
-        Inches(1.2),
-        Inches(3.8),
-        Inches(2.05),
-    )
-    add_panel(
-        s,
-        "Dữ liệu và hiệu năng",
-        ["ScriptableObject lưu cấu hình Player, Enemy, Wave, Buff.", "Object Pooling giảm chi phí sinh/hủy projectile và enemy."],
-        Inches(4.9),
-        Inches(1.2),
-        Inches(3.8),
-        Inches(2.05),
-    )
-    add_panel(
-        s,
-        "Quản lý và backend",
-        ["Git/GitHub quản lý phiên bản mã nguồn.", "PlayFab lưu tên hiển thị và bảng xếp hạng HighScore."],
-        Inches(8.95),
-        Inches(1.2),
-        Inches(3.35),
-        Inches(2.05),
-    )
-    add_bullets(s, ["Các công nghệ được chọn phục vụ trực tiếp cho việc làm ra bản demo chơi được và dễ trình bày khi bảo vệ."], Inches(1.0), Inches(4.1), Inches(11.0), Inches(0.8))
-
-    # 6
-    s = slides[5]
-    add_title(s, "Tổng quan sản phẩm gameplay", 6)
-    add_image_caption(s, assets[29], "Màn hình gameplay chính", Inches(0.9), Inches(1.2), Inches(5.7), Inches(3.15))
-    add_bullets(
-        s,
-        [
-            "Người chơi điều khiển nhân vật trong môi trường 3D.",
-            "Enemy xuất hiện theo wave và tấn công người chơi.",
-            "Người chơi tiêu diệt enemy để nhận EXP, lên cấp và chọn buff.",
-            "Điểm số cuối lượt chơi được gửi lên leaderboard.",
-        ],
-        Inches(7.05),
-        Inches(1.25),
-        Inches(5.0),
-        Inches(3.8),
+        spec["title"],
+        TITLE_SIZE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+        color=TITLE_COLOR,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
     )
 
-    # 7
-    s = slides[6]
-    add_title(s, "Những hệ thống chính đã xây dựng", 7)
-    add_panel(s, "Player", ["Di chuyển, dash, máu, tự động tấn công.", "Đồng bộ trạng thái với animation và UI."], Inches(0.9), Inches(1.15), Inches(3.55), Inches(1.6))
-    add_panel(s, "Enemy và Wave", ["Enemy nhận sát thương, tấn công và phát EXP.", "WaveSpawner sinh quái, boss wave và tăng độ khó."], Inches(4.85), Inches(1.15), Inches(3.55), Inches(1.6))
-    add_panel(s, "Progression", ["Cộng EXP, lên cấp, chọn buff.", "Buff tác động lên chỉ số hoặc kỹ năng chiến đấu."], Inches(8.8), Inches(1.15), Inches(3.55), Inches(1.6))
-    add_panel(s, "UI và Backend", ["HUD, Challenge, Pause, Settings, Loading.", "PlayFab đăng nhập, nhập tên và HighScore."], Inches(2.85), Inches(3.25), Inches(7.6), Inches(1.75))
 
-    # 8
-    s = slides[7]
-    add_title(s, "Tổ chức module trong project", 8)
-    add_panel(s, "Nhóm gameplay", ["PlayerController, PlayerAttack, PlayerHealth.", "Enemy, MeleeEnemy, RangedEnemy, FlyEnemy, BossEnemy.", "WaveSpawner, EnemyConfig, WaveConfig."], Inches(0.9), Inches(1.2), Inches(5.55), Inches(4.3))
-    add_panel(s, "Nhóm hỗ trợ", ["PlayerLevelSystem và BuffCardManager.", "GameUI, các panel chức năng và LoadingUIManager.", "PlayFabLeaderboardManager xử lý định danh và điểm."], Inches(6.85), Inches(1.2), Inches(5.35), Inches(4.3))
+BUILDERS = {
+    "cover": build_cover,
+    "agenda": build_agenda,
+    "text": build_text,
+    "two_col": build_two_col,
+    "text_image": build_text_image,
+    "text_image_grid": build_text_image_grid,
+    "tech_grid": build_tech_grid,
+    "demo_grid": build_demo_grid,
+    "closing": build_closing,
+    "thanks": build_thanks,
+}
 
-    # 9
-    s = slides[8]
-    add_title(s, "Điều khiển nhân vật và chiến đấu", 9)
-    add_image_caption(s, assets[30], "Nhân vật chiến đấu trong gameplay", Inches(0.9), Inches(1.2), Inches(5.75), Inches(3.3))
-    add_bullets(
-        s,
-        [
-            "Input System gửi dữ liệu di chuyển và thao tác cho PlayerController.",
-            "CharacterController xử lý di chuyển, gravity và dash.",
-            "PlayerAttack tự tìm enemy gần nhất và bắn projectile.",
-            "Projectile gây sát thương thông qua interface IDamageable.",
-        ],
-        Inches(7.05),
-        Inches(1.25),
-        Inches(5.05),
-        Inches(3.75),
-    )
 
-    # 10
-    s = slides[9]
-    add_title(s, "Enemy, boss và wave", 10)
-    add_panel(s, "Enemy đã làm", ["Melee enemy áp sát người chơi.", "Ranged/Fly enemy tấn công từ xa.", "Boss enemy tạo thử thách ở wave quan trọng."], Inches(0.9), Inches(1.2), Inches(4.8), Inches(3.3))
-    add_panel(s, "Wave đã làm", ["WaveSpawner đọc cấu hình wave.", "Theo dõi số enemy còn sống.", "Hoàn tất wave để chuyển sang wave tiếp theo.", "Tăng độ khó bằng autoScale và scalePerWave."], Inches(6.0), Inches(1.2), Inches(4.15), Inches(3.3))
-    add_image_caption(s, assets[31], "Enemy/boss trong báo cáo", Inches(10.45), Inches(1.25), Inches(1.75), Inches(2.5))
+def verify(prs):
+    slides = list(prs.slides)
+    if len(slides) != 17:
+        raise RuntimeError(f"Expected 17 slides, got {len(slides)}")
 
-    # 11
-    s = slides[10]
-    add_title(s, "EXP, level-up và buff", 11)
-    add_image_caption(s, assets[34], "Màn hình chọn buff", Inches(0.9), Inches(1.2), Inches(5.75), Inches(3.1))
-    add_bullets(
-        s,
-        [
-            "Enemy chết sẽ cộng EXP cho người chơi.",
-            "Khi đủ EXP, hệ thống tăng level và mở giao diện chọn buff.",
-            "BuffCardManager chọn các card phù hợp theo rarity và luckBonus.",
-            "Buff được áp dụng vào PlayerData, máu hoặc các modifier chiến đấu.",
-        ],
-        Inches(7.05),
-        Inches(1.25),
-        Inches(5.05),
-        Inches(3.75),
-    )
+    issues = []
+    for slide_index, slide in enumerate(slides, start=1):
+        for shape in slide.shapes:
+            if not getattr(shape, "has_text_frame", False):
+                continue
+            for paragraph in shape.text_frame.paragraphs:
+                for run in paragraph.runs:
+                    text = run.text.strip()
+                    if not text:
+                        continue
+                    if run.font.name != FONT_NAME:
+                        issues.append((slide_index, text, run.font.name))
+                    size = round(run.font.size.pt, 2) if run.font.size else None
+                    if slide_index == 1:
+                        if size not in {20.0, 24.0, 36.0}:
+                            issues.append((slide_index, text, size))
+                    elif slide_index == 17:
+                        if size not in {20.0, 36.0}:
+                            issues.append((slide_index, text, size))
+                    else:
+                        if size not in {20.0, 36.0}:
+                            issues.append((slide_index, text, size))
+                    lowered = text.lower()
+                    if any(word in lowered for word in ["bộ môn tin học kinh tế", "diagram", "flowchart", "sơ đồ"]):
+                        issues.append((slide_index, text, "unexpected-text"))
 
-    # 12
-    s = slides[11]
-    add_title(s, "Theme map và chuyển đổi môi trường", 12)
-    add_image_caption(s, assets[32], "Theme map 1", Inches(0.9), Inches(1.2), Inches(5.3), Inches(3.0))
-    add_image_caption(s, assets[33], "Theme map 2", Inches(6.85), Inches(1.2), Inches(5.3), Inches(3.0))
-    add_bullets(s, ["MapThemeManager thay đổi vật liệu, tường và effectRoot theo tiến trình wave.", "LoadingUIManager dùng hiệu ứng chuyển cảnh để quá trình đổi theme không gây gián đoạn trải nghiệm."], Inches(1.1), Inches(4.8), Inches(10.8), Inches(1.0))
+    if issues:
+        raise RuntimeError(f"Verification issues: {issues[:12]}")
 
-    # 13
-    s = slides[12]
-    add_title(s, "Giao diện HUD, Challenge, Pause và Settings", 13)
-    add_image_caption(s, assets[35], "HUD trong trận", Inches(0.85), Inches(1.2), Inches(3.65), Inches(2.15))
-    add_image_caption(s, assets[36], "Challenge panel", Inches(4.85), Inches(1.2), Inches(3.65), Inches(2.15))
-    add_image_caption(s, assets[37], "Pause/Settings", Inches(8.85), Inches(1.2), Inches(3.65), Inches(2.15))
-    add_bullets(s, ["HUD hiển thị HP, EXP, level và wave.", "ChallengePanel điều khiển luồng bắt đầu trận.", "Pause/Settings cho phép tạm dừng và điều chỉnh âm thanh."], Inches(1.05), Inches(4.2), Inches(10.7), Inches(1.2))
 
-    # 14
-    s = slides[13]
-    add_title(s, "Nhập tên và bảng xếp hạng PlayFab", 14)
-    add_image_caption(s, assets[38], "Giao diện nhập tên", Inches(0.9), Inches(1.2), Inches(5.4), Inches(1.75))
-    add_image_caption(s, assets[39], "Bảng xếp hạng", Inches(0.9), Inches(3.35), Inches(5.4), Inches(1.55))
-    add_bullets(
-        s,
-        [
-            "Người chơi được định danh bằng LoginWithCustomID.",
-            "Nếu chưa có Display Name, hệ thống mở panel nhập tên.",
-            "Khi kết thúc lượt chơi, điểm được gửi lên PlayFab HighScore.",
-            "Leaderboard hiển thị top người chơi và thứ hạng hiện tại.",
-        ],
-        Inches(6.85),
-        Inches(1.25),
-        Inches(5.1),
-        Inches(3.8),
-    )
+def build():
+    if not TEMPLATE_PPTX.exists():
+        raise FileNotFoundError(f"Missing source deck: {TEMPLATE_PPTX}")
 
-    # 15
-    s = slides[14]
-    add_title(s, "Một số màn hình demo đã hoàn thiện", 15)
-    add_image_caption(s, assets[29], "Gameplay", Inches(0.85), Inches(1.15), Inches(3.7), Inches(2.05))
-    add_image_caption(s, assets[30], "Combat", Inches(4.85), Inches(1.15), Inches(3.7), Inches(2.05))
-    add_image_caption(s, assets[34], "Buff", Inches(8.85), Inches(1.15), Inches(3.7), Inches(2.05))
-    add_image_caption(s, assets[41], "Giao diện khác", Inches(4.85), Inches(3.85), Inches(3.7), Inches(2.05))
+    prs = Presentation(str(TEMPLATE_PPTX))
+    prs.slide_width = SLIDE_WIDTH
+    prs.slide_height = SLIDE_HEIGHT
 
-    # 16
-    s = slides[15]
-    add_title(s, "Kiểm thử chức năng chính", 16)
-    add_panel(s, "Gameplay", ["Di chuyển, dash, camera.", "Tấn công, projectile, nhận damage.", "Enemy death và cộng EXP."], Inches(0.9), Inches(1.2), Inches(3.6), Inches(3.1))
-    add_panel(s, "Hệ thống", ["Spawn wave, boss wave, hoàn tất wave.", "Level-up, chọn buff, cập nhật chỉ số.", "Đổi theme map và loading."], Inches(4.9), Inches(1.2), Inches(3.6), Inches(3.1))
-    add_panel(s, "Giao diện/backend", ["HUD, challenge, pause, settings.", "Nhập tên, gửi điểm, xem leaderboard."], Inches(8.9), Inches(1.2), Inches(3.4), Inches(3.1))
+    ensure_slide_count(prs, len(SLIDES))
 
-    # 17
-    s = slides[16]
-    add_title(s, "Kết quả đạt được", 17)
-    add_bullets(
-        s,
-        [
-            "Hoàn thiện khung game Roguelike 3D ở mức đồ án.",
-            "Có vòng lặp chơi rõ: chiến đấu, EXP, buff, wave và leaderboard.",
-            "Các module chính được tách theo chức năng để dễ bảo trì.",
-            "Giao diện cơ bản đã hỗ trợ đầy đủ quá trình chơi và demo.",
-        ],
-        Inches(0.95),
-        Inches(1.25),
-        Inches(6.05),
-        Inches(4.1),
-    )
-    add_image_caption(s, assets[41], "Kết quả giao diện/gameplay", Inches(7.35), Inches(1.25), Inches(4.7), Inches(2.65))
+    slides = list(prs.slides)
+    for slide, spec in zip(slides, SLIDES):
+        clear_slide(slide)
+        BUILDERS[spec["kind"]](slide, spec)
 
-    # 18
-    s = slides[17]
-    add_title(s, "Hạn chế", 18)
-    add_bullets(
-        s,
-        [
-            "Số lượng enemy, boss pattern, buff và map variation còn ít.",
-            "Cân bằng độ khó giữa các wave và các buff cần tiếp tục tinh chỉnh.",
-            "Một số tài nguyên giao diện và hình ảnh chưa đồng đều về mặt mỹ thuật.",
-            "Hiệu năng ở wave có mật độ spawn lớn cần kiểm thử và tối ưu thêm.",
-        ],
-        Inches(1.0),
-        Inches(1.25),
-        Inches(10.8),
-        Inches(4.6),
-    )
+    verify(prs)
 
-    # 19
-    s = slides[18]
-    add_title(s, "Hướng phát triển", 19)
-    add_bullets(
-        s,
-        [
-            "Hoàn thiện Main Menu và luồng điều hướng tổng thể.",
-            "Mở rộng danh sách buff, enemy, boss và theme map.",
-            "Bổ sung thống kê ngoài HighScore như thời gian sống sót và số enemy tiêu diệt.",
-            "Cải thiện AI, hiệu ứng, UI/UX và tối ưu hiệu năng.",
-            "Đóng gói bản demo ổn định hơn để thử nghiệm người dùng.",
-        ],
-        Inches(1.0),
-        Inches(1.25),
-        Inches(10.8),
-        Inches(4.8),
-    )
+    OUTPUT_PPTX.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = OUTPUT_PPTX.with_suffix(".tmp.pptx")
+    prs.save(str(temp_path))
 
-    # 20
-    s = slides[19]
-    add_footer(s, 20)
-    add_text(s, "XIN CẢM ƠN THẦY CÔ ĐÃ LẮNG NGHE", Inches(1.0), Inches(2.45), Inches(11.25), Inches(0.45), 16, NAVY, True, PP_ALIGN.CENTER)
-    add_text(s, "Sinh viên thực hiện: Thái Văn Hào - 2121051075", Inches(2.1), Inches(3.35), Inches(9.2), Inches(0.35), 13, BLACK, False, PP_ALIGN.CENTER)
-
-    prs.save(OUT)
-    print(OUT)
+    try:
+        shutil.copyfile(temp_path, OUTPUT_PPTX)
+        temp_path.unlink(missing_ok=True)
+        return OUTPUT_PPTX
+    except PermissionError:
+        shutil.copyfile(temp_path, ALT_PPTX)
+        temp_path.unlink(missing_ok=True)
+        return ALT_PPTX
 
 
 if __name__ == "__main__":
-    build()
+    print(build())
