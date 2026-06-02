@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CardSelectionPanel : PanelBase
 {
@@ -12,6 +13,8 @@ public class CardSelectionPanel : PanelBase
     private readonly Queue<int> queuedLevelRewards = new Queue<int>();
 
     private BuffCardManager cardManager;
+    private PlayerLevelSystem boundLevelSystem;
+    private MapThemeManager boundMapThemeManager;
     private bool waitingForThemeTransition;
 
     protected override void Awake()
@@ -21,27 +24,34 @@ public class CardSelectionPanel : PanelBase
 
     private void Start()
     {
-        cardManager = BuffCardManager.Instance;
+        BindRuntimeReferences();
+    }
 
-        if (cardManager == null)
-        {
-            Debug.LogError("BuffCardManager instance not found!");
-        }
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+        BindRuntimeReferences();
+    }
 
-        PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
-        if (levelSystem != null)
-        {
-            levelSystem.OnLevelUp.AddListener(OnPlayerLevelUp);
-        }
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        UnbindRuntimeReferences();
+    }
 
-        if (MapThemeManager.Instance != null)
-        {
-            MapThemeManager.Instance.OnThemeTransitionCompleted += HandleThemeTransitionCompleted;
-        }
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        queuedLevelRewards.Clear();
+        waitingForThemeTransition = false;
+        ClearCards();
+        HideImmediate();
+        BindRuntimeReferences();
     }
 
     private void OnPlayerLevelUp(int newLevel)
     {
+        BindRuntimeReferences();
+
         if (ShouldSuppressCardSelection())
         {
             Debug.Log($"Skipped card selection for level {newLevel} because leaderboard or death UI is active.");
@@ -55,6 +65,8 @@ public class CardSelectionPanel : PanelBase
 
     public void ShowCards(List<BuffCardConfig> cards)
     {
+        BindRuntimeReferences();
+
         if (cards == null || cards.Count == 0)
         {
             Debug.LogError("No cards to show!");
@@ -121,6 +133,8 @@ public class CardSelectionPanel : PanelBase
 
     public void OnCardSelected(BuffCardConfig card)
     {
+        BindRuntimeReferences();
+
         if (card == null || cardManager == null)
         {
             return;
@@ -170,6 +184,8 @@ public class CardSelectionPanel : PanelBase
 
     private bool TryShowNextQueuedCards()
     {
+        BindRuntimeReferences();
+
         if (ShouldSuppressCardSelection())
         {
             queuedLevelRewards.Clear();
@@ -248,6 +264,8 @@ public class CardSelectionPanel : PanelBase
 
     private void HandleThemeTransitionCompleted(int _)
     {
+        BindRuntimeReferences();
+
         bool wasWaitingForThemeTransition = waitingForThemeTransition;
 
         if (TryShowNextQueuedCards())
@@ -265,16 +283,8 @@ public class CardSelectionPanel : PanelBase
 
     private void OnDestroy()
     {
-        PlayerLevelSystem levelSystem = PlayerLevelSystem.Instance;
-        if (levelSystem != null)
-        {
-            levelSystem.OnLevelUp.RemoveListener(OnPlayerLevelUp);
-        }
-
-        if (MapThemeManager.Instance != null)
-        {
-            MapThemeManager.Instance.OnThemeTransitionCompleted -= HandleThemeTransitionCompleted;
-        }
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        UnbindRuntimeReferences();
 
         queuedLevelRewards.Clear();
         ClearCards();
@@ -283,10 +293,72 @@ public class CardSelectionPanel : PanelBase
     [ContextMenu("Test Show Cards")]
     public void TestShowCards()
     {
+        BindRuntimeReferences();
+
         if (cardManager != null)
         {
             List<BuffCardConfig> cards = cardManager.GetRandomCards(3);
             ShowCards(cards);
         }
+    }
+
+    private void BindRuntimeReferences()
+    {
+        BuffCardManager currentCardManager = BuffCardManager.Instance;
+        if (cardManager != currentCardManager)
+        {
+            cardManager = currentCardManager;
+        }
+
+        PlayerLevelSystem currentLevelSystem = PlayerLevelSystem.Instance;
+        if (boundLevelSystem != currentLevelSystem)
+        {
+            if (boundLevelSystem != null)
+            {
+                boundLevelSystem.OnLevelUp.RemoveListener(OnPlayerLevelUp);
+            }
+
+            boundLevelSystem = currentLevelSystem;
+
+            if (boundLevelSystem != null)
+            {
+                boundLevelSystem.OnLevelUp.RemoveListener(OnPlayerLevelUp);
+                boundLevelSystem.OnLevelUp.AddListener(OnPlayerLevelUp);
+            }
+        }
+
+        MapThemeManager currentMapThemeManager = MapThemeManager.Instance;
+        if (boundMapThemeManager != currentMapThemeManager)
+        {
+            if (boundMapThemeManager != null)
+            {
+                boundMapThemeManager.OnThemeTransitionCompleted -= HandleThemeTransitionCompleted;
+            }
+
+            boundMapThemeManager = currentMapThemeManager;
+
+            if (boundMapThemeManager != null)
+            {
+                boundMapThemeManager.OnThemeTransitionCompleted -= HandleThemeTransitionCompleted;
+                boundMapThemeManager.OnThemeTransitionCompleted += HandleThemeTransitionCompleted;
+            }
+        }
+    }
+
+    private void UnbindRuntimeReferences()
+    {
+        if (boundLevelSystem != null)
+        {
+            boundLevelSystem.OnLevelUp.RemoveListener(OnPlayerLevelUp);
+            boundLevelSystem = null;
+        }
+
+        if (boundMapThemeManager != null)
+        {
+            boundMapThemeManager.OnThemeTransitionCompleted -= HandleThemeTransitionCompleted;
+            boundMapThemeManager = null;
+        }
+
+        cardManager = null;
     }
 }

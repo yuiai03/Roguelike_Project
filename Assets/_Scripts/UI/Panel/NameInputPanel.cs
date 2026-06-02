@@ -79,10 +79,33 @@ public class NameInputPanel : PanelBase
             onFailed: () => ShowNotification("Tên không hợp lệ hoặc đã được sử dụng. Vui lòng thử lại."),
             onSuccess: () =>
             {
-                Hide();
-                if (PlayerController.Instance != null)
-                    PlayerController.Instance.SetInputActive(true);
-                OnNameSubmitted?.Invoke();
+                string displayName = PlayFabLeaderboardManager.Instance != null
+                    ? PlayFabLeaderboardManager.Instance.CurrentDisplayName
+                    : string.Empty;
+                if (string.IsNullOrEmpty(displayName))
+                {
+                    displayName = name;
+                }
+
+                Hide(() =>
+                {
+                    ChallengePanel challengePanel = GameUI.Instance != null ? GameUI.Instance.ChallengePanel : null;
+                    if (challengePanel != null)
+                    {
+                        challengePanel.ShowOnboardingTutorial(() => ShowWelcomeNotification(displayName));
+                    }
+                    else
+                    {
+                        if (PlayerController.Instance != null)
+                        {
+                            PlayerController.Instance.SetInputActive(true);
+                        }
+
+                        ShowWelcomeNotification(displayName);
+                    }
+
+                    OnNameSubmitted?.Invoke();
+                });
             });
     }
 
@@ -100,6 +123,11 @@ public class NameInputPanel : PanelBase
                 notiText.DOFade(0f, notiFadeDuration).SetUpdate(true)
                     .OnComplete(() => notiText.gameObject.SetActive(false)),
                 ignoreTimeScale: true));
+    }
+
+    private void ShowWelcomeNotification(string displayName)
+    {
+        GameUI.Instance?.NotiPanel?.ShowNoti($"Welcome, {displayName}!");
     }
 
     private void OnDestroy()
